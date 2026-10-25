@@ -697,6 +697,13 @@
   .step b{min-width:44px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums;}
   .check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:650;color:var(--ink-soft);}
   .check input{width:22px;height:22px;accent-color:var(--accent);}
+  .lvgrp{margin:6px 0 0;font-size:12.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);}
+  .lvrow .tgl{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .lvrow .tgl input{width:22px;height:22px;accent-color:var(--good);flex-shrink:0;}
+  .lvrow .tgl input:disabled{opacity:0.5;}
+  .lvrow.off .ln,.lvrow.off .ld{color:var(--ink-faint);}
+  .lvrow .ld{padding-left:32px;}
+  .lengths{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
   .lockbar{
     background:#3A2E14;border:1.5px solid var(--accent);border-radius:14px;
     padding:10px 14px;font-size:14.5px;font-weight:650;color:var(--ink);
@@ -975,7 +982,7 @@
       </button>
       <button class="mode" type="button" data-mode="check" id="m-checkcard">
         <span class="ic">📋</span><span class="nm">Check-up</span>
-        <span class="ds">25 questions, 6 seconds each</span>
+        <span class="ds" id="m-check-ds">25 questions, 6 seconds each</span>
         <span class="ft" id="m-check"></span>
       </button>
       <button class="mode" type="button" data-mode="everyday">
@@ -1082,10 +1089,17 @@
         <label for="c-cur">Money questions use</label>
         <select class="select" id="c-cur"></select>
       </div>
-      <h3 style="margin-top:8px">Difficulty</h3>
-      <p>Each one moves by itself. It goes up after 10 recent answers at 85% or more right, and down if the last 8 fall below 60%. Use − and + to nudge it. These are for whoever is selected above.</p>
+      <h3 style="margin-top:8px">Topics and difficulty</h3>
+      <p>Untick a topic to leave it out everywhere, including warm-ups and reviews. A mode with nothing left disappears from the home screen. One of adding, taking away, times tables and dividing always stays on.</p>
+      <p>Each difficulty moves by itself. It goes up after 10 recent answers at 85% or more right, and down if the last 8 fall below 60%. Use − and + to nudge it. These are for whoever is selected above.</p>
       <div class="lvrows" id="c-levels"></div>
       <label class="check"><input type="checkbox" id="c-stretch"> Allow harder than Stage 3 (difficulties 4 and 5)</label>
+    </div>
+    <div class="panel">
+      <h3>⏱️ Round length</h3>
+      <div class="lengths" id="c-lengths"></div>
+      <p>Best scores and the ghost are kept separately for each length, so a longer round never beats a shorter one unfairly. Check-ups are compared as % right.</p>
+      <div class="note" id="c-lnote" hidden></div>
     </div>
     <div class="panel">
       <h3>💾 Back up progress</h3>
@@ -1244,6 +1258,8 @@ const DEFAULT_STATE = {
   strands: {frac:{h:'', ms:0}, money:{h:'', ms:0}, time:{h:'', ms:0}, word:{h:'', ms:0}}, // last 20 results per new topic
   review: {},         // fact id -> {due:'YYYY-MM-DD', step}: missed facts coming back on later days
   currency: null,     // null = from the iPad's region
+  lengths: {timed:60, check:25, everyday:10, story:6},  // round lengths a grown-up can change
+  off: {},            // topic id -> true when a grown-up has turned it off
   stretch: false,     // allow difficulty above Stage 3
   lock: null          // grown-up lock: {kind:'table', t:4} or {kind:'topic', id:'add100'}
 };
@@ -1287,7 +1303,7 @@ function savePlayers(){
 /* nested settings get any keys added since the save was made */
 function upgrade(s){
   const f = fresh();
-  for(const k of ['levels', 'adapt', 'strands']) s[k] = {...f[k], ...(s[k] || {})};
+  for(const k of ['levels', 'adapt', 'strands', 'lengths', 'off']) s[k] = {...f[k], ...(s[k] || {})};
   return s;
 }
 
@@ -1472,11 +1488,16 @@ function qSub(tier){
 }
 
 /* warm-ups are deliberately gentle: small sums and the easy tables */
+/* topics a grown-up has turned off are left out of every mix */
+const isOn = id => !(S.off && S.off[id]);
+
 function warmupQuestion(){
-  const r = Math.random();
-  if(r < 0.4) return mkAdd(R(2,9), R(2,9));
-  if(r < 0.7){ const a = R(5,15); return mkSub(a, R(1, a-1)); }
-  return mkMul(pick([2,5,10]), R(2,6));
+  const kinds = [];
+  if(isOn('add')) kinds.push(() => mkAdd(R(2,9), R(2,9)), () => mkAdd(R(2,9), R(2,9)));
+  if(isOn('sub')) kinds.push(() => { const a = R(5,15); return mkSub(a, R(1, a-1)); });
+  if(isOn('mul')) kinds.push(() => mkMul(pick([2,5,10]), R(2,6)));
+  if(!kinds.length) kinds.push(() => mkDiv(pick([2,5,10]), R(2,6)));
+  return pick(kinds)();
 }
 
 /* A recipe is a weighted list of {op, tier} or {op, tables}. */
@@ -1513,7 +1534,12 @@ const STAGE3_MIX = [
   {op:'mul', tier:3, w:4},  {op:'div', tier:3, w:4}
 ];
 const CHECK_MIX = [{op:'mul', tables:STAGE3, w:80}, {op:'div', tables:STAGE3, w:20}];
-const focusRecipe = t => [{op:'mul', tables:[t], w:70}, {op:'div', tables:[t], w:30}];
+const tableRecipe = t => [{op:'mul', tables:[t], w:70}, {op:'div', tables:[t], w:30}];
+/* drop turned-off topics; if that leaves nothing, keep the original (a lock is explicit) */
+const onlyOn = rec => { const kept = rec.filter(r => isOn(r.op)); return kept.length ? kept : rec; };
+const focusRecipe = t => onlyOn(tableRecipe(t));
+const checkRecipe = () => onlyOn(CHECK_MIX);
+const tablesOn = () => isOn('mul') || isOn('div');   // Focus and the check-up need one of these
 
 /* ============================================================
    hints.js — how to work it out, shown after a miss
@@ -2128,7 +2154,8 @@ const maxLevel = () => S.stretch ? TOP_LEVEL : STAGE3_TOP;
 
 function adaptiveRecipe(tracks){
   const r = [];
-  for(const op of tracks || OPS){
+  const on = (tracks || OPS).filter(t => isOn(t.id));
+  for(const op of on.length ? on : (tracks || OPS)){
     const L = Math.min(S.levels[op.id], maxLevel());
     if(L === 1){ r.push({op:op.id, tier:1, w:op.w}); continue; }
     r.push({op:op.id, tier:L, w:op.w * 0.6});
@@ -2173,7 +2200,7 @@ const LOCK_TOPICS = [
 ];
 const lockTopic = id => LOCK_TOPICS.find(x => x.id === id);
 const lockName = lock => lock.kind === 'table' ? `the ${lock.t}× table` : lockTopic(lock.id).name.toLowerCase();
-const lockRecipe = lock => lock.kind === 'table' ? focusRecipe(lock.t) : lockTopic(lock.id).recipe;
+const lockRecipe = lock => lock.kind === 'table' ? tableRecipe(lock.t) : lockTopic(lock.id).recipe;
 const currentRecipe = () => S.lock ? lockRecipe(S.lock) : adaptiveRecipe();
 
 /* ============================================================
@@ -2418,7 +2445,7 @@ function scheduleReview(q, ok){
   else S.review[q.id] = {due:addDays(today, REVIEW_DAYS[step]), step};
 }
 
-const dueReviews = () => Object.entries(S.review).filter(([, r]) => r.due <= todayStr())
+const dueReviews = () => Object.entries(S.review).filter(([id, r]) => r.due <= todayStr() && isOn(id.split(':')[0]))
   .sort((a, b) => a[1].due < b[1].due ? -1 : a[1].due > b[1].due ? 1 : 0).map(([id]) => id);
 
 function reviewQuestion(id){
@@ -2439,6 +2466,19 @@ const MODES = {
   check: {id:'check',  name:'Check-up',     questions:25, perQ:6, warmups:3, recipe:CHECK_MIX, retry:false, typedOnly:true}
 };
 
+/* round lengths; best scores and the ghost are kept per length, so they stay fair */
+const LENGTHS = {
+  timed:   {name:'Daily Sprint, Ghost Race and Focus', options:[30, 60, 90, 120], unit:'s'},
+  check:   {name:'Check-up', options:[10, 15, 20, 25], unit:'q'},
+  everyday:{name:'Everyday Maths', options:[5, 10, 15], unit:'q'},
+  story:   {name:'Story Problems', options:[3, 6, 10], unit:'q'}
+};
+const roundLen = k => LENGTHS[k].options.includes(S.lengths[k]) ? S.lengths[k] : DEFAULT_STATE.lengths[k];
+const fmtLen = (k, v) => LENGTHS[k].unit === 'q' ? `${v} questions` : v === 120 ? '2 minutes' : `${v} seconds`;
+/* 60-second rounds keep the original keys, so earlier best scores still count */
+const bestKeyFor = (base, secs) => !secs || secs === 60 ? base : `${base}_${secs}`;
+const checkPct = c => c.score / c.of;
+
 const IDLE_MS = 1000;       // a wrong typed answer is judged after this long without a keypress
 const GHOST_DEFAULT = 10;   // ghost pace before there's a best round to race
 
@@ -2451,18 +2491,19 @@ const STATUS = {
   strong:{label:'Strong',         icon:'✓', cls:'good'},
   ok:    {label:'Getting there',  icon:'◐', cls:'warn'},
   work:  {label:'Needs practice', icon:'!', cls:'bad'},
-  none:  {label:'Not started',    icon:'–', cls:'none'}
+  none:  {label:'Not started',    icon:'–', cls:'none'},
+  off:   {label:'Turned off',     icon:'–', cls:'none'}
 };
 const FLUENT_MS = 3000;   // within 3 seconds: remembered, not worked out
 const SLOW_MS = 5000;     // right but slower than this: still being worked out
 
 const AREAS = [
-  {id:'add20',  name:'Adding within 20',           trick:'bridge'},
-  {id:'sub20',  name:'Taking away within 20',      trick:'countup'},
-  {id:'add100', name:'Adding bigger numbers',      trick:'split'},
-  {id:'sub100', name:'Taking away bigger numbers', trick:'takeparts'},
-  {id:'mul',    name:'Times tables',               trick:null},
-  {id:'div',    name:'Dividing',                   trick:'thinkmult'},
+  {id:'add20',  name:'Adding within 20',           trick:'bridge',    track:'add'},
+  {id:'sub20',  name:'Taking away within 20',      trick:'countup',   track:'sub'},
+  {id:'add100', name:'Adding bigger numbers',      trick:'split',     track:'add'},
+  {id:'sub100', name:'Taking away bigger numbers', trick:'takeparts', track:'sub'},
+  {id:'mul',    name:'Times tables',               trick:null,        track:'mul'},
+  {id:'div',    name:'Dividing',                   trick:'thinkmult', track:'div'},
   // the new topics are rated from their own last 20 first-try answers
   {id:'frac',   name:'Fractions',     go:'set:everyday', strand:true, fluent:6000},
   {id:'money',  name:'Money',         go:'set:everyday', strand:true, fluent:Infinity},
@@ -2514,7 +2555,7 @@ function areaStats(){
     const s = out[a.id];
     s.acc = s.n ? s.ok / s.n : null;
     s.speed = s.ms.length ? median(s.ms) : null;
-    s.status = areaStatus(s, a.fluent);
+    s.status = isOn(a.track || a.id) ? areaStatus(s, a.fluent) : 'off';
   }
   return out;
 }
@@ -2577,8 +2618,8 @@ function strengths(){
   const streak = liveStreak();
   if(streak >= 3) out.push({icon:'🔥', html:`<b>${streak}-day streak.</b> Practising every day.`});
   const cu = S.checkups;
-  if(cu.length >= 2 && cu[cu.length - 1].score > cu[cu.length - 2].score)
-    out.push({icon:'📋', html:`Check-up score up from <b>${cu[cu.length - 2].score}</b> to <b>${cu[cu.length - 1].score}</b> out of ${cu[cu.length - 1].of}.`});
+  if(cu.length >= 2 && checkPct(cu[cu.length - 1]) > checkPct(cu[cu.length - 2]))
+    out.push({icon:'📋', html:`Check-up score up from <b>${pct(checkPct(cu[cu.length - 2]))}</b> to <b>${pct(checkPct(cu[cu.length - 1]))}</b> right.`});
   return out.slice(0, 5);
 }
 
@@ -2592,7 +2633,7 @@ function nextSteps(){
   const tables = order.map(t => ({t, p:tableProgress(t)})).filter(x => x.p.mastered < 8);
   const trickyIn = x => x.p.cells.filter(c => c === 'tricky').length;
   tables.sort((x, y) => trickyIn(y) - trickyIn(x) || x.p.mastered - y.p.mastered);
-  if(tables.length){
+  if(tables.length && isOn('mul')){
     const {t, p} = tables[0];
     const worst = trickyFacts().filter(f => f.op === 'mul' && (f.a === t || f.b === t)).slice(0, 3).map(f => f.text);
     steps.push({icon:'🎯', html:`<b>The ${t}× table.</b> ${p.mastered} of 9 facts mastered${worst.length ? `; trickiest: ${worst.join(', ')}` : ''}. It's on the Stage 3 list.`,
@@ -2624,7 +2665,7 @@ function nextSteps(){
   if(wk.days < 4) steps.push({icon:'📅', html:`<b>Little and often.</b> Played on ${wk.days} of the last 7 days. A few minutes every day builds recall faster than one long session.`});
 
   const last = S.checkups[S.checkups.length - 1];
-  if(!last || dayGap(last.date, todayStr()) >= 7) steps.push({icon:'📋', html:`<b>Weekly check-up ${last ? 'is due' : 'not done yet'}.</b> 25 quick questions on the Stage 3 tables, to track progress week to week.`,
+  if(tablesOn() && (!last || dayGap(last.date, todayStr()) >= 7)) steps.push({icon:'📋', html:`<b>Weekly check-up ${last ? 'is due' : 'not done yet'}.</b> ${roundLen('check')} quick questions on the Stage 3 tables, to track progress week to week.`,
     act:{label:'Start the check-up', go:'mode:check'}});
 
   return steps.slice(0, 3);
@@ -2735,13 +2776,21 @@ function paintHome(){
     ? 'Today\'s goal: <b>done! 🎉</b>'
     : `Today's goal: <b>${done} of ${GOAL}</b> rounds`;
 
-  $('m-sprint').textContent = S.lock ? '🔒 Set by a grown-up' : S.best.sprint ? `Best: ${S.best.sprint}` : 'Start here';
-  $('m-sprint-ds').textContent = S.lock ? `60 seconds of ${lockName(S.lock)}` : '60 seconds of mixed facts';
+  const secs = roundLen('timed'), best = S.best[bestKeyFor('sprint', secs)];
+  $('m-sprint').textContent = S.lock ? '🔒 Set by a grown-up' : best ? `Best: ${best}` : 'Start here';
+  const onOps = OPS.filter(o => isOn(o.id));
+  $('m-sprint-ds').textContent = `${fmtLen('timed', secs)} of ${S.lock ? lockName(S.lock) : onOps.length === 1 ? onOps[0].name.toLowerCase() : 'mixed facts'}`;
+  $('m-check-ds').textContent = `${roundLen('check')} questions, 6 seconds each`;
+  // a mode with every one of its topics turned off disappears
+  document.querySelector('[data-mode="focus"]').hidden = !tablesOn();
+  $('m-checkcard').hidden = !tablesOn();
+  document.querySelector('[data-mode="everyday"]').hidden = !SETS.everyday.strands.some(isOn);
+  document.querySelector('[data-mode="story"]').hidden = !SETS.story.strands.some(isOn);
   $('m-focus').textContent = `Try the ${suggestTable()}× table`;
-  $('m-ghost').textContent = `Ghost to beat: ${S.best.sprint || GHOST_DEFAULT}`;
+  $('m-ghost').textContent = `Ghost to beat: ${best || Math.round(GHOST_DEFAULT * secs / 60)}`;
   for(const id of ['everyday', 'story']){
     const last = [...S.sessions].reverse().find(x => x.mode === id);
-    $('m-' + id).textContent = last ? `Last time: ${last.right} of ${SETS[id].n}` : 'New! No clock';
+    $('m-' + id).textContent = last ? `Last time: ${last.right} of ${last.right + last.wrong}` : 'New! No clock';
   }
   $('h-switch').hidden = P.list.length < 2;
   const trickTotal = TRICKS.reduce((s, t) => s + trickStars(t.id), 0);
@@ -2849,7 +2898,9 @@ function startMode(id, opts){
     mode:m,
     input: m.typedOnly ? 'type' : S.input,
     table: opts.table || null,
-    recipe: id === 'focus' ? focusRecipe(opts.table) : m.adaptive ? currentRecipe() : m.recipe,
+    recipe: id === 'focus' ? focusRecipe(opts.table) : m.adaptive ? currentRecipe() : id === 'check' ? checkRecipe() : m.recipe,
+    seconds: m.seconds ? roundLen('timed') : 0,
+    questions: m.questions ? roundLen('check') : 0,
     adaptive: !!m.adaptive && !S.lock,   // locked rounds don't move the difficulty
     reviewOK: id === 'focus' || (!!m.adaptive && !S.lock),
     reviewed: new Set(), reviewRight: 0,
@@ -2865,7 +2916,7 @@ function startMode(id, opts){
     qStart:0, qEnd:0, endAt:0,
     frozenAt:null,
     locked:false, raf:0, autoT:0, nextT:0,
-    ghostTarget: m.ghost ? (S.best.sprint || GHOST_DEFAULT) : 0
+    ghostTarget: m.ghost ? (S.best[bestKeyFor('sprint', roundLen('timed'))] || Math.round(GHOST_DEFAULT * roundLen('timed') / 60)) : 0
   };
 
   el.score.textContent = '0';
@@ -2916,7 +2967,7 @@ function serve(){
   G.qStart = performance.now();
   if(G.mode.perQ && G.phase === 'live'){
     G.qEnd = G.qStart + G.mode.perQ * 1000;
-    el.clock.textContent = `${G.asked}/${G.mode.questions}`;
+    el.clock.textContent = `${G.asked}/${G.questions}`;
     el.barFill.style.transform = 'scaleX(1)';
     el.bar.classList.remove('low');
   }
@@ -3052,7 +3103,7 @@ function submit(got, how){
     if(G.phase === 'warm'){
       G.warmLeft -= 1;
       if(G.warmLeft <= 0){ goLive(); return; }
-    } else if(G.mode.questions && G.asked >= G.mode.questions){
+    } else if(G.questions && G.asked >= G.questions){
       finish();
       return;
     }
@@ -3082,7 +3133,7 @@ function flyXP(n){
 function goLive(){
   G.phase = 'live';
   const now = performance.now();
-  if(G.mode.seconds) G.endAt = now + G.mode.seconds * 1000;
+  if(G.seconds) G.endAt = now + G.seconds * 1000;
   // backgrounded during the last warm-up: start the round frozen
   if(document.hidden) G.frozenAt = now;
   el.warm.classList.remove('on');
@@ -3096,8 +3147,8 @@ function tick(){
   if(!G || G.phase !== 'live' || G.frozenAt !== null) return;
   const now = performance.now();
 
-  if(G.mode.seconds){
-    const total = G.mode.seconds * 1000;
+  if(G.seconds){
+    const total = G.seconds * 1000;
     const left = G.endAt - now;
     if(left <= 0){
       el.clock.textContent = '0:00';
@@ -3149,14 +3200,14 @@ function finish(){
 
   const m = G.mode;
   const med = median(G.times);
-  const key = m.id === 'focus' ? 'focus' + G.table : m.bestKey;
+  const key = m.id === 'focus' ? bestKeyFor('focus' + G.table, G.seconds) : m.bestKey ? bestKeyFor(m.bestKey, G.seconds) : null;
   let isPB = false;
   if(key && G.score > (S.best[key] || 0)){ S.best[key] = G.score; isPB = true; }
 
   let prevCheck = null;
   if(m.id === 'check'){
     prevCheck = S.checkups[S.checkups.length - 1] || null;
-    S.checkups.push({date:todayStr(), score:G.score, of:m.questions});
+    S.checkups.push({date:todayStr(), score:G.score, of:G.questions});
     if(S.checkups.length > 100) S.checkups = S.checkups.slice(-100);
   }
 
@@ -3219,16 +3270,17 @@ function paintResults(r){
   const acc = total ? Math.round(G.right / total * 100) : 0;
 
   $('d-score').textContent = G.score;
-  $('d-of').textContent = m.questions ? `out of ${m.questions}` : (total ? `right out of ${total}` : 'right');
+  $('d-of').textContent = G.questions ? `out of ${G.questions}` : (total ? `right out of ${total}` : 'right');
   $('d-right').textContent = G.right;
   $('d-wrong').textContent = G.wrong;
   $('d-speed').textContent = r.med ? fmtS(r.med) : '—';
 
   let v;
-  if(m.questions){
-    if(G.score >= 23)      v = 'Brilliant check-up! 🌟';
-    else if(G.score >= 18) v = 'Strong result. 💪';
-    else if(G.score >= 12) v = 'Good effort. Keep practising!';
+  if(G.questions){
+    const share = G.score / G.questions;
+    if(share >= 0.9)       v = 'Brilliant check-up! 🌟';
+    else if(share >= 0.7)  v = 'Strong result. 💪';
+    else if(share >= 0.5)  v = 'Good effort. Keep practising!';
     else                   v = 'Lots to practise. Focus mode will help.';
   } else {
     if(total === 0)        v = 'Have a go!';
@@ -3253,8 +3305,8 @@ function paintResults(r){
   }
   if(m.id === 'check'){
     if(!r.prevCheck)                      badges.push(['', '📋 First check-up done. Next one in a week']);
-    else if(G.score > r.prevCheck.score)  badges.push(['green', `📋 ${G.score - r.prevCheck.score} more than last check-up`]);
-    else                                  badges.push(['', `📋 Last check-up: ${r.prevCheck.score}/${r.prevCheck.of}`]);
+    else if(G.score / G.questions > checkPct(r.prevCheck)) badges.push(['green', `📋 Better than last check-up: ${pct(G.score / G.questions)} right, up from ${pct(checkPct(r.prevCheck))}`]);
+    else                                  badges.push(['', `📋 Last check-up: ${r.prevCheck.score} of ${r.prevCheck.of}`]);
   }
   if(G.fixed)  badges.push(['green', `🔁 Fixed ${G.fixed} on the next try`]);
   if(G.reviewed.size) badges.push(['green', `📅 ${G.reviewRight} of ${plural(G.reviewed.size, 'fact')} from earlier days right`]);
@@ -3535,7 +3587,7 @@ function columnChart({data, max, ticks, goal, valueLast, label}){
     `<text class="gl-lab" x="${W - R}" y="${y(goal) - 6}" text-anchor="end">Goal: ${goal} a day</text>`;
   if(valueLast){
     const i = data.length - 1;
-    s += `<text class="val" x="${L + band * i + band / 2}" y="${y(data[i].v) - 7}" text-anchor="middle">${data[i].v}</text>`;
+    s += `<text class="val" x="${L + band * i + band / 2}" y="${y(data[i].v) - 7}" text-anchor="middle">${data[i].lab || data[i].v}</text>`;
   }
   data.forEach((d, i) => {
     s += `<rect class="hit" x="${L + band * i}" y="${T}" width="${band}" height="${ph}" tabindex="0" role="button" ` +
@@ -3582,6 +3634,7 @@ function paintReport(){
     `<p class="sub">Difficulty now: ${ALL_TRACKS.map(op => `${op.name.toLowerCase()} <b>${S.levels[op.id]}</b>`).join(' · ')} (of ${maxLevel()}). It adjusts by itself; change it in Settings.</p><div class="meters">` +
     AREAS.map(a => {
       const s = areas[a.id];
+      if(s.status === 'off') return meterRow(a.name, 'off', 0, 'Turned off in Settings.');
       if(s.status === 'none') return meterRow(a.name, 'none', 0, s.n ? 'A few more answers needed before this can be rated.' : 'Not practised yet.');
       const a0 = w0.areas[a.id], a1 = w1.areas[a.id];
       const trend = a0 && a1 && a0[0] + a0[1] >= 10 && a1[0] + a1[1] >= 10
@@ -3637,13 +3690,16 @@ function paintReport(){
   const cu = S.checkups.slice(-8);
   h += '<div class="panel"><h3>Weekly check-ups</h3>';
   if(!cu.length){
-    h += '<p class="noneyet">No check-ups yet. The check-up is 25 times-table questions with 6 seconds each, and it\'s due once a week.</p>';
+    h += `<p class="noneyet">No check-ups yet. The check-up is ${roundLen('check')} times-table questions with 6 seconds each, and it's due once a week.</p>`;
   } else {
+    // shown as % right, so check-ups of different lengths compare fairly
     const last = cu[cu.length - 1], prev = cu[cu.length - 2];
-    h += `<p class="sub">Score out of ${last.of}. Latest: <b>${last.score}</b>${prev ? ` (${last.score === prev.score ? 'same as' : last.score > prev.score ? `up ${last.score - prev.score} from` : `down ${prev.score - last.score} from`} the one before)` : ''}.</p>` +
-      columnChart({label:'Check-up scores over time', max:last.of, ticks:[0, 5, 10, 15, 20, 25], valueLast:true,
-        data:cu.map(c => ({v:c.score, x:fmtDate(dateOf(c.date)), tip:`${fmtDate(dateOf(c.date))}: ${c.score} out of ${c.of}`}))}) +
-      tableHtml('tb-checks', ['Date', 'Score'], cu.map(c => [fmtDate(dateOf(c.date)), `${c.score} / ${c.of}`]));
+    const d = prev ? Math.round(checkPct(last) * 100) - Math.round(checkPct(prev) * 100) : 0;
+    h += `<p class="sub">% right in each check-up. Latest: <b>${last.score} of ${last.of}</b> (${pct(checkPct(last))})${prev ? `, ${d === 0 ? 'the same as' : d > 0 ? `up ${d} points from` : `down ${-d} points from`} the one before` : ''}.</p>` +
+      columnChart({label:'Check-up results over time, as % right', max:100, ticks:[0, 25, 50, 75, 100], valueLast:true,
+        data:cu.map(c => ({v:Math.round(checkPct(c) * 100), lab:pct(checkPct(c)), x:fmtDate(dateOf(c.date)),
+          tip:`${fmtDate(dateOf(c.date))}: ${c.score} out of ${c.of} (${pct(checkPct(c))})`}))}) +
+      tableHtml('tb-checks', ['Date', 'Score', 'Right'], cu.map(c => [fmtDate(dateOf(c.date)), `${c.score} / ${c.of}`, pct(checkPct(c))]));
   }
   h += '</div>';
 
@@ -4241,7 +4297,8 @@ function startSet(id){
   const set = SETS[id];
   const recipe = adaptiveRecipe(ALL_TRACKS.filter(t => set.strands.includes(t.id)));
   const probs = [], seen = new Set();
-  for(let i = 0; probs.length < set.n && i < 300; i++){
+  const n = roundLen(id);
+  for(let i = 0; probs.length < n && i < 300; i++){
     const q = fromRecipe(recipe);
     if(seen.has(q.text)) continue;
     seen.add(q.text);
@@ -4446,13 +4503,21 @@ function paintControls(){
     Object.entries(CURRENCIES).map(([k, c]) => `<option value="${k}">${c.name}</option>`).join('');
   $('c-cur').value = S.currency || '';
   const max = maxLevel();
-  $('c-levels').innerHTML = ALL_TRACKS.map(op => {
-    const L = S.levels[op.id];
-    return `<div class="lvrow"><span class="ln">${op.name}</span><span class="ld">Difficulty ${L} of ${max}: ${op.levels[L - 1]}</span>` +
-      `<span class="step"><button type="button" data-lv="${op.id}" data-d="-1"${L <= 1 ? ' disabled' : ''} aria-label="Easier ${op.name.toLowerCase()}">−</button>` +
-      `<b>${L}</b><button type="button" data-lv="${op.id}" data-d="1"${L >= max ? ' disabled' : ''} aria-label="Harder ${op.name.toLowerCase()}">+</button></span></div>`;
-  }).join('');
+  const numbersOn = OPS.filter(o => isOn(o.id)).length;
+  const groups = [['Daily Sprint, Ghost Race, Focus and Check-up', OPS], ['Everyday Maths', STRANDS.filter(t => t.id !== 'word')], ['Story Problems', STRANDS.filter(t => t.id === 'word')]];
+  $('c-levels').innerHTML = groups.map(([title, tracks]) => `<p class="lvgrp">${title}</p>` + tracks.map(op => {
+    const L = S.levels[op.id], on = isOn(op.id);
+    const lastNumber = on && OPS.includes(op) && numbersOn === 1;   // Daily Sprint always needs one
+    return `<div class="lvrow${on ? '' : ' off'}"><label class="tgl"><input type="checkbox" data-on="${op.id}"${on ? ' checked' : ''}${lastNumber ? ' disabled title="One number topic must stay on"' : ''}>` +
+      `<span class="ln">${op.name}</span></label><span class="ld">${on ? `Difficulty ${L} of ${max}: ${op.levels[L - 1]}` : 'Turned off'}</span>` +
+      `<span class="step"><button type="button" data-lv="${op.id}" data-d="-1"${!on || L <= 1 ? ' disabled' : ''} aria-label="Easier ${op.name.toLowerCase()}">−</button>` +
+      `<b>${L}</b><button type="button" data-lv="${op.id}" data-d="1"${!on || L >= max ? ' disabled' : ''} aria-label="Harder ${op.name.toLowerCase()}">+</button></span></div>`;
+  }).join('')).join('');
   $('c-stretch').checked = !!S.stretch;
+  $('c-lengths').innerHTML = Object.entries(LENGTHS).map(([k, L]) =>
+    `<div class="ctl"><label for="len-${k}">${L.name}</label><select class="select" id="len-${k}" data-len="${k}">` +
+    L.options.map(v => `<option value="${v}"${v === roundLen(k) ? ' selected' : ''}>${fmtLen(k, v)}${v === DEFAULT_STATE.lengths[k] ? ' (usual)' : ''}</option>`).join('') +
+    '</select></div>').join('');
 }
 
 function controlNote(text){
@@ -4578,6 +4643,26 @@ $('c-lock').addEventListener('change', e=>{
   controlNote(S.lock
     ? `Locked to ${lockName(S.lock)}. Daily Sprint and Ghost Race will only ask these until you change it back here.`
     : 'Unlocked. Daily Sprint and Ghost Race are back to the full mix, at the difficulty below.');
+});
+$('c-levels').addEventListener('change', e=>{
+  const c = e.target.closest('[data-on]');
+  if(!c) return;
+  const id = c.dataset.on, name = ALL_TRACKS.find(t => t.id === id).name;
+  if(c.checked) delete S.off[id];
+  else if(OPS.some(o => o.id === id) && OPS.filter(o => isOn(o.id)).length <= 1){ c.checked = true; return; }
+  else S.off[id] = true;
+  saveState();
+  paintControls();
+  controlNote(c.checked ? `${name} is back on.` : `${name} is turned off. It's left out of every mix until you tick it again.`);
+});
+$('c-lengths').addEventListener('change', e=>{
+  const k = e.target.dataset.len;
+  if(!k) return;
+  S.lengths[k] = Number(e.target.value);
+  saveState();
+  const n = $('c-lnote');
+  n.hidden = false;
+  n.textContent = `${LENGTHS[k].name}: ${fmtLen(k, S.lengths[k])} from the next round.`;
 });
 $('c-levels').addEventListener('click', e=>{
   const b = e.target.closest('[data-lv]');

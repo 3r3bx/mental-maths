@@ -32,6 +32,8 @@ The content follows the **Cambridge Primary Stage 3** maths curriculum: addition
 | 🕒 **Everyday Maths** | 10 questions on fractions of amounts, money and telling the time. No clock. |
 | 📖 **Story Problems** | 6 word problems, one or two steps. No clock. |
 
+These are the usual lengths. A grown-up can change each one in Settings.
+
 The first four are timed. In those, every round opens with three untimed warm-up questions. Answers can be typed on a number pad or tapped from a 12-button grid. Only typed answers count towards mastery, because tapping can be done by elimination.
 
 ### Difficulty that adjusts itself
@@ -144,7 +146,19 @@ Press and hold **Hold for grown-ups** on the home screen for 2 seconds.
 - **Settings:**
   - **Players:** add, rename and remove children. Removing takes two taps, because it deletes that child's progress.
   - **Practice lock:** keep Daily Sprint and Ghost Race on one times table or one topic, for example before a school test. While it's on, a lock shows on the child's home screen and a banner shows on the report, so it isn't forgotten. Locked rounds don't change the difficulty.
-  - **Difficulty:** see each difficulty and nudge it with − and +. "Allow harder than Stage 3" opens difficulties 4 and 5.
+  - **Topics and difficulty:** each of the 8 topics has an on/off tick, its difficulty, and − and + to nudge it.
+    - A topic that's off is left out everywhere: Sprint, Ghost Race, warm-ups, missed-fact reviews, Everyday Maths and Story Problems.
+    - A mode with nothing left disappears from the home screen.
+    - One of adding, taking away, times tables and dividing always stays on, so Daily Sprint has something to ask.
+    - The report shows turned-off topics as "Turned off" and doesn't recommend them.
+    - "Allow harder than Stage 3" opens difficulties 4 and 5.
+  - **Round length:**
+    - Daily Sprint, Ghost Race and Focus: 30 s, 60 s, 90 s or 2 min.
+    - Check-up: 10, 15, 20 or 25 questions.
+    - Everyday Maths: 5, 10 or 15 questions.
+    - Story Problems: 3, 6 or 10 questions.
+
+    Best scores and the ghost are kept separately for each length, so a longer round never beats a shorter one unfairly. The report charts check-ups as % right, so different lengths compare fairly.
   - **Money:** the currency used in money questions.
   - Daily streak reminders, and backup and restore. A backup holds every child.
 
@@ -240,7 +254,5 @@ To publish a change, commit and push to `main`. GitHub Pages redeploys in about 
 
 These were in the original plan's parent controls but haven't been built:
 
-- A setting for how long a round is. Rounds are fixed: 60 seconds, 25, 10 or 6 questions.
-- Turning individual topics off.
 - A "reset progress" button. Removing a player and adding them again does the same.
 - Choosing the reminder time in the app. Today it's set in the workflow file.
