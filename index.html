@@ -29,6 +29,7 @@
     --bad:#FF6B6B;
     --bad-deep:#7A2A2A;
     --learn:#2B4A7A;
+    --xp:#7FB2FF;
     --key:#2E4570;
     --key-hi:#3A5588;
     --safe-t:env(safe-area-inset-top,0px);
@@ -75,7 +76,7 @@
   /* ============ HOME ============ */
   .brand{display:flex;flex-direction:column;gap:6px;align-items:center;}
   .brand h1{font-size:clamp(32px,8vw,50px);font-weight:800;line-height:1;}
-  .brand .sub{color:var(--ink-soft);font-size:clamp(13.5px,3vw,15.5px);max-width:40ch;line-height:1.45;}
+  .brand .sub{color:var(--ink-soft);font-size:clamp(13.5px,3vw,15.5px);max-width:40ch;line-height:1.45;text-wrap:balance;}
   .brand .sub b{color:var(--ink);}
 
   .chips{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;}
@@ -417,6 +418,169 @@
   }
   .btn2.ghost:active{box-shadow:0 1px 0 var(--bg-deep);}
 
+  /* ============ AVATAR ============ */
+  .ava{
+    --s:64px;
+    position:relative;flex-shrink:0;
+    width:var(--s);height:var(--s);
+    border-radius:50%;
+    padding:var(--fw,0px);
+    background:var(--frame,transparent);
+  }
+  .ava-in{
+    width:100%;height:100%;border-radius:50%;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bgc);
+  }
+  .ava .a-base{font-size:calc(var(--s) * 0.56);line-height:1;transform:translateY(6%);}
+  .ava .a-hat,.ava .a-item,.ava .a-pet{position:absolute;line-height:1;pointer-events:none;}
+  .ava .a-hat{font-size:calc(var(--s) * 0.36);top:calc(var(--s) * -0.15);left:50%;transform:translateX(-50%) rotate(-10deg);}
+  .ava .a-item{font-size:calc(var(--s) * 0.3);right:calc(var(--s) * -0.07);bottom:calc(var(--s) * -0.03);}
+  .ava .a-pet{font-size:calc(var(--s) * 0.28);left:calc(var(--s) * -0.07);bottom:calc(var(--s) * -0.03);}
+
+  /* ---- home header ---- */
+  .me{
+    display:flex;align-items:center;gap:14px;width:100%;
+    background:var(--card);border-radius:22px;
+    padding:14px 16px 12px 12px;text-align:left;
+  }
+  .ava-btn{appearance:none;border:none;background:none;padding:8px 6px 2px;cursor:pointer;border-radius:50%;}
+  .me-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .me-name{font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .me-name span{color:var(--ink-soft);font-weight:650;}
+  .xpbar{height:10px;border-radius:5px;background:var(--bg-deep);overflow:hidden;}
+  .xpbar i{display:block;height:100%;width:0;background:var(--xp);border-radius:5px;transition:width .9s ease;}
+  .me-xp{font-size:12.5px;color:var(--ink-soft);font-weight:650;font-variant-numeric:tabular-nums;}
+  .coins{
+    background:var(--bg-deep);border-radius:999px;padding:8px 14px;
+    font-size:17px;font-weight:800;color:var(--accent);
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .risk{
+    background:#3A2E14;border:1.5px solid var(--accent);color:var(--ink);
+    border-radius:14px;padding:11px 16px;
+    font-size:15px;font-weight:650;line-height:1.4;max-width:46ch;
+    text-wrap:balance;
+  }
+  .links{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;}
+  .hold{
+    position:relative;overflow:hidden;
+    appearance:none;background:none;cursor:pointer;font-family:inherit;
+    border:1.5px solid var(--card-hi);color:var(--ink-faint);
+    font-size:13px;font-weight:650;padding:9px 16px;border-radius:999px;
+    -webkit-touch-callout:none;
+  }
+  .hold span{position:relative;}
+  .hold i{position:absolute;inset:0;background:var(--card-hi);transform:scaleX(0);transform-origin:left center;}
+  .hold.holding i{transform:scaleX(1);transition:transform 2s linear;}
+
+  /* ---- shop ---- */
+  .preview{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:18px;}
+  .nameinput{
+    appearance:none;font-family:inherit;
+    background:var(--bg-deep);color:var(--ink);
+    border:2px solid var(--card-hi);border-radius:12px;
+    font-size:18px;font-weight:700;text-align:center;
+    padding:10px 14px;width:220px;
+    -webkit-user-select:text;user-select:text;
+  }
+  .nameinput::placeholder{color:var(--ink-faint);}
+  .tabs{
+    display:flex;gap:6px;overflow-x:auto;width:100%;
+    padding:2px 2px 6px;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tabs button{
+    flex-shrink:0;appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink-soft);
+    font-size:14.5px;font-weight:700;padding:10px 15px;border-radius:999px;min-height:44px;
+  }
+  .tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);}
+  .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;width:100%;}
+  .it{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);
+    border-radius:16px;padding:12px 6px 10px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+  }
+  .it .ie{font-size:38px;line-height:1;height:44px;display:flex;align-items:center;}
+  .it .sw{width:44px;height:44px;border-radius:50%;}
+  .it .sw.ring{box-shadow:inset 0 0 0 9px var(--card);}
+  .it .sw.plain{border:2px dashed var(--ink-faint);}
+  .it .in{font-size:13px;font-weight:700;}
+  .it .ip{font-size:12.5px;font-weight:750;color:var(--accent);font-variant-numeric:tabular-nums;}
+  .it.locked{opacity:0.55;}
+  .it.locked .ip{color:var(--ink-faint);}
+  .it.owned .ip{color:var(--ink-soft);}
+  .it.wearing .ip{color:var(--good);}
+  .it.sel{box-shadow:0 0 0 3px var(--accent);}
+  .shopbar{
+    position:sticky;bottom:0;width:100%;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--bg-deep);border-radius:18px;
+    padding:12px 14px 12px 18px;
+    box-shadow:0 -8px 20px rgba(10,18,30,0.5);
+  }
+  .shopbar .what{font-size:16px;font-weight:750;text-align:left;}
+  .shopbar .what small{display:block;color:var(--ink-soft);font-weight:600;font-size:12.5px;margin-top:2px;}
+  .btn2.small{font-size:16px;padding:13px 22px;}
+  .btn2:disabled{background:var(--card);color:var(--ink-faint);box-shadow:none;cursor:default;transform:none;}
+
+  /* ---- grown-ups ---- */
+  .panel{
+    background:var(--card);border-radius:18px;padding:18px 20px;width:100%;
+    display:flex;flex-direction:column;gap:12px;text-align:left;
+  }
+  .panel h3{margin:0;font-size:18px;font-weight:800;}
+  .panel p{margin:0;font-size:14.5px;color:var(--ink-soft);line-height:1.55;}
+  .panel p b{color:var(--ink);}
+  .code{
+    width:100%;min-height:90px;resize:none;
+    background:var(--bg-deep);color:var(--ink);
+    border:1.5px solid var(--card-hi);border-radius:12px;padding:10px 12px;
+    font:12px ui-monospace,Menlo,monospace;word-break:break-all;
+    -webkit-user-select:text;user-select:text;
+  }
+  .note{font-size:14px;font-weight:650;color:var(--good);line-height:1.45;}
+  .note.err{color:var(--bad);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* ---- rewards ---- */
+  .rewards{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:420px;}
+  .gains{display:flex;gap:10px;}
+  .gain{background:var(--card);border-radius:999px;padding:8px 18px;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .gain.x{color:var(--xp);}
+  .gain.c{color:var(--accent);}
+  .lvlrow{width:100%;display:flex;flex-direction:column;gap:5px;}
+  .lvlrow .lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .fly{
+    position:absolute;transform:translateX(-50%);
+    font-size:20px;font-weight:800;color:var(--xp);
+    pointer-events:none;animation:fly .8s ease-out forwards;
+  }
+  @keyframes fly{
+    from{opacity:1;transform:translate(-50%,0);}
+    to{opacity:0;transform:translate(-50%,-46px);}
+  }
+
+  .overlay{
+    position:fixed;inset:0;z-index:20;
+    background:rgba(10,18,30,0.82);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal{
+    background:var(--card);border-radius:26px;padding:30px 26px 24px;
+    width:100%;max-width:380px;
+    display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+    animation:pop .4s ease;
+  }
+  .modal .t{font-size:22px;font-weight:800;margin-top:6px;}
+  .modal .big{font-size:64px;font-weight:800;color:var(--accent);line-height:1;letter-spacing:-0.02em;}
+  .modal .unl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .modal .unl span{background:var(--bg-deep);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;}
+  #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30;}
+
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
@@ -427,14 +591,25 @@
 
   <!-- ===== HOME ===== -->
   <div class="screen scroll on" id="home"><div class="inner">
+    <div class="me">
+      <button class="ava-btn" type="button" id="h-ava" aria-label="My avatar and shop"></button>
+      <div class="me-txt">
+        <div class="me-name" id="h-name"></div>
+        <div class="xpbar"><i id="h-xpfill"></i></div>
+        <div class="me-xp" id="h-xp"></div>
+      </div>
+      <div class="coins" id="h-coins"></div>
+    </div>
     <div class="brand">
       <h1>Mental Maths</h1>
       <div class="sub" id="h-next"></div>
     </div>
     <div class="chips">
       <div class="chip hot">🔥 <b id="h-streak">0</b> day streak</div>
+      <div class="chip" id="h-freeze" hidden>❄️ <b id="h-freezes">0</b> freeze</div>
       <div class="chip" id="h-rank"></div>
     </div>
+    <div class="risk" id="h-risk" hidden></div>
     <div class="goal" id="h-goal">
       <div class="dots"><i></i><i></i><i></i></div>
       <span id="h-goaltext"></span>
@@ -468,9 +643,53 @@
       </div>
       <button class="iconbtn" type="button" id="h-sound" aria-label="Sound on"></button>
     </div>
-    <button class="link" type="button" id="h-grid">My times tables grid →</button>
+    <div class="links">
+      <button class="link" type="button" id="h-shop">🛍️ Avatar shop</button>
+      <button class="link" type="button" id="h-grid">📊 Times tables grid</button>
+    </div>
     <div class="banner" id="h-install" hidden>
       To keep progress safe, add this to your Home Screen: tap <b>Share</b>, then <b>Add to Home Screen</b>, and always open it from that icon.
+    </div>
+    <button class="hold" type="button" id="h-adult"><i></i><span>Hold for grown-ups</span></button>
+  </div></div>
+
+  <!-- ===== AVATAR SHOP ===== -->
+  <div class="screen scroll" id="shop"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>My avatar</h2></div>
+    <div class="preview">
+      <div id="s-ava"></div>
+      <input class="nameinput" id="s-name" type="text" maxlength="12" placeholder="Type your name" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
+      <div class="chips"><div class="chip" id="s-level"></div><div class="chip hot" id="s-coins"></div></div>
+    </div>
+    <div class="tabs" id="s-tabs" role="group" aria-label="Shop sections"></div>
+    <div class="items" id="s-items"></div>
+    <div class="shopbar" id="s-bar" hidden>
+      <div class="what" id="s-what"></div>
+      <button class="btn2 small" type="button" id="s-act"></button>
+    </div>
+  </div></div>
+
+  <!-- ===== GROWN-UPS ===== -->
+  <div class="screen scroll" id="adult"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>For grown-ups</h2></div>
+    <div class="panel">
+      <h3>🔔 Streak reminders</h3>
+      <p>Once a day at <b>5:00 pm</b>, this iPad gets a reminder. If today's round isn't done yet, it warns that the streak is at risk. If it is done, it says the streak is safe.</p>
+      <div class="row"><button class="btn2 small" type="button" id="a-on">Turn on reminders</button></div>
+      <div class="note" id="a-note" hidden></div>
+      <div class="panel" id="a-codewrap" hidden style="padding:0;gap:10px">
+        <p><b>Last step:</b> send this reminder code to Claude, or save it in the GitHub repository as the secret <b>PUSH_SUBSCRIPTIONS</b>.</p>
+        <textarea class="code" id="a-code" readonly></textarea>
+        <div class="row">
+          <button class="btn2 small" type="button" id="a-copy">Copy code</button>
+          <button class="btn2 small ghost" type="button" id="a-test">Send a test notification</button>
+        </div>
+      </div>
+      <p>Needs iPadOS 16.4 or later, with the app opened from its Home Screen icon.</p>
+    </div>
+    <div class="panel">
+      <h3>📈 At a glance</h3>
+      <p id="a-stats"></p>
     </div>
   </div></div>
 
@@ -530,6 +749,7 @@
   <div class="screen scroll" id="done"><div class="inner">
     <div class="bigscore"><span id="d-score">0</span><span class="of" id="d-of">right</span></div>
     <div class="verdict" id="d-verdict"></div>
+    <div class="rewards" id="d-rewards"></div>
     <div class="badges" id="d-badges"></div>
     <div class="stats">
       <div class="stat ok"><div class="v" id="d-right">0</div><div class="k">right</div></div>
@@ -545,6 +765,18 @@
 
 </div>
 
+<div class="overlay" id="levelup" hidden>
+  <div class="modal" role="dialog" aria-labelledby="lu-t">
+    <div id="lu-ava"></div>
+    <div class="t" id="lu-t">Level up!</div>
+    <div class="big" id="lu-n"></div>
+    <p class="hint" id="lu-msg"></p>
+    <div class="unl" id="lu-unl"></div>
+    <button class="btn2" type="button" id="lu-ok">Awesome!</button>
+  </div>
+</div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
 <script>
 'use strict';
 
@@ -555,7 +787,7 @@ const KEY = 'mm_v1';          // key kept from Phase 1; `v` inside drives migrat
 const GOAL = 3;               // rounds per day
 
 const DEFAULT_STATE = {
-  v: 2,
+  v: 3,
   best: {},           // 'sprint' | 'focus3' ... -> best score
   streak: 0,
   lastPlayed: null,   // 'YYYY-MM-DD'
@@ -566,7 +798,14 @@ const DEFAULT_STATE = {
   sessions: [],       // {date, mode, score, right, wrong, msPer}
   facts: {},          // id -> {n, ok, ms, seen, run}
   sound: true,
-  input: 'type'       // 'type' | 'tap'
+  input: 'type',      // 'type' | 'tap'
+  name: '',
+  xp: 0,              // never spent; sets the level
+  coins: 50,          // spent in the shop; new players start with 50
+  owned: [],          // bought item ids (free items are always owned)
+  wear: {base:'fox', hat:null, item:null, pet:null, bg:'night', frame:'plain'},
+  freezes: 0,         // streak freezes held
+  streakMilestone: 0  // highest milestone paid out in the current streak
 };
 
 const fresh = () => JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -576,6 +815,14 @@ function migrate(s){
   if(!s.v || s.v < 2){
     if(typeof s.best === 'number') s.best = s.best ? {sprint: s.best} : {};
     s.v = 2;
+  }
+  // v3 adds XP and coins: credit the rounds already played.
+  // Literal numbers on purpose: this runs before the XP table below exists.
+  if(s.v < 3){
+    const right = (s.sessions || []).reduce((t, x) => t + (x.right || 0), 0);
+    s.xp = right * 10;
+    s.coins = 50 + right;
+    s.v = 3;
   }
   return s;
 }
@@ -609,17 +856,27 @@ function dayGap(a, b){
   return Math.round((db - da) / 86400000);
 }
 
-/* streak counts days with at least one finished round */
+/* Streak counts days with at least one finished round. A streak freeze
+   covers one missed day, and is used up automatically on the next play. */
 function bumpStreak(){
-  const t = todayStr();
-  if(S.lastPlayed === t) return;
+  const t = todayStr(), r = {froze:0, lost:0};
+  if(S.lastPlayed === t) return r;
   if(S.lastPlayed === null){ S.streak = 1; }
   else {
-    const gap = dayGap(S.lastPlayed, t);
-    if(gap === 1) S.streak += 1;
-    else if(gap > 1) S.streak = 1;
+    const missed = dayGap(S.lastPlayed, t) - 1;
+    if(missed <= 0) S.streak += 1;
+    else if(missed <= S.freezes){ S.freezes -= missed; r.froze = missed; S.streak += 1; }
+    else { r.lost = S.streak; S.streak = 1; S.streakMilestone = 0; }
   }
   S.lastPlayed = t;
+  return r;
+}
+
+/* the streak as it stands right now, before today's round is played */
+function liveStreak(){
+  if(!S.lastPlayed) return 0;
+  const missed = dayGap(S.lastPlayed, todayStr()) - 1;
+  return missed <= S.freezes ? S.streak : 0;
 }
 
 function roundsToday(){ return S.goal.date === todayStr() ? S.goal.rounds : 0; }
@@ -845,6 +1102,132 @@ function rankFromSpeed(){
 }
 
 /* ============================================================
+   economy.js — XP and levels, coins, streak rewards
+   XP is never spent and sets the level; coins buy shop items.
+   ============================================================ */
+const xpForLevel = L => 50 * L * (L - 1);     // level 2 at 100 XP, 3 at 300, 4 at 600, 5 at 1000 ...
+
+function levelOf(xp){
+  let L = 1;
+  while(xpForLevel(L + 1) <= xp) L++;
+  return L;
+}
+
+function levelProgress(xp){
+  const L = levelOf(xp), lo = xpForLevel(L), hi = xpForLevel(L + 1);
+  return {L, into: xp - lo, need: hi - lo, frac: (xp - lo) / (hi - lo)};
+}
+
+/* typed answers earn double: they're the ones that build real recall */
+const XP = {typed:10, tapped:5, round:20, best:25, ghost:25, check:50, goal:50};
+const COIN = {answer:1, best:5, ghost:5, check:10, goal:10};
+const MAX_FREEZES = 2;
+const STREAK_MILESTONES = [[3,20], [7,50], [14,100], [30,200], [50,300], [100,500], [200,800], [365,1000]];
+
+function claimMilestones(){
+  let coins = 0, hit = 0;
+  for(const [days, c] of STREAK_MILESTONES){
+    if(S.streak >= days && S.streakMilestone < days){ S.streakMilestone = days; coins += c; hit = days; }
+  }
+  return {coins, hit};
+}
+
+/* ============================================================
+   shop.js — the avatar catalogue
+   ============================================================ */
+const SLOTS = [
+  {id:'base',  name:'Characters'},
+  {id:'hat',   name:'Hats'},
+  {id:'item',  name:'Things'},
+  {id:'pet',   name:'Pets'},
+  {id:'bg',    name:'Backgrounds'},
+  {id:'frame', name:'Frames'},
+  {id:'power', name:'Power-ups'}
+];
+const OPTIONAL = ['hat', 'item', 'pet'];      // slots that can be left empty
+
+const it = (slot, id, name, price, lvl, look) => ({slot, id, name, price, lvl, ...look});
+const ITEMS = [
+  it('base', 'fox',     'Fox',      0,   1,  {e:'🦊'}),
+  it('base', 'panda',   'Panda',    0,   1,  {e:'🐼'}),
+  it('base', 'frog',    'Frog',     0,   1,  {e:'🐸'}),
+  it('base', 'cat',     'Cat',      0,   1,  {e:'🐱'}),
+  it('base', 'tiger',   'Tiger',    60,  1,  {e:'🐯'}),
+  it('base', 'monkey',  'Monkey',   60,  1,  {e:'🐵'}),
+  it('base', 'koala',   'Koala',    80,  1,  {e:'🐨'}),
+  it('base', 'bear',    'Bear',     100, 2,  {e:'🐻'}),
+  it('base', 'lion',    'Lion',     120, 3,  {e:'🦁'}),
+  it('base', 'octopus', 'Octopus',  150, 4,  {e:'🐙'}),
+  it('base', 'unicorn', 'Unicorn',  200, 6,  {e:'🦄'}),
+  it('base', 'robot',   'Robot',    250, 8,  {e:'🤖'}),
+  it('base', 'alien',   'Alien',    250, 8,  {e:'👽'}),
+  it('base', 'dragon',  'Dragon',   350, 10, {e:'🐲'}),
+  it('base', 'trex',    'T. rex',   450, 14, {e:'🦖'}),
+
+  it('hat', 'flower',   'Flower',   30,  1,  {e:'🌸'}),
+  it('hat', 'cap',      'Cap',      30,  1,  {e:'🧢'}),
+  it('hat', 'bow',      'Bow',      40,  1,  {e:'🎀'}),
+  it('hat', 'sunhat',   'Sun hat',  50,  1,  {e:'👒'}),
+  it('hat', 'tophat',   'Top hat',  60,  2,  {e:'🎩'}),
+  it('hat', 'helmet',   'Helmet',   70,  3,  {e:'⛑️'}),
+  it('hat', 'grad',     'Grad cap', 100, 5,  {e:'🎓'}),
+  it('hat', 'sparkle',  'Sparkles', 150, 7,  {e:'✨'}),
+  it('hat', 'crown',    'Crown',    400, 15, {e:'👑'}),
+
+  it('item', 'books',   'Books',    30,  1,  {e:'📚'}),
+  it('item', 'ball',    'Football', 30,  1,  {e:'⚽'}),
+  it('item', 'hoop',    'Basketball', 30, 1, {e:'🏀'}),
+  it('item', 'paint',   'Paints',   50,  1,  {e:'🎨'}),
+  it('item', 'kite',    'Kite',     50,  2,  {e:'🪁'}),
+  it('item', 'abacus',  'Abacus',   60,  2,  {e:'🧮'}),
+  it('item', 'skate',   'Skateboard', 80, 3, {e:'🛹'}),
+  it('item', 'guitar',  'Guitar',   90,  3,  {e:'🎸'}),
+  it('item', 'scope',   'Telescope', 120, 5, {e:'🔭'}),
+  it('item', 'wand',    'Magic wand', 150, 7, {e:'🪄'}),
+  it('item', 'rocket',  'Rocket',   250, 10, {e:'🚀'}),
+  it('item', 'trophy',  'Trophy',   300, 12, {e:'🏆'}),
+
+  it('pet', 'snail',    'Snail',    40,  1,  {e:'🐌'}),
+  it('pet', 'fish',     'Fish',     50,  1,  {e:'🐠'}),
+  it('pet', 'butterfly','Butterfly', 60, 1,  {e:'🦋'}),
+  it('pet', 'turtle',   'Turtle',   60,  2,  {e:'🐢'}),
+  it('pet', 'hamster',  'Hamster',  70,  2,  {e:'🐹'}),
+  it('pet', 'puppy',    'Puppy',    80,  3,  {e:'🐶'}),
+  it('pet', 'kitten',   'Kitten',   80,  3,  {e:'🐈'}),
+  it('pet', 'hedgehog', 'Hedgehog', 90,  4,  {e:'🦔'}),
+  it('pet', 'parrot',   'Parrot',   100, 4,  {e:'🦜'}),
+  it('pet', 'owl',      'Owl',      150, 6,  {e:'🦉'}),
+  it('pet', 'drake',    'Baby dragon', 500, 18, {e:'🐉'}),
+
+  it('bg', 'night',     'Night',    0,   1,  {css:'linear-gradient(160deg,#2E4570,#132032)'}),
+  it('bg', 'ocean',     'Ocean',    40,  1,  {css:'linear-gradient(160deg,#3BA7D9,#1C4E8A)'}),
+  it('bg', 'jungle',    'Jungle',   40,  1,  {css:'linear-gradient(160deg,#5CC46A,#1E6B47)'}),
+  it('bg', 'sunset',    'Sunset',   60,  2,  {css:'linear-gradient(160deg,#FFB35C,#E0577A)'}),
+  it('bg', 'candy',     'Candy',    60,  2,  {css:'linear-gradient(160deg,#FF9ED2,#B58CFF)'}),
+  it('bg', 'space',     'Space',    120, 5,  {css:'radial-gradient(1.5px 1.5px at 22% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 74% 22%,#fff,transparent),radial-gradient(1px 1px at 62% 72%,#fff,transparent),radial-gradient(1px 1px at 30% 80%,#fff,transparent),radial-gradient(circle at 30% 25%,#5B4BD6,#120E33 75%)'}),
+  it('bg', 'lava',      'Lava',     150, 7,  {css:'linear-gradient(160deg,#FF6B3D,#7A1F1F)'}),
+  it('bg', 'rainbow',   'Rainbow',  250, 10, {css:'linear-gradient(160deg,#FF6B6B,#FFC857,#4ECD8E,#5BA8FF,#B58CFF)'}),
+  it('bg', 'gold',      'Gold',     500, 20, {css:'radial-gradient(circle at 35% 30%,#FFF1B8,#E0A82E 70%)'}),
+
+  it('frame', 'plain',  'No frame', 0,   1,  {css:'transparent', fw:'0px'}),
+  it('frame', 'silver', 'Silver',   80,  2,  {css:'linear-gradient(160deg,#F2F6FB,#8FA3BF)', fw:'4px'}),
+  it('frame', 'goldf',  'Gold',     200, 6,  {css:'linear-gradient(160deg,#FFE9A8,#E0A82E)', fw:'4px'}),
+  it('frame', 'fire',   'Fire',     300, 9,  {css:'linear-gradient(160deg,#FFD25E,#FF5A1F,#B3201B)', fw:'5px'}),
+  it('frame', 'rainbowf','Rainbow', 400, 12, {css:'conic-gradient(#FF6B6B,#FFC857,#4ECD8E,#5BA8FF,#B58CFF,#FF6B6B)', fw:'5px'}),
+
+  it('power', 'freeze', 'Streak freeze', 50, 1, {e:'❄️'})
+];
+const ITEM = Object.fromEntries(ITEMS.map(x => [x.id, x]));
+const owns = id => ITEM[id].price === 0 || S.owned.includes(id);
+
+function avatarHtml(w, size){
+  const bg = ITEM[w.bg] || ITEM.night, fr = ITEM[w.frame] || ITEM.plain, base = ITEM[w.base] || ITEM.fox;
+  const extras = OPTIONAL.map(s => w[s] && ITEM[w[s]] ? `<span class="a-${s}">${ITEM[w[s]].e}</span>` : '').join('');
+  return `<div class="ava" style="--s:${size}px;--bgc:${bg.css};--frame:${fr.css};--fw:${fr.fw}">` +
+    `<div class="ava-in"><span class="a-base">${base.e}</span></div>${extras}</div>`;
+}
+
+/* ============================================================
    modes.js
    ============================================================ */
 const MODES = {
@@ -885,14 +1268,16 @@ const Snd = {
   key(){   this.tone(520, 0.05, 'triangle', 0.05); },
   right(){ this.tone(880, 0.09, 'sine', 0.11); this.tone(1320, 0.14, 'sine', 0.09, 0.07); },
   wrong(){ this.tone(196, 0.22, 'triangle', 0.11); },
-  done(){  [660, 880, 1100, 1320].forEach((f,i)=>this.tone(f, 0.16, 'sine', 0.09, i*0.09)); }
+  done(){  [660, 880, 1100, 1320].forEach((f,i)=>this.tone(f, 0.16, 'sine', 0.09, i*0.09)); },
+  buy(){   this.tone(988, 0.08, 'square', 0.04); this.tone(1319, 0.22, 'square', 0.04, 0.08); },
+  level(){ [523, 659, 784, 1047, 1319].forEach((f,i)=>this.tone(f, 0.22, 'triangle', 0.1, i*0.1)); }
 };
 
 /* ============================================================
    ui.js
    ============================================================ */
 const $ = id => document.getElementById(id);
-const SCREENS = ['home','pick','learn','grid','game','done'];
+const SCREENS = ['home','shop','adult','pick','learn','grid','game','done'];
 
 function show(name){
   for(const n of SCREENS) $(n).classList.toggle('on', n === name);
@@ -909,6 +1294,7 @@ const el = {
 
 const fmtS = ms => (ms/1000).toFixed(1) + 's';
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[c]));
 
 function isIOS(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -919,7 +1305,28 @@ function isStandalone(){
 
 /* ---- home ---- */
 function paintHome(){
-  $('h-streak').textContent = S.streak;
+  const lp = levelProgress(S.xp);
+  $('h-ava').innerHTML = avatarHtml(S.wear, 60);
+  $('h-name').innerHTML = S.name ? `${esc(S.name)} <span>· Level ${lp.L}</span>` : `Level ${lp.L}`;
+  $('h-xpfill').style.width = (lp.frac * 100) + '%';
+  $('h-xp').textContent = `${lp.into} / ${lp.need} XP to level ${lp.L + 1}`;
+  $('h-coins').textContent = `🪙 ${S.coins}`;
+
+  const live = liveStreak();
+  $('h-streak').textContent = live;
+  $('h-freeze').hidden = !S.freezes;
+  $('h-freeze').innerHTML = `❄️ <b>${S.freezes}</b> ${S.freezes === 1 ? 'freeze' : 'freezes'}`;
+
+  let risk = '';
+  if(live > 0 && S.lastPlayed !== todayStr()){
+    const missed = dayGap(S.lastPlayed, todayStr()) - 1;
+    if(missed >= 1) risk = `❄️ A streak freeze is saving your ${live}-day streak. Play today to keep it going!`;
+    else if(!S.freezes && new Date().getHours() >= 15) risk = `🔥 Your ${live}-day streak ends tonight. Play one round to keep it!`;
+    else risk = `🔥 Play one round today to keep your ${live}-day streak.`;
+  }
+  $('h-risk').hidden = !risk;
+  $('h-risk').textContent = risk;
+
   const r = RANKS[S.rank];
   $('h-rank').innerHTML = `${r.icon} <b>${r.name}</b>`;
 
@@ -1050,6 +1457,7 @@ function startMode(id, opts){
     q:null, typed:'', lastId:null,
     score:0, run:0, bestRun:0,
     right:0, wrong:0, fixed:0,
+    xp:0, coins:0,
     missed:[], times:[],
     retry:[], asked:0,
     qStart:0, qEnd:0, endAt:0,
@@ -1196,6 +1604,10 @@ function submit(got, how){
       G.run += 1;
       G.bestRun = Math.max(G.bestRun, G.run);
       G.times.push(ms);
+      const gain = typed ? XP.typed : XP.tapped;
+      G.xp += gain;
+      G.coins += COIN.answer;
+      flyXP(gain);
       if(typed && isFactSample(q)){
         S.recentMs.push(Math.round(ms));
         if(S.recentMs.length > 60) S.recentMs = S.recentMs.slice(-60);
@@ -1237,6 +1649,16 @@ function submit(got, how){
     }
     serve();
   }, ok ? 260 : 1150);
+}
+
+function flyXP(n){
+  const f = document.createElement('div');
+  f.className = 'fly';
+  f.textContent = `+${n} XP`;
+  f.style.left = '50%';
+  f.style.top = (el.a.offsetTop - 10) + 'px';
+  el.a.parentNode.appendChild(f);
+  setTimeout(()=>f.remove(), 850);
 }
 
 function goLive(){
@@ -1320,7 +1742,8 @@ function finish(){
     if(S.checkups.length > 100) S.checkups = S.checkups.slice(-100);
   }
 
-  bumpStreak();
+  const streak = bumpStreak();
+  const milestone = claimMilestones();
   const goalBefore = roundsToday();
   bumpGoal();
   const goalJustMet = goalBefore < GOAL && roundsToday() >= GOAL;
@@ -1329,16 +1752,31 @@ function finish(){
   const rankUp = rankNow > S.rank;
   S.rank = rankNow;
 
+  // rewards: per-answer XP and coins were counted during the round
+  const ghostBeat = m.ghost && G.score > G.ghostTarget;
+  let xp = G.xp + XP.round, coins = G.coins + milestone.coins;
+  if(isPB && G.score > 0 && !m.ghost){ xp += XP.best;  coins += COIN.best; }
+  if(ghostBeat){                       xp += XP.ghost; coins += COIN.ghost; }
+  if(m.id === 'check'){                xp += XP.check; coins += COIN.check; }
+  if(goalJustMet){                     xp += XP.goal;  coins += COIN.goal; }
+  const xpBefore = S.xp;
+  S.xp += xp;
+  S.coins += coins;
+
   S.sessions.push({
     date:todayStr(), mode:m.id + (G.table ? G.table : ''), score:G.score,
     right:G.right, wrong:G.wrong, msPer:Math.round(med)
   });
   if(S.sessions.length > 400) S.sessions = S.sessions.slice(-400);
   saveState();
+  mirrorState();
+  if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
 
-  paintResults({isPB, med, prevCheck, goalJustMet, rankUp});
+  paintResults({isPB, med, prevCheck, goalJustMet, rankUp, streak, milestone, xp, coins, xpBefore});
   Snd.done();
   show('done');
+  const from = levelOf(xpBefore), to = levelOf(S.xp);
+  if(to > from) setTimeout(()=>showLevelUp(from, to), 900);
 }
 
 function paintResults(r){
@@ -1368,7 +1806,18 @@ function paintResults(r){
   }
   $('d-verdict').textContent = v;
 
+  const lp0 = levelProgress(r.xpBefore), lp1 = levelProgress(S.xp);
+  $('d-rewards').innerHTML =
+    `<div class="gains"><div class="gain x">+${r.xp} XP</div><div class="gain c">+${r.coins} 🪙</div></div>` +
+    `<div class="lvlrow"><div class="lbl"><span>Level ${lp1.L}</span><span>${lp1.into} / ${lp1.need} XP</span></div>` +
+    `<div class="xpbar"><i id="d-xpfill" style="width:${lp1.L > lp0.L ? 0 : lp0.frac * 100}%"></i></div></div>`;
+  // fill the bar once the screen is showing, so the gain animates
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('d-xpfill').style.width = (lp1.frac * 100) + '%'; }));
+
   const badges = [];
+  if(r.milestone.hit) badges.push(['gold', `🔥 ${r.milestone.hit}-day streak! +${r.milestone.coins} 🪙`]);
+  if(r.streak.froze)  badges.push(['', `❄️ A streak freeze saved your ${S.streak - 1}-day streak`]);
+  if(r.streak.lost >= 2) badges.push(['', '🔥 New streak started. Come back tomorrow!']);
   if(m.ghost){
     const d = G.score - G.ghostTarget;
     if(d > 0)        badges.push(['gold', `👻 You beat your ghost by ${d}!`]);
@@ -1414,6 +1863,215 @@ function abandon(){
 }
 
 /* ============================================================
+   shop screen
+   ============================================================ */
+let shopTab = 'base', shopSel = null;
+
+function showShop(){
+  shopSel = null;
+  $('s-name').value = S.name;
+  paintShop();
+  show('shop');
+}
+
+/* what the avatar would look like with the selected item on */
+function previewWear(){
+  const w = {...S.wear};
+  const x = shopSel && ITEM[shopSel];
+  if(x && x.slot !== 'power') w[x.slot] = x.id;
+  return w;
+}
+
+function paintShop(){
+  const L = levelOf(S.xp);
+  $('s-ava').innerHTML = avatarHtml(previewWear(), 150);
+  $('s-level').innerHTML = `⭐ Level <b>${L}</b>`;
+  $('s-coins').innerHTML = `🪙 <b>${S.coins}</b>`;
+  $('s-tabs').innerHTML = SLOTS.map(s =>
+    `<button type="button" data-tab="${s.id}" aria-pressed="${s.id === shopTab}">${s.name}</button>`).join('');
+
+  $('s-items').innerHTML = ITEMS.filter(x => x.slot === shopTab).map(x => {
+    const look = x.e ? `<span class="ie">${x.e}</span>`
+      : `<span class="sw${x.slot === 'frame' ? (x.fw === '0px' ? ' plain' : ' ring') : ''}" style="background:${x.css}"></span>`;
+    let cls = '', label = `🪙 ${x.price}`;
+    if(x.slot === 'power')               label = `🪙 ${x.price}`;
+    else if(S.wear[x.slot] === x.id)     { cls = 'wearing'; label = 'Wearing'; }
+    else if(owns(x.id))                  { cls = 'owned'; label = 'Owned'; }
+    else if(L < x.lvl)                   { cls = 'locked'; label = `🔒 Level ${x.lvl}`; }
+    if(shopSel === x.id) cls += ' sel';
+    return `<button type="button" class="it ${cls}" data-item="${x.id}">${look}<span class="in">${x.name}</span><span class="ip">${label}</span></button>`;
+  }).join('');
+  paintShopBar();
+}
+
+function paintShopBar(){
+  const x = shopSel && ITEM[shopSel];
+  $('s-bar').hidden = !x;
+  if(!x) return;
+  const short = `Need ${x.price - S.coins} more 🪙`;
+  let label, can = true, sub = '';
+  if(x.slot === 'power'){
+    sub = `You have ${S.freezes} of ${MAX_FREEZES}. Each one saves your streak for a missed day.`;
+    if(S.freezes >= MAX_FREEZES)       { label = 'You have the most'; can = false; }
+    else if(S.coins < x.price)         { label = short; can = false; }
+    else label = `Buy for 🪙 ${x.price}`;
+  } else if(S.wear[x.slot] === x.id){
+    if(OPTIONAL.includes(x.slot)) label = 'Take it off';
+    else { label = 'You\'re wearing it'; can = false; }
+  } else if(owns(x.id))                label = 'Wear it';
+  else if(levelOf(S.xp) < x.lvl)       { label = `Unlocks at level ${x.lvl}`; can = false; }
+  else if(S.coins < x.price)           { label = short; can = false; }
+  else label = `Buy for 🪙 ${x.price}`;
+  $('s-what').innerHTML = `${x.e || ''} ${x.name}${sub ? `<small>${sub}</small>` : ''}`;
+  $('s-act').textContent = label;
+  $('s-act').disabled = !can;
+}
+
+function shopAction(){
+  const x = shopSel && ITEM[shopSel];
+  if(!x) return;
+  if(x.slot === 'power'){
+    if(S.freezes >= MAX_FREEZES || S.coins < x.price) return;
+    S.coins -= x.price;
+    S.freezes += 1;
+    Snd.buy(); confetti(40);
+  } else if(S.wear[x.slot] === x.id){
+    if(OPTIONAL.includes(x.slot)) S.wear[x.slot] = null;
+    shopSel = null;
+  } else if(owns(x.id)){
+    S.wear[x.slot] = x.id;
+    Snd.right();
+  } else {
+    if(levelOf(S.xp) < x.lvl || S.coins < x.price) return;
+    S.coins -= x.price;
+    S.owned.push(x.id);
+    S.wear[x.slot] = x.id;
+    Snd.buy(); confetti(70);
+  }
+  saveState();
+  mirrorState();
+  paintShop();
+}
+
+/* ============================================================
+   celebrations
+   ============================================================ */
+function showLevelUp(from, to){
+  const unlocked = ITEMS.filter(x => x.lvl > from && x.lvl <= to);
+  $('lu-ava').innerHTML = avatarHtml(S.wear, 110);
+  $('lu-n').textContent = to;
+  $('lu-msg').textContent = unlocked.length ? 'New in the shop:' : 'Keep going to unlock more shop items!';
+  $('lu-unl').innerHTML = unlocked.map(x => `<span>${x.e || '🎨'} ${x.name}</span>`).join('');
+  $('levelup').hidden = false;
+  Snd.level();
+  confetti(150);
+}
+
+function confetti(n){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const run = confetti.run = (confetti.run || 0) + 1;   // a newer burst takes over the canvas
+  const cv = $('confetti'), ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
+  const W = cv.width = innerWidth * dpr, H = cv.height = innerHeight * dpr;
+  const cols = ['#FFC857', '#4ECD8E', '#7FB2FF', '#FF6B6B', '#F2F6FB', '#B58CFF'];
+  const ps = Array.from({length:n}, ()=>({
+    x: W/2 + (Math.random() - 0.5) * W * 0.3, y: H * 0.38,
+    vx: (Math.random() - 0.5) * W * 0.02, vy: -(H * 0.008 + Math.random() * H * 0.022),
+    r: (4 + Math.random() * 5) * dpr, c: pick(cols), a: Math.random() * 6, va: (Math.random() - 0.5) * 0.3
+  }));
+  let start = null;
+  const step = t => {
+    if(run !== confetti.run) return;
+    if(start === null) start = t;
+    ctx.clearRect(0, 0, W, H);
+    for(const p of ps){
+      p.vy += H * 0.0009; p.x += p.vx; p.y += p.vy; p.a += p.va;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+      ctx.restore();
+    }
+    if(t - start < 2400) requestAnimationFrame(step); else ctx.clearRect(0, 0, W, H);
+  };
+  requestAnimationFrame(step);
+}
+
+/* ============================================================
+   reminders.js — daily streak push, sent by a scheduled GitHub
+   Action. The service worker writes the message from this copy
+   of the streak, so the push itself carries no data.
+   ============================================================ */
+const VAPID_PUBLIC = 'BDUPLBYyW5KlagXawTpVR8zdyR_DfjEmLAOEBReZWyvnS-6ZJv4A15s8Hr7XoSY52vGv9vjyEwK4xapE-LNQs30';
+const REMINDER_TIME = '5:00 pm';
+
+function mirrorState(){
+  if(!('caches' in window)) return;
+  const body = JSON.stringify({lastPlayed:S.lastPlayed, streak:S.streak, freezes:S.freezes, name:S.name});
+  caches.open('mm-state')
+    .then(c => c.put(new URL('state.json', location.href).href, new Response(body, {headers:{'Content-Type':'application/json'}})))
+    .catch(()=>{});
+}
+
+function b64uBytes(s){
+  const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4));
+  return Uint8Array.from(b, c => c.charCodeAt(0));
+}
+
+function reminderNote(text, err){
+  const n = $('a-note');
+  n.hidden = !text;
+  n.textContent = text || '';
+  n.className = 'note' + (err ? ' err' : '');
+}
+
+function showCode(sub){
+  $('a-code').value = 'MM1.' + btoa(JSON.stringify(sub.toJSON()));
+  $('a-codewrap').hidden = false;
+  $('a-on').textContent = 'Reminders are on ✓';
+}
+
+async function enableReminders(){
+  if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)){
+    reminderNote(isIOS() && !isStandalone()
+      ? 'Open the app from its Home Screen icon first, then try again.'
+      : 'This device can\'t receive reminders. On an iPad it needs iPadOS 16.4 or later.', true);
+    return;
+  }
+  // must be the first await, so it still counts as part of the tap
+  const perm = await Notification.requestPermission();
+  if(perm !== 'granted'){
+    reminderNote('Notifications are switched off. Turn them on in Settings → Notifications → Mental Maths, then try again.', true);
+    return;
+  }
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    const sub = (await reg.pushManager.getSubscription()) ||
+      await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64uBytes(VAPID_PUBLIC)});
+    showCode(sub);
+    reminderNote('Reminders are switched on for this iPad.');
+  }catch(e){
+    reminderNote('Reminders couldn\'t be switched on: ' + e.message, true);
+  }
+}
+
+async function showAdult(){
+  const lp = levelProgress(S.xp);
+  const last = S.checkups[S.checkups.length - 1];
+  $('a-stats').innerHTML =
+    `Streak: <b>${liveStreak()} days</b> · freezes: <b>${S.freezes}</b><br>` +
+    `Level <b>${lp.L}</b> (${S.xp} XP) · <b>${S.coins}</b> coins · <b>${S.owned.length}</b> shop items<br>` +
+    `Rounds today: <b>${roundsToday()}</b> of ${GOAL} · all rounds: <b>${S.sessions.length}</b><br>` +
+    `Last check-up: <b>${last ? `${last.score}/${last.of} on ${last.date}` : 'not done yet'}</b>`;
+  reminderNote('');
+  $('a-codewrap').hidden = true;
+  $('a-on').textContent = 'Turn on reminders';
+  show('adult');
+  try{
+    const reg = 'serviceWorker' in navigator && await navigator.serviceWorker.getRegistration();
+    const sub = reg && reg.pushManager && await reg.pushManager.getSubscription();
+    if(sub && Notification.permission === 'granted') showCode(sub);
+  }catch(e){}
+}
+
+/* ============================================================
    wiring
    ============================================================ */
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
@@ -1446,6 +2104,57 @@ el.choices.addEventListener('click', e=>{
   if(b) tap(Number(b.dataset.v));
 });
 
+$('h-shop').addEventListener('click', showShop);
+$('h-ava').addEventListener('click', showShop);
+$('s-tabs').addEventListener('click', e=>{
+  const b = e.target.closest('[data-tab]');
+  if(!b) return;
+  shopTab = b.dataset.tab;
+  shopSel = null;
+  paintShop();
+});
+$('s-items').addEventListener('click', e=>{
+  const b = e.target.closest('[data-item]');
+  if(!b) return;
+  Snd.key();
+  shopSel = shopSel === b.dataset.item ? null : b.dataset.item;
+  paintShop();
+});
+$('s-act').addEventListener('click', shopAction);
+$('s-name').addEventListener('input', e=>{
+  S.name = e.target.value.trim().slice(0, 12);
+  saveState();
+  mirrorState();
+});
+$('lu-ok').addEventListener('click', ()=>{ $('levelup').hidden = true; });
+
+/* the grown-ups area opens after a 2-second press */
+(function(){
+  const b = $('h-adult');
+  let t = 0;
+  const stop = ()=>{ clearTimeout(t); b.classList.remove('holding'); };
+  b.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    b.classList.add('holding');
+    t = setTimeout(()=>{ stop(); showAdult(); }, 2000);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev=>b.addEventListener(ev, stop));
+  b.addEventListener('contextmenu', e=>e.preventDefault());
+})();
+$('a-on').addEventListener('click', enableReminders);
+$('a-copy').addEventListener('click', ()=>{
+  const code = $('a-code').value;
+  navigator.clipboard.writeText(code)
+    .then(()=>reminderNote('Code copied. Paste it into a message to Claude.'))
+    .catch(()=>{ $('a-code').select(); reminderNote('Select the code above and copy it.'); });
+});
+$('a-test').addEventListener('click', async ()=>{
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    await reg.showNotification('🔔 Reminders work!', {body:`You'll get a streak reminder at ${REMINDER_TIME} every day.`, icon:'icon-180.png', tag:'test'});
+  }catch(e){ reminderNote('The test notification couldn\'t be shown: ' + e.message, true); }
+});
+
 /* iOS only lets audio start inside a touch */
 document.addEventListener('pointerdown', ()=>Snd.wake(), {capture:true});
 
@@ -1465,6 +2174,8 @@ document.addEventListener('touchmove', e=>{ if(e.touches.length > 1) e.preventDe
    end the round, nor hand out free thinking time. Freeze every clock on the
    way out and shift them forward by the time away on the way back. */
 document.addEventListener('visibilitychange', ()=>{
+  // coming back on a new day: refresh the streak warning
+  if(!document.hidden && $('home').classList.contains('on')) paintHome();
   if(!G || G.phase !== 'live') return;
   if(document.hidden){
     if(G.frozenAt !== null) return;
@@ -1487,6 +2198,7 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
+mirrorState();
 paintHome();
 </script>
 </body>

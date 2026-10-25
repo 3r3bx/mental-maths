@@ -1,0 +1,31 @@
+name: Streak reminder
+
+on:
+  schedule:
+    - cron: '0 13 * * *'    # 13:00 UTC = 5:00 pm in Dubai (UTC+4, no daylight saving)
+  workflow_dispatch:         # "Run workflow" button, for a test reminder
+
+permissions:
+  actions: write             # lets the last step keep this schedule switched on
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Send reminders
+        run: node .github/push/send.mjs
+        env:
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          PUSH_SUBSCRIPTIONS: ${{ secrets.PUSH_SUBSCRIPTIONS }}
+      # GitHub pauses scheduled workflows in public repos after 60 days without
+      # commits. Re-enabling on every run keeps the daily reminder alive.
+      - name: Keep the schedule alive
+        if: always()
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/streak-reminder.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
