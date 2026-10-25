@@ -721,6 +721,48 @@
   .tcard.locked{opacity:0.6;}
   .tcard .tcol{display:flex;flex-direction:column;gap:3px;}
 
+  /* ---- everyday maths and story problems ---- */
+  .kask{margin:0;font-size:clamp(20px,4.6vw,27px);font-weight:750;text-align:center;line-height:1.35;max-width:26ch;text-wrap:balance;}
+  .kstory{margin:0;font-size:clamp(19px,4.2vw,25px);font-weight:650;line-height:1.5;text-align:center;max-width:32ch;text-wrap:pretty;}
+  .kemoji{font-size:58px;line-height:1;}
+  .answer.shownans{background:var(--learn);color:var(--ink);}
+  .copts{max-width:460px;grid-template-columns:repeat(2,minmax(0,1fr));}
+  .copts .wopt{padding:18px 10px;}
+  .copts .wn{font-size:clamp(22px,5vw,28px);font-variant-numeric:tabular-nums;}
+  .aclock{width:min(230px,58vw);height:auto;}
+  .aclock .cf{fill:var(--ink);}
+  .aclock .rim{fill:none;stroke:var(--card-hi);stroke-width:6;}
+  .aclock .tM{stroke:#1B2A41;stroke-width:3;stroke-linecap:round;}
+  .aclock .tm{stroke:#8A9AB3;stroke-width:1.5;}
+  .aclock .cn{fill:#1B2A41;font-size:19px;font-weight:800;text-anchor:middle;}
+  .aclock .hh{stroke:#1B2A41;stroke-width:8;stroke-linecap:round;}
+  .aclock .mh{stroke:#2E6FD8;stroke-width:5;stroke-linecap:round;}
+  .aclock .cc{fill:var(--accent);stroke:#1B2A41;stroke-width:2;}
+  .ptags{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+  .ptag{background:var(--card);border-radius:16px;padding:12px 16px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px;}
+  .ptag .te{font-size:42px;line-height:1;}
+  .ptag .tp{font-size:22px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+  .ptag .tl{font-size:13px;color:var(--ink-soft);font-weight:650;}
+  .ptag.pay{background:var(--good-deep);}
+  .ptag.pay .tp{color:var(--good);}
+
+  /* ---- who's playing ---- */
+  .whoh{font-size:clamp(30px,7vw,44px);font-weight:800;margin:0;}
+  .whos{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;width:100%;}
+  .who{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);border-radius:22px;padding:28px 14px 18px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+    box-shadow:0 5px 0 var(--bg-deep);transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .who:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bg-deep);}
+  .who .pn{font-size:21px;font-weight:800;}
+  .who .ps{font-size:14px;color:var(--ink-soft);font-weight:650;}
+  .pllist{display:flex;flex-direction:column;gap:10px;}
+  .plrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .nameinput.plname{width:200px;text-align:left;font-size:16px;}
+  .plmeta{font-size:13px;color:var(--ink-soft);flex:1;min-width:110px;}
+
   /* ============ MATHS TRICKS ============ */
   .mode.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;min-height:0;padding:16px 18px;}
   .mode.wide .ic{font-size:36px;}
@@ -936,6 +978,16 @@
         <span class="ds">25 questions, 6 seconds each</span>
         <span class="ft" id="m-check"></span>
       </button>
+      <button class="mode" type="button" data-mode="everyday">
+        <span class="ic">🕒</span><span class="nm">Everyday Maths</span>
+        <span class="ds">Fractions, money and telling the time</span>
+        <span class="ft" id="m-everyday"></span>
+      </button>
+      <button class="mode" type="button" data-mode="story">
+        <span class="ic">📖</span><span class="nm">Story Problems</span>
+        <span class="ds">Maths hidden in little stories</span>
+        <span class="ft" id="m-story"></span>
+      </button>
       <button class="mode wide" type="button" data-mode="tricks">
         <span class="ic">🧠</span>
         <span class="txt"><span class="nm">Maths Tricks</span><span class="ds">Learn clever shortcuts, like 14 + 24 = 30 + 8</span></span>
@@ -952,11 +1004,19 @@
     <div class="links">
       <button class="link" type="button" id="h-shop">🛍️ Avatar shop</button>
       <button class="link" type="button" id="h-grid">📊 Times tables grid</button>
+      <button class="link" type="button" id="h-switch" hidden>👥 Switch player</button>
     </div>
     <div class="banner" id="h-install" hidden>
       To keep progress safe, add this to your Home Screen: tap <b>Share</b>, then <b>Add to Home Screen</b>, and always open it from that icon.
     </div>
     <button class="hold" type="button" id="h-adult"><i></i><span>Hold for grown-ups</span></button>
+  </div></div>
+
+  <!-- ===== WHO'S PLAYING ===== -->
+  <div class="screen scroll" id="who"><div class="inner">
+    <h1 class="whoh">Who's playing?</h1>
+    <div class="whos" id="w-list"></div>
+    <p class="hint">Grown-ups can add or rename players in the grown-ups area.</p>
   </div></div>
 
   <!-- ===== AVATAR SHOP ===== -->
@@ -978,12 +1038,23 @@
   <!-- ===== GROWN-UPS ===== -->
   <div class="screen scroll" id="adult"><div class="inner wide">
     <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>For grown-ups</h2></div>
+    <div class="seg" id="a-players" role="group" aria-label="Which child" hidden></div>
     <div class="seg" role="group" aria-label="Grown-ups sections">
       <button type="button" data-atab="progress" aria-pressed="true">📈 Progress</button>
       <button type="button" data-atab="settings" aria-pressed="false">⚙️ Settings</button>
     </div>
     <div class="report" id="a-progress"></div>
     <div class="report" id="a-settings" hidden>
+    <div class="panel">
+      <h3>👥 Players</h3>
+      <p>Each player has their own progress, avatar, streak and settings. With two or more players, the app asks "Who's playing?" when it opens.</p>
+      <div class="pllist" id="pl-list"></div>
+      <div class="row">
+        <input class="nameinput plname" id="pl-new" type="text" maxlength="12" placeholder="New player's name" autocomplete="off" autocapitalize="words">
+        <button class="btn2 small" type="button" id="pl-add">Add player</button>
+      </div>
+      <div class="note" id="pl-note" hidden></div>
+    </div>
     <div class="panel">
       <h3>🔔 Streak reminders</h3>
       <p>Once a day at <b>5:00 pm</b>, this iPad gets a reminder. If today's round isn't done yet, it warns that the streak is at risk. If it is done, it says the streak is safe.</p>
@@ -1007,8 +1078,12 @@
         <p>Locking keeps practice on one table or topic, for example before a school test. Focus mode and the check-up aren't affected.</p>
       </div>
       <div class="note" id="c-note" hidden></div>
+      <div class="ctl">
+        <label for="c-cur">Money questions use</label>
+        <select class="select" id="c-cur"></select>
+      </div>
       <h3 style="margin-top:8px">Difficulty</h3>
-      <p>Each one moves by itself. It goes up after 10 recent answers at 85% or more right, and down if the last 8 fall below 60%. Use − and + to nudge it.</p>
+      <p>Each one moves by itself. It goes up after 10 recent answers at 85% or more right, and down if the last 8 fall below 60%. Use − and + to nudge it. These are for whoever is selected above.</p>
       <div class="lvrows" id="c-levels"></div>
       <label class="check"><input type="checkbox" id="c-stretch"> Allow harder than Stage 3 (difficulties 4 and 5)</label>
     </div>
@@ -1164,8 +1239,11 @@ const DEFAULT_STATE = {
   freezes: 0,         // streak freezes held
   streakMilestone: 0, // highest milestone paid out in the current streak
   tricks: {},         // trick id -> {stars: 0-3}
-  levels: {add:2, sub:2, mul:2, div:2},    // difficulty per operation, 1-5
-  adapt: {add:'', sub:'', mul:'', div:''}, // recent typed results at the current difficulty
+  levels: {add:2, sub:2, mul:2, div:2, frac:2, money:2, time:2, word:2},   // difficulty per track, 1-5
+  adapt: {add:'', sub:'', mul:'', div:'', frac:'', money:'', time:'', word:''}, // recent results at the current difficulty
+  strands: {frac:{h:'', ms:0}, money:{h:'', ms:0}, time:{h:'', ms:0}, word:{h:'', ms:0}}, // last 20 results per new topic
+  review: {},         // fact id -> {due:'YYYY-MM-DD', step}: missed facts coming back on later days
+  currency: null,     // null = from the iPad's region
   stretch: false,     // allow difficulty above Stage 3
   lock: null          // grown-up lock: {kind:'table', t:4} or {kind:'topic', id:'add100'}
 };
@@ -1189,21 +1267,116 @@ function migrate(s){
   return s;
 }
 
-function loadState(){
+/* Players: each child's progress is saved under its own key. The first
+   player keeps the original key, so installs from before still load. */
+const PLAYERS_KEY = 'mm_players';
+const keyFor = id => id === 'p1' ? KEY : `${KEY}_${id}`;
+
+function loadPlayers(){
   try{
-    const raw = localStorage.getItem(KEY);
+    const p = JSON.parse(localStorage.getItem(PLAYERS_KEY));
+    if(p && Array.isArray(p.list) && p.list.length && p.list.some(x => x.id === p.active)) return p;
+  }catch(e){}
+  return {active:'p1', list:[{id:'p1', name:''}]};
+}
+
+function savePlayers(){
+  try{ localStorage.setItem(PLAYERS_KEY, JSON.stringify(P)); }catch(e){}
+}
+
+/* nested settings get any keys added since the save was made */
+function upgrade(s){
+  const f = fresh();
+  for(const k of ['levels', 'adapt', 'strands']) s[k] = {...f[k], ...(s[k] || {})};
+  return s;
+}
+
+function loadState(id){
+  try{
+    const raw = localStorage.getItem(keyFor(id || P.active));
     if(!raw) return fresh();
-    return {...fresh(), ...migrate(JSON.parse(raw))};
+    return upgrade({...fresh(), ...migrate(JSON.parse(raw))});
   }catch(e){
     return fresh();
   }
 }
 
 function saveState(){
-  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+  try{ localStorage.setItem(keyFor(P.active), JSON.stringify(S)); }catch(e){}
 }
 
+let P = loadPlayers();
 let S = loadState();
+
+/* another player's progress, without switching to them */
+const stateOf = id => id === P.active ? S : loadState(id);
+const playerName = (p, i) => (p && (stateOf(p.id).name || p.name)) || `Player ${i + 1}`;
+
+function usePlayer(id){
+  if(!P.list.some(p => p.id === id)) return;
+  saveState();
+  P.active = id;
+  savePlayers();
+  S = loadState();
+}
+
+function addPlayer(name){
+  const id = 'p' + Date.now().toString(36) + Math.floor(Math.random() * 1000);
+  const s = fresh();
+  s.name = name;
+  try{ localStorage.setItem(keyFor(id), JSON.stringify(s)); }catch(e){}
+  P.list.push({id, name});
+  savePlayers();
+  return id;
+}
+
+function renamePlayer(id, name){
+  const p = P.list.find(x => x.id === id);
+  if(!p) return;
+  p.name = name;
+  if(id === P.active){ S.name = name; saveState(); }
+  else { const s = loadState(id); s.name = name; try{ localStorage.setItem(keyFor(id), JSON.stringify(s)); }catch(e){} }
+  savePlayers();
+}
+
+function removePlayer(id){
+  if(P.list.length < 2) return;
+  P.list = P.list.filter(p => p.id !== id);
+  try{ localStorage.removeItem(keyFor(id)); }catch(e){}
+  if(P.active === id){ P.active = P.list[0].id; S = loadState(); }
+  savePlayers();
+}
+
+/* a backup holds every player */
+function buildBackup(){
+  saveState();
+  return {app:'mental-maths', backup:2, players:P, states:Object.fromEntries(P.list.map(p => [p.id, stateOf(p.id)]))};
+}
+
+/* returns a short description, or null if it isn't a backup */
+function describeBackup(data){
+  if(data && data.backup === 2 && data.players && data.states){
+    const names = data.players.list.map((p, i) => (data.states[p.id] || {}).name || p.name || `Player ${i + 1}`);
+    return `${names.length === 1 ? 'one player' : `${names.length} players`}: ${listJoin(names)}`;
+  }
+  if(data && data.facts && Array.isArray(data.sessions)) return `${data.name || 'one player'}, level ${levelOf(data.xp || 0)}, ${data.sessions.length} rounds`;
+  return null;
+}
+
+function restoreBackup(data){
+  if(data.backup === 2){
+    for(const p of P.list){ try{ localStorage.removeItem(keyFor(p.id)); }catch(e){} }
+    P = {active:data.players.active, list:data.players.list.map(p => ({id:p.id, name:p.name || ''}))};
+    if(!P.list.some(p => p.id === P.active)) P.active = P.list[0].id;
+    for(const p of P.list){ try{ localStorage.setItem(keyFor(p.id), JSON.stringify(data.states[p.id] || fresh())); }catch(e){} }
+    savePlayers();
+    S = loadState();
+  } else {
+    // an older single-player backup goes into the current player
+    S = upgrade({...fresh(), ...migrate(data)});
+    saveState();
+  }
+}
 
 function todayStr(d){
   const t = d || new Date();
@@ -1235,10 +1408,11 @@ function bumpStreak(){
 }
 
 /* the streak as it stands right now, before today's round is played */
-function liveStreak(){
-  if(!S.lastPlayed) return 0;
-  const missed = dayGap(S.lastPlayed, todayStr()) - 1;
-  return missed <= S.freezes ? S.streak : 0;
+function liveStreak(s){
+  s = s || S;
+  if(!s.lastPlayed) return 0;
+  const missed = dayGap(s.lastPlayed, todayStr()) - 1;
+  return missed <= s.freezes ? s.streak : 0;
 }
 
 function roundsToday(){ return S.goal.date === todayStr() ? S.goal.rounds : 0; }
@@ -1312,7 +1486,8 @@ function fromRecipe(recipe){
   let r = recipe[recipe.length-1];
   for(const c of recipe){ x -= c.w; if(x <= 0){ r = c; break; } }
   let q;
-  if(r.op === 'add') q = qAdd(r.tier);
+  if(STRAND_GEN[r.op]) q = STRAND_GEN[r.op](r.tier);
+  else if(r.op === 'add') q = qAdd(r.tier);
   else if(r.op === 'sub') q = qSub(r.tier);
   else {
     const t = pick(r.tables || TABLES[r.tier]);
@@ -1951,9 +2126,9 @@ const UP_ACC = 0.85, UP_N = 10, DOWN_ACC = 0.6, DOWN_N = 8, WINDOW = 12;
 
 const maxLevel = () => S.stretch ? TOP_LEVEL : STAGE3_TOP;
 
-function adaptiveRecipe(){
+function adaptiveRecipe(tracks){
   const r = [];
-  for(const op of OPS){
+  for(const op of tracks || OPS){
     const L = Math.min(S.levels[op.id], maxLevel());
     if(L === 1){ r.push({op:op.id, tier:1, w:op.w}); continue; }
     r.push({op:op.id, tier:L, w:op.w * 0.6});
@@ -1979,7 +2154,7 @@ function setLevel(op, L){
 function updateLevels(){
   const share = h => h.split('').filter(c => c === '1').length / h.length;
   const moves = [];
-  for(const op of OPS){
+  for(const op of ALL_TRACKS){
     const h = S.adapt[op.id] || '', L = S.levels[op.id];
     if(h.length >= UP_N && share(h) >= UP_ACC && L < maxLevel()){ setLevel(op.id, L + 1); moves.push({op:op.id, from:L, to:L + 1}); }
     else if(h.length >= DOWN_N && share(h.slice(-DOWN_N)) < DOWN_ACC && L > 1){ setLevel(op.id, L - 1); moves.push({op:op.id, from:L, to:L - 1}); }
@@ -2000,6 +2175,259 @@ const lockTopic = id => LOCK_TOPICS.find(x => x.id === id);
 const lockName = lock => lock.kind === 'table' ? `the ${lock.t}× table` : lockTopic(lock.id).name.toLowerCase();
 const lockRecipe = lock => lock.kind === 'table' ? focusRecipe(lock.t) : lockTopic(lock.id).recipe;
 const currentRecipe = () => S.lock ? lockRecipe(S.lock) : adaptiveRecipe();
+
+/* ============================================================
+   everyday.js — fractions, money and time (Everyday Maths), and
+   word problems (Story Problems). Both are calm modes: no clock.
+   A question: {op, tier, text, answer, explain, and any of: big
+   (shown large), prompt, emoji, choices, vis, visAfter, tip}.
+   `answer` is a number when typed, a label when it's a choice.
+   ============================================================ */
+const STRANDS = [
+  {id:'frac',  name:'Fractions', w:1, levels:['Halves', 'Quarters and thirds', 'Three quarters, and parts of a whole', 'Fifths, tenths and two thirds', 'Fractions like ⅖ and ³⁄₁₀']},
+  {id:'money', name:'Money', w:1, levels:['Totals of whole amounts', 'Totals with smaller coins, and simple change', 'Change from 5 or 10', 'A price times how many', 'Totals, then change']},
+  {id:'time',  name:'Time', w:1, levels:['O\'clock and half past', 'Quarter past and quarter to', 'Any 5 minutes', 'When does it end?', 'Minutes between two times']},
+  {id:'word',  name:'Word problems', w:1, levels:['One step, within 20', 'One step, within 100', 'Stage 3 tables, and two steps', 'Two steps, mixing × with + or −', 'Harder two-step problems']}
+];
+const ALL_TRACKS = [...OPS, ...STRANDS];
+
+/* ---- money ---- */
+const CURRENCIES = {
+  AED:{sym:'AED ', unit:'dirhams', name:'UAE dirhams (AED)'},
+  USD:{sym:'$',    unit:'dollars', name:'US dollars ($)'},
+  GBP:{sym:'£',    unit:'pounds',  name:'British pounds (£)'},
+  EUR:{sym:'€',    unit:'euros',   name:'Euros (€)'},
+  INR:{sym:'₹',    unit:'rupees',  name:'Indian rupees (₹)'}
+};
+function autoCurrency(){
+  const region = ((typeof navigator !== 'undefined' && navigator.language) || '').split('-')[1] || '';
+  const map = {AE:'AED', GB:'GBP', IN:'INR', US:'USD'};
+  const euro = ['IE','DE','FR','ES','IT','NL','BE','PT','AT','FI','GR','LU','SK','SI','EE','LV','LT','MT','CY','HR'];
+  return map[region.toUpperCase()] || (euro.includes(region.toUpperCase()) ? 'EUR' : 'USD');
+}
+const cur = () => CURRENCIES[S.currency || autoCurrency()] || CURRENCIES.USD;
+/* amounts are whole cents (or fils, pence...): 250 → "AED 2.50", 300 → "AED 3" */
+const money = c => cur().sym + (c % 100 === 0 ? String(c / 100) : (c / 100).toFixed(2));
+
+const SHOP_ITEMS = [['🍎','apple'], ['🧃','juice'], ['✏️','pencil'], ['📒','notebook'], ['🍪','cookie'], ['🎈','balloon'],
+  ['🧸','teddy'], ['⚽','ball'], ['🍌','banana'], ['🥪','sandwich'], ['🖍️','crayons'], ['🧁','cupcake']];
+
+/* the right answer plus three wrong ones, from likely slips first */
+function pickChoices(answer, wrongs){
+  const set = new Set([answer]);
+  for(const w of wrongs) if(set.size < 4 && w != null) set.add(w);
+  return shuffle([...set]);
+}
+
+function genMoney(L){
+  const [a, b, c] = shuffle(SHOP_ITEMS).slice(0, 3);
+  const slips = x => [x + 100, x - 100, x + 10, x - 10, x + 50, x - 50, x + 200, x + 20].filter(v => v > 0);
+  const q = (items, prompt, ans, explain, tip, extra) => ({op:'money', text:`${prompt} ${items.map(i => money(i[2])).join(', ')}`,
+    prompt, answer:money(ans), choices:pickChoices(money(ans), slips(ans).map(money)), explain, tip,
+    vis:{type:'tags', items, ...extra}});
+  if(L <= 1){
+    const x = R(1,6) * 100, y = R(1,4) * 100;
+    return q([[...a, x], [...b, y]], 'How much for both?', x + y, `${money(x)} + ${money(y)} = ${money(x + y)}.`, 'Add the prices.');
+  }
+  if(L === 2){
+    if(Math.random() < 0.6){
+      const x = R(5,30) * 10, y = R(5,30) * 10;
+      return q([[...a, x], [...b, y]], 'How much for both?', x + y, `${money(x)} + ${money(y)} = ${money(x + y)}.`, 'Add the whole amounts, then the smaller coins.');
+    }
+    const x = R(2,8) * 100;
+    return q([[...a, x]], 'How much change?', 1000 - x, `${money(1000)} − ${money(x)} = ${money(1000 - x)}.`, 'Count on from the price to what you paid.', {pay:1000});
+  }
+  if(L === 3){
+    const pay = pick([500, 1000]), x = R(11, pay / 10 - 5) * 10;
+    const up = Math.ceil(x / 100) * 100;
+    return q([[...a, x]], 'How much change?', pay - x,
+      up > x ? `Count on from ${money(x)} to ${money(up)}, then on to ${money(pay)}: ${money(pay - x)}.` : `${money(pay)} − ${money(x)} = ${money(pay - x)}.`,
+      'Count on from the price to what you paid.', {pay});
+  }
+  if(L === 4){
+    const n = R(2,5), x = R(3,25) * 10;
+    return q([[...a, x]], `How much for ${n}?`, n * x, `${n} × ${money(x)} = ${money(n * x)}.`, 'Times the price by how many.', {qty:n});
+  }
+  const x = R(15,60) * 10, y = R(15,60) * 10, pay = 2000;
+  return q([[...a, x], [...b, y]], 'How much change from both?', pay - x - y,
+    `${money(x)} + ${money(y)} = ${money(x + y)}, then ${money(pay)} − ${money(x + y)} = ${money(pay - x - y)}.`, 'Add the prices first, then find the change.', {pay});
+}
+
+/* ---- time ---- */
+const hm = (h, m) => `${h}:${String(m).padStart(2, '0')}`;
+const nextHour = h => h % 12 + 1, prevHour = h => (h + 10) % 12 + 1;
+function sayTime(h, m){
+  if(m === 0) return `${h} o'clock`;
+  if(m === 30) return `half past ${h}`;
+  if(m === 15) return `quarter past ${h}`;
+  if(m === 45) return `quarter to ${nextHour(h)}`;
+  return m < 30 ? `${m} minutes past ${h}` : `${60 - m} minutes to ${nextHour(h)}`;
+}
+const TIME_FACTS = [['How many minutes are in an hour?', 60], ['How many days are in a week?', 7], ['How many hours are in a day?', 24],
+  ['How many months are in a year?', 12], ['How many minutes are in half an hour?', 30], ['How many seconds are in a minute?', 60],
+  ['How many minutes are in a quarter of an hour?', 15]];
+const EVENTS = ['The film', 'Swimming', 'The party', 'Football practice', 'The school play', 'The bus ride'];
+
+function genTime(L){
+  if(L <= 2 && Math.random() < 0.25){
+    const [prompt, ans] = pick(TIME_FACTS);
+    return {op:'time', text:prompt, prompt, answer:ans, explain:`${ans}. That's one to remember!`, tip:'Think about a clock or a calendar.'};
+  }
+  const h = R(1,12);
+  if(L <= 3){
+    const m = L <= 1 ? pick([0, 30]) : L === 2 ? pick([15, 45, 15, 45, 0, 30]) : 5 * R(1,11);
+    const wrong = [[nextHour(h), m], [m === 0 ? 12 : m / 5, h * 5 % 60], [prevHour(h), m], [h, (m + 30) % 60], [h, (m + 5) % 60], [h, (m + 55) % 60]];
+    return {op:'time', text:`clock ${hm(h, m)}`, prompt:'What time does the clock show?', answer:hm(h, m),
+      choices:pickChoices(hm(h, m), wrong.map(([x, y]) => hm(x, y))),
+      explain:`It's ${sayTime(h, m)}, which is ${hm(h, m)}.`, tip:'The short hand shows the hour. The long hand shows the minutes.', vis:{type:'clock', h, m}};
+  }
+  const m = 5 * R(1,11);
+  if(L === 4){
+    const dur = 5 * R(4,11), total = m + dur, eh = total >= 60 ? nextHour(h) : h, em = total % 60;
+    const ev = pick(EVENTS);
+    const explain = total >= 60
+      ? `From ${hm(h, m)} to ${hm(nextHour(h), 0)} is ${60 - m} minutes. ${dur - (60 - m)} more minutes makes ${hm(eh, em)}.`
+      : `${hm(h, m)} and ${dur} more minutes makes ${hm(eh, em)}.`;
+    return {op:'time', text:`${hm(h, m)} + ${dur} min`, prompt:`${ev} starts at ${hm(h, m)} and lasts ${dur} minutes. When does it end?`,
+      answer:hm(eh, em), choices:pickChoices(hm(eh, em), [hm(h, em), hm(eh, (em + 10) % 60), hm(nextHour(eh), em), hm(eh, (em + 50) % 60)]),
+      explain, tip:'Jump to the next o\'clock first.', vis:{type:'clock', h, m}};
+  }
+  const gap = 5 * R(3,11), total = m + gap, eh = total >= 60 ? nextHour(h) : h, em = total % 60;
+  const explain = total >= 60 ? `${hm(h, m)} to ${hm(nextHour(h), 0)} is ${60 - m} minutes, and ${hm(nextHour(h), 0)} to ${hm(eh, em)} is ${em} more: ${gap} minutes.`
+    : `Count on from ${hm(h, m)} to ${hm(eh, em)}: ${gap} minutes.`;
+  return {op:'time', text:`${hm(h, m)} to ${hm(eh, em)}`, prompt:`How many minutes is it from ${hm(h, m)} to ${hm(eh, em)}?`, answer:gap,
+    explain, tip:'Count on to the next o\'clock, then on again.'};
+}
+
+/* ---- fractions ---- */
+const FRAC = {'1/2':'½', '1/4':'¼', '3/4':'¾', '1/3':'⅓', '2/3':'⅔', '1/5':'⅕', '2/5':'⅖', '3/5':'⅗', '4/5':'⅘', '1/10':'⅒', '3/10':'³⁄₁₀', '7/10':'⁷⁄₁₀'};
+const fracText = (n, d) => FRAC[`${n}/${d}`] || `${n}/${d}`;
+function fracOf(n, d, x){
+  const one = x / d, ans = one * n;
+  return {op:'frac', text:`${fracText(n, d)} of ${x}`, big:`${fracText(n, d)} of ${x}`, answer:ans, tip:'Share it into equal groups.',
+    explain: n === 1 ? `Share ${x} into ${d} equal groups. Each group has ${one}.` : `${fracText(1, d)} of ${x} is ${one}, so ${fracText(n, d)} is ${n} × ${one} = ${ans}.`,
+    vis:{type:'array', rows:d, cols:one, mark:r => r < n ? 'a' : 'dim'}, visAfter:true};
+}
+function partsQ(part, d, of){
+  const whole = of === 'a whole';
+  const ans = whole ? d : d / 2;
+  return {op:'frac', text:`${part} in ${of}`, prompt:`How many ${part} make ${of}?`, answer:ans, tip:'Think of a pizza cut into equal slices.',
+    explain:`${whole ? 'A whole' : 'A half'} is ${ans} ${part}.`};
+}
+function genFrac(L){
+  const r = Math.random();
+  if(L <= 1) return r < 0.85 ? fracOf(1, 2, 2 * R(1,10)) : partsQ('halves', 2, 'a whole');
+  if(L === 2) return r < 0.4 ? fracOf(1, 4, 4 * R(1,10)) : r < 0.75 ? fracOf(1, 3, 3 * R(1,10)) : fracOf(1, 2, 2 * R(6,25));
+  if(L === 3) return r < 0.5 ? fracOf(3, 4, 4 * R(1,10)) : r < 0.75 ? fracOf(1, pick([3, 4]), 12 * R(1,4))
+    : pick([partsQ('quarters', 4, 'a whole'), partsQ('quarters', 4, 'a half'), partsQ('thirds', 3, 'a whole'), partsQ('eighths', 8, 'a half')]);
+  if(L === 4) return r < 0.35 ? fracOf(1, 5, 5 * R(1,10)) : r < 0.65 ? fracOf(1, 10, 10 * R(1,10)) : fracOf(2, 3, 3 * R(2,10));
+  const [n, d] = pick([[2, 5], [3, 5], [4, 5], [3, 10], [7, 10]]);
+  return fracOf(n, d, d * R(2,10));
+}
+
+/* ---- word problems (characters are always named, never "he" or "she") ---- */
+const NAMES = ['Mia', 'Omar', 'Leo', 'Aisha', 'Sam', 'Priya', 'Noah', 'Zara', 'Yusuf', 'Ella', 'Ravi', 'Lina', 'Kai', 'Maya', 'Ali', 'Nora'];
+const THINGS = [['stickers', '🌟'], ['marbles', '🔮'], ['shells', '🐚'], ['cards', '🃏'], ['beads', '📿'], ['crayons', '🖍️']];
+const WORD = {
+  1: [
+    () => { const [A] = shuffle(NAMES), [th, e] = pick(THINGS), a = R(3,12), b = R(2, 20 - a);
+      return [e, `${A} has ${a} ${th}. ${A} gets ${b} more. How many ${th} does ${A} have now?`, a + b, `${a} + ${b} = ${a + b}`]; },
+    () => { const a = R(8,20), b = R(2, a - 2);
+      return ['🐦', `There are ${a} birds on a fence. ${b} fly away. How many birds are left?`, a - b, `${a} − ${b} = ${a - b}`]; },
+    () => { const [A, B] = shuffle(NAMES), [th, e] = pick(THINGS), a = R(3,10), b = R(3, 20 - a);
+      return [e, `${A} has ${a} ${th} and ${B} has ${b}. How many ${th} do they have altogether?`, a + b, `${a} + ${b} = ${a + b}`]; },
+    () => { const [A, B] = shuffle(NAMES), [th, e] = pick(THINGS), a = R(9,20), b = R(2, a - 3);
+      return [e, `${A} had ${a} ${th} and gave ${b} to ${B}. How many does ${A} have left?`, a - b, `${a} − ${b} = ${a - b}`]; }
+  ],
+  2: [
+    () => { const a = R(15,48), b = R(11, 99 - a);
+      return ['📚', `A class read ${a} books in May and ${b} books in June. How many books did they read altogether?`, a + b, `${a} + ${b} = ${a + b}`]; },
+    () => { const [A, B] = shuffle(NAMES), a = R(40,95), b = R(12, a - 5);
+      return ['🎯', `${A} scored ${a} points and ${B} scored ${b} points. How many more points did ${A} score?`, a - b, `${a} − ${b} = ${a - b}`]; },
+    () => { const [th, e] = pick(THINGS), t = pick([2, 5, 10]), n = R(2,10);
+      return ['📦', `There are ${n} boxes with ${t} ${th} in each. How many ${th} are there altogether?`, n * t, `${n} × ${t} = ${n * t}`]; },
+    () => { const [A] = shuffle(NAMES), [th, e] = pick(THINGS), t = pick([2, 5, 10]), n = R(2,10);
+      return [e, `${A} shares ${t * n} ${th} equally between ${t} friends. How many does each friend get?`, n, `${t * n} ÷ ${t} = ${n}`]; }
+  ],
+  3: [
+    () => { const [what, k, e] = pick([['tricycles', 3, '🚲'], ['tables', 4, '🪑'], ['dogs', 4, '🐕']]), n = R(2,10), part = k === 3 ? 'wheels' : 'legs';
+      return [e, `A ${what.slice(0, -1)} has ${k} ${part}. How many ${part} do ${n} ${what} have?`, n * k, `${n} × ${k} = ${n * k}`]; },
+    () => { const t = pick([3, 4]), n = R(2,10);
+      return ['⚽', `${t * n} children get into teams of ${t}. How many teams are there?`, n, `${t * n} ÷ ${t} = ${n}`]; },
+    () => { const [A] = shuffle(NAMES), [th, e] = pick(THINGS), a = R(10,40), b = R(5,20), c = R(3, a + b - 5);
+      return [e, `${A} had ${a} ${th}, got ${b} more, then lost ${c}. How many ${th} does ${A} have now?`, a + b - c, `${a} + ${b} = ${a + b}, then ${a + b} − ${c} = ${a + b - c}`]; },
+    () => { const a = R(15,40), b = R(3, a - 5), c = R(2,15);
+      return ['🚌', `A bus has ${a} people on it. At the first stop, ${b} get off and ${c} get on. How many people are on the bus now?`, a - b + c, `${a} − ${b} = ${a - b}, then ${a - b} + ${c} = ${a - b + c}`]; }
+  ],
+  4: [
+    () => { const [A] = shuffle(NAMES), t = pick([3, 4, 5, 10]), n = R(2,6), e = R(1,9);
+      return ['🍎', `${A} buys ${n} bags with ${t} apples in each, and ${e} more apples. How many apples does ${A} have?`, n * t + e, `${n} × ${t} = ${n * t}, then ${n * t} + ${e} = ${n * t + e}`]; },
+    () => { const n = R(3,8), t = pick([4, 5, 10]), x = R(2, n * t - 2);
+      return ['🪑', `There are ${n} rows of ${t} chairs. ${x} chairs are taken. How many chairs are empty?`, n * t - x, `${n} × ${t} = ${n * t}, then ${n * t} − ${x} = ${n * t - x}`]; },
+    () => { const t = pick([2, 3, 4, 5]), q = R(4,10), g = R(1, q - 1);
+      return ['🌟', `${t * q} stickers are shared equally between ${t} children. Each child then uses ${g}. How many does each child have left?`, q - g, `${t * q} ÷ ${t} = ${q}, then ${q} − ${g} = ${q - g}`]; }
+  ],
+  5: [
+    () => { const [A] = shuffle(NAMES), t = R(2,10), n = R(3,8), sp = R(1, t * n - 1), c = cur();
+      return ['🐷', `${A} saves ${money(t * 100)} every week for ${n} weeks, then spends ${money(sp * 100)}. How many ${c.unit} are left?`, t * n - sp, `${n} × ${t} = ${t * n}, then ${t * n} − ${sp} = ${t * n - sp}`]; },
+    () => { const t = pick([6, 10, 12]), q = R(2,8);
+      return ['🥚', `A box holds ${t} eggs. How many boxes are needed for ${t * q} eggs?`, q, `${t * q} ÷ ${t} = ${q}`]; },
+    () => { const [A, B] = shuffle(NAMES), [th, e] = pick(THINGS), a = R(3,12), k = pick([2, 3, 4, 5]);
+      return [e, `${A} has ${a} ${th}. ${B} has ${k} times as many. How many ${th} do they have altogether?`, a + k * a, `${k} × ${a} = ${k * a}, then ${a} + ${k * a} = ${a + k * a}`]; }
+  ]
+};
+function genWord(L){
+  const [emoji, prompt, answer, explain] = pick(WORD[Math.max(1, Math.min(5, L))])();
+  return {op:'word', text:prompt, prompt, emoji, answer, explain:`${explain}.`, story:true, tip:'Read it carefully. What do you need to work out?'};
+}
+
+const STRAND_GEN = {frac:genFrac, money:genMoney, time:genTime, word:genWord};
+
+const SETS = {
+  everyday:{id:'everyday', name:'Everyday Maths', icon:'🕒', n:10, strands:['frac', 'money', 'time']},
+  story:   {id:'story',    name:'Story Problems', icon:'📖', n:6,  strands:['word']}
+};
+
+/* first-try results for the new topics, for the grown-ups report */
+function recordStrand(q, ok, ms){
+  const r = S.strands[q.op] || (S.strands[q.op] = {h:'', ms:0});
+  r.h = (r.h + (ok ? '1' : '0')).slice(-20);
+  r.ms = r.ms ? Math.round(r.ms * 0.7 + ms * 0.3) : Math.round(ms);
+}
+
+/* ============================================================
+   review.js — missed facts come back 1, 3, 7 and 14 days later
+   A miss (re)starts the schedule. A right answer once a fact is
+   due moves it to the next gap; after the 14-day one it's done.
+   ============================================================ */
+const REVIEW_DAYS = [1, 3, 7, 14];
+const REVIEW_SHARE = 0.2;   // about 1 question in 5, when facts are due
+
+function addDays(date, n){
+  const [y, m, d] = date.split('-').map(Number);
+  return todayStr(new Date(y, m - 1, d + n));
+}
+
+function scheduleReview(q, ok){
+  if(!['add', 'sub', 'mul', 'div'].includes(q.op) || !q.id) return;
+  const today = todayStr(), r = S.review[q.id];
+  if(!ok){ S.review[q.id] = {due:addDays(today, REVIEW_DAYS[0]), step:0}; return; }
+  if(!r || r.due > today) return;
+  const step = r.step + 1;
+  if(step >= REVIEW_DAYS.length) delete S.review[q.id];
+  else S.review[q.id] = {due:addDays(today, REVIEW_DAYS[step]), step};
+}
+
+const dueReviews = () => Object.entries(S.review).filter(([, r]) => r.due <= todayStr())
+  .sort((a, b) => a[1].due < b[1].due ? -1 : a[1].due > b[1].due ? 1 : 0).map(([id]) => id);
+
+function reviewQuestion(id){
+  const p = parseFact(id);
+  if(!p) return null;
+  const q = p.op === 'add' ? mkAdd(p.a, p.b) : p.op === 'sub' ? mkSub(p.a, p.b) : p.op === 'mul' ? mkMul(p.a, p.b) : mkDiv(p.b, p.answer);
+  q.review = true;
+  return q;
+}
 
 /* ============================================================
    modes.js
@@ -2034,7 +2462,12 @@ const AREAS = [
   {id:'add100', name:'Adding bigger numbers',      trick:'split'},
   {id:'sub100', name:'Taking away bigger numbers', trick:'takeparts'},
   {id:'mul',    name:'Times tables',               trick:null},
-  {id:'div',    name:'Dividing',                   trick:'thinkmult'}
+  {id:'div',    name:'Dividing',                   trick:'thinkmult'},
+  // the new topics are rated from their own last 20 first-try answers
+  {id:'frac',   name:'Fractions',     go:'set:everyday', strand:true, fluent:6000},
+  {id:'money',  name:'Money',         go:'set:everyday', strand:true, fluent:Infinity},
+  {id:'time',   name:'Time',          go:'set:everyday', strand:true, fluent:Infinity},
+  {id:'word',   name:'Word problems', go:'set:story',    strand:true, fluent:Infinity}
 ];
 
 function areaOf(q){
@@ -2055,9 +2488,9 @@ function parseFact(id){
 const pct = v => Math.round(v * 100) + '%';
 const listJoin = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
 
-function areaStatus(s){
+function areaStatus(s, fluent){
   if(s.n < 8) return 'none';
-  if(s.acc >= 0.9 && s.speed <= FLUENT_MS) return 'strong';
+  if(s.acc >= 0.9 && s.speed <= (fluent || FLUENT_MS)) return 'strong';
   if(s.acc >= 0.8) return 'ok';
   return 'work';
 }
@@ -2072,10 +2505,16 @@ function areaStats(){
     s.n += r.n; s.ok += r.ok; s.facts++;
     if(f.ok > 0 && f.ms) s.ms.push(f.ms);
   }
-  for(const s of Object.values(out)){
+  for(const a of AREAS.filter(x => x.strand)){
+    const r = S.strands[a.id] || {h:'', ms:0}, s = out[a.id];
+    s.n = r.h.length; s.ok = r.h.split('').filter(c => c === '1').length; s.facts = s.n;
+    if(r.ms) s.ms.push(r.ms);
+  }
+  for(const a of AREAS){
+    const s = out[a.id];
     s.acc = s.n ? s.ok / s.n : null;
     s.speed = s.ms.length ? median(s.ms) : null;
-    s.status = areaStatus(s);
+    s.status = areaStatus(s, a.fluent);
   }
   return out;
 }
@@ -2161,13 +2600,21 @@ function nextSteps(){
   }
 
   // the weakest other area, with the trick that teaches it
-  const weak = AREAS.filter(a => a.trick && ['work', 'ok'].includes(areas[a.id].status))
+  const weak = AREAS.filter(a => (a.trick || a.go) && ['work', 'ok'].includes(areas[a.id].status))
     .sort((x, y) => areas[x.id].acc - areas[y.id].acc)[0];
-  if(weak){
+  if(weak && weak.trick){
     const s = areas[weak.id], tr = TRICK[weak.trick];
     steps.push({icon:tr.icon, html:`<b>${weak.name}.</b> ${pct(s.acc)} right recently${s.speed ? `, about ${fmtS(s.speed)} an answer` : ''}. The <b>${tr.name}</b> trick helps with this.`,
       act:{label:'Open the trick', go:`trick:${tr.id}`}});
+  } else if(weak){
+    const s = areas[weak.id], set = SETS[weak.go.split(':')[1]];
+    steps.push({icon:set.icon, html:`<b>${weak.name}.</b> ${pct(s.acc)} right recently. ${set.name} practises this, with no clock and a worked answer every time.`,
+      act:{label:`Start ${set.name}`, go:weak.go}});
   }
+
+  const due = dueReviews();
+  if(due.length >= 5) steps.push({icon:'🔁', html:`<b>${due.length} facts are due for review.</b> They were missed on earlier days. Daily Sprint brings them back automatically.`,
+    act:{label:'Start a Daily Sprint', go:'mode:sprint'}});
 
   const slow = slowFacts();
   if(slow.length >= 2) steps.push({icon:'⏱', html:`<b>Right, but slow:</b> ${slow.slice(0, 3).map(f => f.text).join(', ')}. Still being worked out rather than remembered. Short daily sprints turn these into instant recall.`,
@@ -2220,7 +2667,7 @@ const Snd = {
    ui.js
    ============================================================ */
 const $ = id => document.getElementById(id);
-const SCREENS = ['home','shop','adult','tricks','trick','pick','learn','grid','game','done'];
+const SCREENS = ['home','who','shop','adult','tricks','trick','pick','learn','grid','game','done'];
 
 function show(name){
   for(const n of SCREENS) $(n).classList.toggle('on', n === name);
@@ -2292,6 +2739,11 @@ function paintHome(){
   $('m-sprint-ds').textContent = S.lock ? `60 seconds of ${lockName(S.lock)}` : '60 seconds of mixed facts';
   $('m-focus').textContent = `Try the ${suggestTable()}× table`;
   $('m-ghost').textContent = `Ghost to beat: ${S.best.sprint || GHOST_DEFAULT}`;
+  for(const id of ['everyday', 'story']){
+    const last = [...S.sessions].reverse().find(x => x.mode === id);
+    $('m-' + id).textContent = last ? `Last time: ${last.right} of ${SETS[id].n}` : 'New! No clock';
+  }
+  $('h-switch').hidden = P.list.length < 2;
   const trickTotal = TRICKS.reduce((s, t) => s + trickStars(t.id), 0);
   $('m-tricks').textContent = trickTotal ? `⭐ ${trickTotal} / ${TRICKS.length * 3}` : 'New!';
 
@@ -2399,6 +2851,8 @@ function startMode(id, opts){
     table: opts.table || null,
     recipe: id === 'focus' ? focusRecipe(opts.table) : m.adaptive ? currentRecipe() : m.recipe,
     adaptive: !!m.adaptive && !S.lock,   // locked rounds don't move the difficulty
+    reviewOK: id === 'focus' || (!!m.adaptive && !S.lock),
+    reviewed: new Set(), reviewRight: 0,
     phase:'warm',             // 'warm' | 'live' | 'over'
     warmLeft:m.warmups,
     q:null, typed:'', lastId:null,
@@ -2444,9 +2898,12 @@ function serve(){
   } else {
     // a missed fact comes back a couple of questions later
     const due = G.retry.findIndex(r => r.due <= G.asked);
+    let rq = null;
     if(due >= 0){
       const r = G.retry.splice(due, 1)[0];
       q = {...r.q, tries:r.tries};
+    } else if(G.reviewOK && Math.random() < REVIEW_SHARE && (rq = nextReview())){
+      q = rq;   // a fact missed on an earlier day
     } else {
       const avoid = new Set(G.retry.map(r => r.q.id));
       if(G.lastId) avoid.add(G.lastId);
@@ -2541,6 +2998,8 @@ function submit(got, how){
   const typed = how === 'type';
 
   recordFact(q, ok, ms, typed);
+  if(live) scheduleReview(q, ok);
+  if(live && q.review && ok && !q.tries) G.reviewRight++;
   if(live) (G.areas[areaOf(q)] ||= [0, 0])[ok ? 0 : 1]++;
   if(live && typed && G.adaptive) noteAdaptive(q, ok);
 
@@ -2599,6 +3058,15 @@ function submit(got, how){
     }
     serve();
   }, ok ? 260 : 1150);
+}
+
+/* the next due fact this round hasn't asked yet; in Focus, only that table */
+function nextReview(){
+  const inTable = id => { const f = parseFact(id); return f && (f.op === 'mul' ? f.a === G.table || f.b === G.table : f.op === 'div' && f.b === G.table); };
+  const id = dueReviews().find(x => !G.reviewed.has(x) && x !== G.lastId && (!G.table || inTable(x)));
+  if(!id) return null;
+  G.reviewed.add(id);
+  return reviewQuestion(id);
 }
 
 function flyXP(n){
@@ -2789,6 +3257,7 @@ function paintResults(r){
     else                                  badges.push(['', `📋 Last check-up: ${r.prevCheck.score}/${r.prevCheck.of}`]);
   }
   if(G.fixed)  badges.push(['green', `🔁 Fixed ${G.fixed} on the next try`]);
+  if(G.reviewed.size) badges.push(['green', `📅 ${G.reviewRight} of ${plural(G.reviewed.size, 'fact')} from earlier days right`]);
   if(r.rankUp){ const k = RANKS[S.rank]; badges.push(['gold', `${k.icon} Rank up! You're a ${k.name} now`]); }
   for(const mv of r.moves || []) if(mv.to > mv.from)
     badges.push(['gold', `⬆️ Harder ${OPS.find(o => o.id === mv.op).name.toLowerCase()} unlocked!`]);
@@ -2965,7 +3434,10 @@ const REMINDER_TIME = '5:00 pm';
 
 function mirrorState(){
   if(!('caches' in window)) return;
-  const body = JSON.stringify({lastPlayed:S.lastPlayed, streak:S.streak, freezes:S.freezes, name:S.name});
+  const many = P.list.length > 1;
+  const kids = P.list.map((p, i) => { const s = stateOf(p.id);
+    return {name:s.name || (many ? `Player ${i + 1}` : ''), lastPlayed:s.lastPlayed, streak:s.streak, freezes:s.freezes}; });
+  const body = JSON.stringify({kids});
   caches.open('mm-state')
     .then(c => c.put(new URL('state.json', location.href).href, new Response(body, {headers:{'Content-Type':'application/json'}})))
     .catch(()=>{});
@@ -3107,7 +3579,7 @@ function paintReport(){
   // ---- skills by area
   const areas = areaStats();
   h += '<div class="panel"><h3>Skills</h3><p class="sub">Each fact\'s last 6 answers. <b>Strong</b> means 90% right in about 3 seconds or less: remembered, not worked out.</p>' +
-    `<p class="sub">Difficulty now: ${OPS.map(op => `${op.name.toLowerCase()} <b>${S.levels[op.id]}</b>`).join(' · ')} (of ${maxLevel()}). It adjusts by itself; change it in Settings.</p><div class="meters">` +
+    `<p class="sub">Difficulty now: ${ALL_TRACKS.map(op => `${op.name.toLowerCase()} <b>${S.levels[op.id]}</b>`).join(' · ')} (of ${maxLevel()}). It adjusts by itself; change it in Settings.</p><div class="meters">` +
     AREAS.map(a => {
       const s = areas[a.id];
       if(s.status === 'none') return meterRow(a.name, 'none', 0, s.n ? 'A few more answers needed before this can be rated.' : 'Not practised yet.');
@@ -3115,7 +3587,7 @@ function paintReport(){
       const trend = a0 && a1 && a0[0] + a0[1] >= 10 && a1[0] + a1[1] >= 10
         ? ' · ' + deltaHtml(a0[0] / (a0[0] + a0[1]), a1[0] / (a1[0] + a1[1]), true, ptsFmt) : '';
       return meterRow(a.name, s.status, s.acc,
-        `${pct(s.acc)} right · about ${fmtS(s.speed)} an answer · ${plural(s.facts, 'fact')} practised${trend}`);
+        `${pct(s.acc)} right · about ${fmtS(s.speed)} an answer · ${a.strand ? plural(s.n, 'recent answer') : plural(s.facts, 'fact') + ' practised'}${trend}`);
     }).join('') + '</div></div>';
 
   // ---- times tables
@@ -3139,7 +3611,14 @@ function paintReport(){
     '<p class="sub"><b>Keeps getting wrong</b>: right only half the time or less, lately.</p>' +
     (chips(tricky.slice(0, 10), f => `${f.ok} of ${f.n} right`) || '<p class="noneyet">None at the moment.</p>') +
     '<p class="sub" style="margin-top:4px"><b>Right, but slow</b>: still being worked out, not yet remembered.</p>' +
-    (chips(slow.slice(0, 8), f => fmtS(f.ms)) || '<p class="noneyet">None at the moment.</p>') + '</div>';
+    (chips(slow.slice(0, 8), f => fmtS(f.ms)) || '<p class="noneyet">None at the moment.</p>') +
+    '<p class="sub" style="margin-top:4px"><b>Coming back for review</b>: missed facts return 1, 3, 7 and 14 days later.</p>' +
+    (() => {
+      const due = dueReviews(), later = Object.keys(S.review).length - due.length;
+      const list = due.map(id => parseFact(id)).filter(Boolean).slice(0, 10);
+      return (list.length ? chips(list, () => 'due today') : '<p class="noneyet">Nothing due today.</p>') +
+        (later > 0 ? `<p class="sub">${plural(later, 'more fact')} will come back on later days.</p>` : '');
+    })() + '</div>';
 
   // ---- activity, 14 days
   const days = daySeries(14);
@@ -3214,7 +3693,7 @@ function backupNote(text, err){
 
 async function saveBackup(){
   const name = `mental-maths-backup-${todayStr()}.json`;
-  const blob = new Blob([JSON.stringify(S)], {type:'application/json'});
+  const blob = new Blob([JSON.stringify(buildBackup())], {type:'application/json'});
   // on iPad the share sheet offers "Save to Files"
   const file = new File([blob], name, {type:'application/json'});
   if(navigator.canShare && navigator.canShare({files:[file]})){
@@ -3239,9 +3718,12 @@ async function saveBackup(){
 async function readBackup(file){
   try{
     const data = JSON.parse(await file.text());
-    if(!data || typeof data !== 'object' || !data.facts || !Array.isArray(data.sessions)) throw new Error('not a backup');
+    const desc = describeBackup(data);
+    if(!desc) throw new Error('not a backup');
     pendingRestore = data;
-    backupNote(`This backup${data.name ? ` for ${data.name}` : ''} is at level ${levelOf(data.xp || 0)}, with ${plural(data.sessions.length, 'round')}, last played ${data.lastPlayed || 'never'}. Restoring replaces all progress on this iPad.`);
+    backupNote(data.backup === 2
+      ? `This backup has ${desc}. Restoring replaces every player's progress on this iPad.`
+      : `This is an older backup for ${desc}. Restoring replaces the progress of the player selected above.`);
     $('b-confirm').hidden = false;
   }catch(e){
     pendingRestore = null;
@@ -3252,16 +3734,19 @@ async function readBackup(file){
 
 function applyRestore(){
   if(!pendingRestore) return;
-  S = {...fresh(), ...migrate(pendingRestore)};
+  restoreBackup(pendingRestore);
   pendingRestore = null;
-  saveState();
   mirrorState();
+  paintPlayers();
+  paintControls();
   $('b-confirm').hidden = true;
   backupNote('Progress restored.');
   paintReport();
 }
 
 async function showAdult(){
+  paintPlayers();
+  playerNote('');
   paintControls();
   controlNote('');
   adultTab('progress');
@@ -3327,7 +3812,26 @@ function lineSvg(v, upto){
   return s + '</svg>';
 }
 
+function clockSvg(h, m){
+  const at = (deg, r) => [110 + r * Math.sin(deg * Math.PI / 180), 110 - r * Math.cos(deg * Math.PI / 180)].map(v => +v.toFixed(1));
+  let s = `<svg class="aclock" viewBox="0 0 220 220" role="img" aria-label="A clock face"><circle class="cf" cx="110" cy="110" r="104"/><circle class="rim" cx="110" cy="110" r="104"/>`;
+  for(let i = 0; i < 60; i++){
+    const [x1, y1] = at(i * 6, i % 5 ? 95 : 89), [x2, y2] = at(i * 6, 100);
+    s += `<line class="${i % 5 ? 'tm' : 'tM'}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  }
+  for(let n = 1; n <= 12; n++){ const [x, y] = at(n * 30, 73); s += `<text class="cn" x="${x}" y="${y + 7}">${n}</text>`; }
+  const [hx, hy] = at(((h % 12) + m / 60) * 30, 50), [mx, my] = at(m * 6, 82);
+  return s + `<line class="hh" x1="110" y1="110" x2="${hx}" y2="${hy}"/><line class="mh" x1="110" y1="110" x2="${mx}" y2="${my}"/>` +
+    '<circle class="cc" cx="110" cy="110" r="7"/></svg>';
+}
+
 function visHtml(v, i, k){
+  if(v.type === 'clock') return clockSvg(v.h, v.m);
+  if(v.type === 'tags'){
+    return '<div class="ptags">' + v.items.map(([e, name, c]) =>
+      `<div class="ptag"><span class="te">${e}</span><span class="tp">${money(c)}</span><span class="tl">${v.qty ? `${v.qty} × ${name}` : name}</span></div>`).join('') +
+      (v.pay ? `<div class="ptag pay"><span class="te">💵</span><span class="tp">${money(v.pay)}</span><span class="tl">you pay</span></div>` : '') + '</div>';
+  }
   if(v.type === 'line') return lineSvg(v, v.reveal[Math.min(k, v.reveal.length - 1)]);
 
   if(v.type === 'frames'){
@@ -3404,6 +3908,7 @@ function showTricks(){
 
 function openTrick(id){
   T = {t:TRICK[id], phase:'intro'};
+  $('k-back').textContent = '‹ Tricks';
   $('k-name').textContent = `${T.t.icon} ${T.t.name}`;
   renderTrick();
   show('trick');
@@ -3429,9 +3934,9 @@ const workedLines = p => p.steps.map(s => stepLine(s, 'done')).join('');
 
 function renderTrick(){
   const t = T.t, p = T.prob, stage = $('k-stage'), act = $('k-act');
-  const typing = T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing);
+  const typing = T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing) || (T.phase === 'cq' && !p.choices);
   $('k-pad').hidden = !typing;
-  $('k-prog').innerHTML = T.probs && ['steps', 'use', 'wpick', 'wsolve'].includes(T.phase)
+  $('k-prog').innerHTML = T.probs && ['steps', 'use', 'wpick', 'wsolve', 'cq', 'cdone'].includes(T.phase)
     ? T.probs.map((_, n) => `<i class="${n < T.n ? 'done' : n === T.n ? 'cur' : ''}"></i>`).join('') : '';
 
   if(T.phase === 'intro'){
@@ -3470,6 +3975,28 @@ function renderTrick(){
     return;
   }
 
+  if(T.phase === 'cq' || T.phase === 'cdone'){
+    const done = T.phase === 'cdone';
+    const pic = p.vis && (!p.visAfter || done || T.helped) ? `<div class="kvis">${visHtml(p.vis, 9, 9)}</div>` : '';
+    const lead = p.story ? `<div class="kemoji">${p.emoji}</div><p class="kstory">${p.prompt}</p>`
+      : (p.big ? `<div class="kprob">${p.big}</div>` : '') + (p.prompt ? `<p class="kask">${p.prompt}</p>` : '');
+    let ans;
+    if(p.choices){
+      ans = '<div class="wopts copts">' + p.choices.map(c => {
+        const cls = done && c === p.answer ? ' right' : T.picked.includes(c) ? ' wrong' : '';
+        return `<button type="button" class="wopt${cls}" data-c="${c}"${done || T.picked.includes(c) ? ' disabled' : ''}><span class="wn">${c}</span></button>`;
+      }).join('') + '</div>';
+    } else {
+      const cls = done ? (T.result === 'right' ? ' right' : ' shownans') : T.typed ? '' : ' empty';
+      ans = `<div class="answer${cls}" id="k-ans">${done ? p.answer : (T.typed || '?')}</div>`;
+    }
+    stage.innerHTML = (p.story ? lead + pic : pic + lead) + ans + bubble(T.msg || (T.helped ? p.explain : p.tip));
+    act.innerHTML = done
+      ? `<button class="btn2" type="button" data-k="cnext">${T.n === T.probs.length - 1 ? 'Finish' : 'Next ▶'}</button>`
+      : '<button class="btn2 ghost small" type="button" data-k="cshow">💡 Show me</button>';
+    return;
+  }
+
   if(T.phase === 'wpick'){
     stage.innerHTML = probHtml(p, false) + bubble(T.msg || 'Which trick fits this one best?') +
       '<div class="wopts">' + T.opts.map(o => {
@@ -3498,13 +4025,15 @@ function renderTrick(){
 
   if(T.phase === 'end'){
     const e = T.end;
-    const head = T.kind === 'which'
+    const head = T.kind === 'which' || T.kind === 'set'
       ? `<div class="bigscore">${e.score}<span class="of">out of ${T.probs.length}</span></div>`
       : `<div class="stars" style="font-size:46px">${starStr(e.stars)}</div>`;
     stage.innerHTML = `<div class="kintro">${head}` +
       `<div class="verdict">${e.title}</div><p class="kblurb">${e.msg}</p></div>` +
       rewardsHtml(e.r, 'k-xpfill') + `<div class="badges">${badgesHtml(e.badges)}</div>`;
-    act.innerHTML = T.kind === 'which'
+    act.innerHTML = T.kind === 'set'
+      ? '<button class="btn2" type="button" data-k="again-set">🔁 Play again</button><button class="btn2 ghost" type="button" data-k="home">Done</button>'
+      : T.kind === 'which'
       ? '<button class="btn2" type="button" data-k="which">🔁 Play again</button><button class="btn2 ghost" type="button" data-k="list">Back to tricks</button>'
       : (T.kind === 'learn'
         ? '<button class="btn2" type="button" data-k="use">🚀 Use it now</button>'
@@ -3547,7 +4076,8 @@ function skipInfo(){
 
 function nextProblem(){
   T.n++;
-  if(T.n >= T.probs.length) (T.kind === 'which' ? endWhich : endTrick)();
+  if(T.n >= T.probs.length) (T.kind === 'set' ? endSet : T.kind === 'which' ? endWhich : endTrick)();
+  else if(T.kind === 'set') loadSetQ();
   else if(T.kind === 'which') loadWhich();
   else loadProblem();
 }
@@ -3555,7 +4085,7 @@ function nextProblem(){
 const kWant = () => T.phase === 'steps' ? T.prob.steps[T.i].ans : T.prob.answer;
 
 function kPress(k){
-  if(!T || T.locked || !(T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing))) return;
+  if(!T || T.locked || !(T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing) || (T.phase === 'cq' && !T.prob.choices))) return;
   Snd.key();
   if(k === '⌫'){
     clearTimeout(T.autoT);
@@ -3589,7 +4119,10 @@ function paintTyped(){
 function kSubmit(){
   clearTimeout(T.autoT);
   const ok = Number(T.typed) === kWant();
-  if(T.phase === 'steps') stepAnswer(ok); else if(T.phase === 'wsolve') whichAnswer(ok); else useAnswer(ok);
+  if(T.phase === 'steps') stepAnswer(ok);
+  else if(T.phase === 'wsolve') whichAnswer(ok);
+  else if(T.phase === 'cq') setAnswer(ok);
+  else useAnswer(ok);
 }
 
 function stepAnswer(ok){
@@ -3700,12 +4233,127 @@ function endTrick(){
 }
 
 /* ============================================================
+   calm sets — Everyday Maths and Story Problems
+   No countdown. Typed answers on the keypad, or 4 choices for
+   money and clock answers. Every answer shows how it works.
+   ============================================================ */
+function startSet(id){
+  const set = SETS[id];
+  const recipe = adaptiveRecipe(ALL_TRACKS.filter(t => set.strands.includes(t.id)));
+  const probs = [], seen = new Set();
+  for(let i = 0; probs.length < set.n && i < 300; i++){
+    const q = fromRecipe(recipe);
+    if(seen.has(q.text)) continue;
+    seen.add(q.text);
+    probs.push(q);
+  }
+  T = {t:{id, name:set.name, icon:set.icon}, kind:'set', set, probs, n:0, xp:0, coins:0, right:0, wrong:0, areas:{}};
+  $('k-name').textContent = `${set.icon} ${set.name}`;
+  $('k-back').textContent = '‹ Home';
+  loadSetQ();
+  show('trick');
+}
+
+function loadSetQ(){
+  Object.assign(T, {prob:T.probs[T.n], phase:'cq', typed:'', tries:0, helped:false, picked:[], msg:'', result:null,
+    locked:false, qStart:performance.now()});
+  renderTrick();
+}
+
+function setAnswer(ok, label){
+  if(!T || T.phase !== 'cq' || T.locked) return;
+  clearTimeout(T.autoT);
+  const q = T.prob;
+  // the report and the difficulty only count first tries
+  if(T.tries === 0){ recordStrand(q, ok && !T.helped, performance.now() - T.qStart); noteAdaptive(q, ok && !T.helped); }
+  if(ok){
+    const clean = T.tries === 0 && !T.helped;
+    if(clean) T.right++; else T.wrong++;
+    (T.areas[q.op] ||= [0, 0])[clean ? 0 : 1]++;
+    T.xp += clean ? XP.typed : XP.tapped;
+    T.coins += COIN.answer;
+    Snd.right();
+    Object.assign(T, {phase:'cdone', result:'right', msg:`${pick(PRAISE)} ${q.explain}`});
+    renderTrick();
+    return;
+  }
+  Snd.wrong();
+  T.tries++;
+  if(label != null) T.picked.push(label);
+  if(T.tries >= 2){
+    T.wrong++;
+    (T.areas[q.op] ||= [0, 0])[1]++;
+    Object.assign(T, {phase:'cdone', result:'shown', msg:`It's ${q.answer}. ${q.explain}`});
+    renderTrick();
+    return;
+  }
+  T.msg = q.choices ? 'Not quite. Have another look.' : 'Not quite. Try again, or tap 💡 Show me.';
+  if(q.choices){ renderTrick(); return; }
+  const a = $('k-ans');
+  if(a) a.className = 'answer wrong shake';
+  T.locked = true;
+  setTimeout(()=>{ if(!T) return; T.locked = false; T.typed = ''; renderTrick(); }, 800);
+}
+
+function endSet(){
+  const n = T.probs.length;
+  const moves = updateLevels();
+  const r = settleRound(T.xp + XP.round, T.coins);
+  logSession(T.set.id, T.right, T.right, T.wrong, 0, T.areas);
+  saveRound();
+  const badges = streakBadges(r);
+  for(const mv of moves) if(mv.to > mv.from)
+    badges.push(['gold', `⬆️ Harder ${ALL_TRACKS.find(o => o.id === mv.op).name.toLowerCase()} unlocked!`]);
+  if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
+  T.end = {score:T.right, r, badges, title:`${T.right} of ${n} right first time`,
+    msg:T.right === n ? 'Every one right! 🌟' : T.right >= n - 2 ? 'Really strong work. 💪' : 'Good effort. Every go makes it easier.'};
+  T.phase = 'end';
+  renderTrick();
+  Snd.done();
+  if(T.right >= n - 1) confetti(80);
+  celebrateLevel(r.xpBefore);
+}
+
+/* ============================================================
+   players — "Who's playing?" and the grown-ups list
+   ============================================================ */
+function showWho(){
+  $('w-list').innerHTML = P.list.map((p, i) => {
+    const s = stateOf(p.id), st = liveStreak(s);
+    return `<button type="button" class="who" data-player="${p.id}">${avatarHtml(s.wear, 96)}` +
+      `<span class="pn">${esc(playerName(p, i))}</span><span class="ps">Level ${levelOf(s.xp)} · 🔥 ${plural(st, 'day')}</span></button>`;
+  }).join('');
+  show('who');
+}
+
+function paintPlayers(){
+  const many = P.list.length > 1;
+  $('a-players').hidden = !many;
+  $('a-players').innerHTML = many ? P.list.map((p, i) =>
+    `<button type="button" data-ap="${p.id}" aria-pressed="${p.id === P.active}">${esc(playerName(p, i))}</button>`).join('') : '';
+  $('pl-list').innerHTML = P.list.map((p, i) => {
+    const s = stateOf(p.id);
+    return `<div class="plrow"><input class="nameinput plname" type="text" maxlength="12" data-rename="${p.id}" value="${esc(s.name || p.name || '')}" placeholder="Player ${i + 1}" aria-label="Name of player ${i + 1}">` +
+      `<span class="plmeta">Level ${levelOf(s.xp)} · 🔥 ${plural(liveStreak(s), 'day')}</span>` +
+      (many ? `<button class="btn2 small ghost" type="button" data-remove="${p.id}">Remove</button>` : '') + '</div>';
+  }).join('');
+}
+
+function playerNote(text, err){
+  const n = $('pl-note');
+  n.hidden = !text;
+  n.textContent = text || '';
+  n.className = 'note' + (err ? ' err' : '');
+}
+
+/* ============================================================
    Which trick? — pick the best strategy, then use it
    ============================================================ */
 function startWhich(){
   T = {t:{id:'which', name:'Which trick?', icon:'🔍'}, kind:'which', probs:whichSet(), n:0,
     xp:0, coins:0, picks:0, right:0, wrong:0};
   $('k-name').textContent = '🔍 Which trick?';
+  $('k-back').textContent = '‹ Tricks';
   loadWhich();
   show('trick');
 }
@@ -3794,8 +4442,11 @@ function paintControls(){
     '<optgroup label="One times table">' + [2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12].map(t =>
       opt('table:' + t, `The ${t}× table${STAGE3.includes(t) ? ' (Stage 3)' : ''}`)).join('') + '</optgroup>';
   $('c-lock').value = !S.lock ? '' : S.lock.kind === 'table' ? 'table:' + S.lock.t : 'topic:' + S.lock.id;
+  $('c-cur').innerHTML = `<option value="">Automatic (${CURRENCIES[autoCurrency()].name})</option>` +
+    Object.entries(CURRENCIES).map(([k, c]) => `<option value="${k}">${c.name}</option>`).join('');
+  $('c-cur').value = S.currency || '';
   const max = maxLevel();
-  $('c-levels').innerHTML = OPS.map(op => {
+  $('c-levels').innerHTML = ALL_TRACKS.map(op => {
     const L = S.levels[op.id];
     return `<div class="lvrow"><span class="ln">${op.name}</span><span class="ld">Difficulty ${L} of ${max}: ${op.levels[L - 1]}</span>` +
       `<span class="step"><button type="button" data-lv="${op.id}" data-d="-1"${L <= 1 ? ' disabled' : ''} aria-label="Easier ${op.name.toLowerCase()}">−</button>` +
@@ -3817,6 +4468,7 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', 
   const id = b.dataset.mode;
   if(id === 'focus') showPick();
   else if(id === 'tricks') showTricks();
+  else if(SETS[id]) startSet(id);
   else startMode(id);
 }));
 document.querySelectorAll('[data-input]').forEach(b=>b.addEventListener('click', ()=>{
@@ -3859,7 +4511,65 @@ $('t-which').addEventListener('click', e=>{
 });
 $('k-stage').addEventListener('click', e=>{
   const b = e.target.closest('[data-w]');
-  if(b) pickTrick(b.dataset.w);
+  if(b){ pickTrick(b.dataset.w); return; }
+  const c = e.target.closest('[data-c]');
+  if(c && T && T.phase === 'cq') setAnswer(c.dataset.c === T.prob.answer, c.dataset.c);
+});
+$('w-list').addEventListener('click', e=>{
+  const b = e.target.closest('[data-player]');
+  if(!b) return;
+  usePlayer(b.dataset.player);
+  mirrorState();
+  paintHome();
+  show('home');
+});
+$('h-switch').addEventListener('click', showWho);
+$('a-players').addEventListener('click', e=>{
+  const b = e.target.closest('[data-ap]');
+  if(!b) return;
+  usePlayer(b.dataset.ap);
+  paintPlayers();
+  paintControls();
+  adultTab($('a-progress').hidden ? 'settings' : 'progress');
+});
+$('pl-list').addEventListener('change', e=>{
+  const i = e.target.closest('[data-rename]');
+  if(!i) return;
+  renamePlayer(i.dataset.rename, i.value.trim().slice(0, 12));
+  paintPlayers();
+  mirrorState();
+  playerNote('Name saved.');
+});
+$('pl-list').addEventListener('click', e=>{
+  const b = e.target.closest('[data-remove]');
+  if(!b) return;
+  const id = b.dataset.remove, name = playerName(P.list.find(p => p.id === id), P.list.findIndex(p => p.id === id));
+  // two taps, so progress isn't deleted by accident
+  if(!b.dataset.armed){
+    b.dataset.armed = '1';
+    b.textContent = 'Tap again to delete';
+    playerNote(`Tapping again deletes all of ${name}'s progress on this iPad.`, true);
+    return;
+  }
+  removePlayer(id);
+  paintPlayers();
+  paintControls();
+  mirrorState();
+  playerNote(`${name} removed.`);
+});
+$('pl-add').addEventListener('click', ()=>{
+  const name = $('pl-new').value.trim().slice(0, 12);
+  if(!name){ playerNote('Type a name first.', true); return; }
+  addPlayer(name);
+  $('pl-new').value = '';
+  paintPlayers();
+  mirrorState();
+  playerNote(`${name} added. The app will ask "Who's playing?" when it opens.`);
+});
+$('c-cur').addEventListener('change', e=>{
+  S.currency = e.target.value || null;
+  saveState();
+  controlNote(`Money questions now use ${cur().name}.`);
 });
 $('c-lock').addEventListener('change', e=>{
   const v = e.target.value;
@@ -3878,7 +4588,7 @@ $('c-levels').addEventListener('click', e=>{
 });
 $('c-stretch').addEventListener('change', e=>{
   S.stretch = e.target.checked;
-  if(!S.stretch) for(const op of OPS) if(S.levels[op.id] > STAGE3_TOP) setLevel(op.id, STAGE3_TOP);
+  if(!S.stretch) for(const op of ALL_TRACKS) if(S.levels[op.id] > STAGE3_TOP) setLevel(op.id, STAGE3_TOP);
   saveState();
   paintControls();
 });
@@ -3887,10 +4597,11 @@ $('c-stretch').addEventListener('change', e=>{
   if(b) openTrick(b.dataset.trick);
 }));
 $('k-back').addEventListener('click', ()=>{
-  // leaving mid-lesson keeps nothing, like stopping a game
+  // leaving part-way keeps nothing, like stopping a game
+  const home = T && T.kind === 'set';
   if(T) clearTimeout(T.autoT);
   T = null;
-  showTricks();
+  if(home){ paintHome(); show('home'); } else showTricks();
 });
 $('k-act').addEventListener('click', e=>{
   const b = e.target.closest('[data-k]');
@@ -3909,6 +4620,10 @@ $('k-act').addEventListener('click', e=>{
   }
   else if(k === 'list') showTricks();
   else if(k === 'which') startWhich();
+  else if(k === 'cshow'){ T.helped = true; T.msg = ''; renderTrick(); }
+  else if(k === 'cnext') nextProblem();
+  else if(k === 'again-set') startSet(T.set.id);
+  else if(k === 'home'){ T = null; paintHome(); show('home'); }
 });
 
 $('h-shop').addEventListener('click', showShop);
@@ -3929,8 +4644,7 @@ $('s-items').addEventListener('click', e=>{
 });
 $('s-act').addEventListener('click', shopAction);
 $('s-name').addEventListener('input', e=>{
-  S.name = e.target.value.trim().slice(0, 12);
-  saveState();
+  renamePlayer(P.active, e.target.value.trim().slice(0, 12));
   mirrorState();
 });
 $('lu-ok').addEventListener('click', ()=>{ $('levelup').hidden = true; });
@@ -3965,6 +4679,7 @@ $('a-progress').addEventListener('click', e=>{
     if(kind === 'focus') showLearn(Number(arg));
     else if(kind === 'trick') openTrick(arg);
     else if(kind === 'mode') startMode(arg);
+    else if(kind === 'set') startSet(arg);
     else if(kind === 'grid') showGrid();
     return;
   }
@@ -4038,6 +4753,7 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
 
 mirrorState();
 paintHome();
+if(P.list.length > 1) showWho();
 </script>
 </body>
 </html>

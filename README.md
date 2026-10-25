@@ -5,15 +5,19 @@ A mental maths practice app for 8-year-olds, built for an iPad. It works offline
 **Play it:** https://3r3bx.github.io/mental-maths/
 
 <p>
-  <img src="docs/screenshots/home.png" width="150" alt="Home screen with avatar, level, streak and game modes">
-  <img src="docs/screenshots/game.png" width="150" alt="A Daily Sprint round with the number pad">
-  <img src="docs/screenshots/trick.png" width="150" alt="Maths Tricks lesson: 14 + 24 split into tens and ones">
-  <img src="docs/screenshots/which.png" width="150" alt="Which trick? game: picking Add 9 for 46 + 9">
-  <img src="docs/screenshots/shop.png" width="150" alt="Avatar shop">
-  <img src="docs/screenshots/report.png" width="150" alt="Parents' progress report">
+  <img src="docs/screenshots/home.png" width="180" alt="Home screen with avatar, level, streak and game modes">
+  <img src="docs/screenshots/game.png" width="180" alt="A Daily Sprint round with the number pad">
+  <img src="docs/screenshots/everyday.png" width="180" alt="Everyday Maths: reading a clock showing quarter to 7">
+  <img src="docs/screenshots/story.png" width="180" alt="Story Problems: a two-step bus problem, answered with its number sentence">
+</p>
+<p>
+  <img src="docs/screenshots/trick.png" width="180" alt="Maths Tricks lesson: 14 + 24 split into tens and ones">
+  <img src="docs/screenshots/which.png" width="180" alt="Which trick? game: picking Add 9 for 46 + 9">
+  <img src="docs/screenshots/shop.png" width="180" alt="Avatar shop">
+  <img src="docs/screenshots/report.png" width="180" alt="Parents' progress report">
 </p>
 
-The content follows the **Cambridge Primary Stage 3** maths curriculum: addition and subtraction facts to 20 with speed, adding and subtracting within 100, the 2, 3, 4, 5 and 10 times tables by heart, and division as the inverse of multiplication. The 3× and 4× tables get extra weight, because they're the usual gap for children coming from the IB PYP.
+The content follows the **Cambridge Primary Stage 3** maths curriculum: addition and subtraction facts to 20 with speed, adding and subtracting within 100, the 2, 3, 4, 5 and 10 times tables by heart, division as the inverse of multiplication, fractions of amounts, money, telling the time, and word problems. The 3× and 4× tables get extra weight, because they're the usual gap for children coming from the IB PYP.
 
 ## What's in it
 
@@ -25,12 +29,14 @@ The content follows the **Cambridge Primary Stage 3** maths curriculum: addition
 | 🎯 **Focus** | One times table. Starts with a look-first card that marks the child's tricky facts. |
 | 👻 **Ghost Race** | Race against your own best round, shown as two lanes. Same questions as Daily Sprint. |
 | 📋 **Check-up** | 25 times-table questions, 6 seconds each, due weekly. Tracks progress week to week. |
+| 🕒 **Everyday Maths** | 10 questions on fractions of amounts, money and telling the time. No clock. |
+| 📖 **Story Problems** | 6 word problems, one or two steps. No clock. |
 
-Every round opens with three untimed warm-up questions. Answers can be typed on a number pad or tapped from a 12-button grid. Only typed answers count towards mastery, because tapping can be done by elimination.
+The first four are timed. In those, every round opens with three untimed warm-up questions. Answers can be typed on a number pad or tapped from a 12-button grid. Only typed answers count towards mastery, because tapping can be done by elimination.
 
 ### Difficulty that adjusts itself
 
-Adding, taking away, times tables and dividing each have their own difficulty, from 1 to 5:
+Each topic has its own difficulty, from 1 to 5:
 
 | | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
@@ -38,13 +44,41 @@ Adding, taking away, times tables and dividing each have their own difficulty, f
 | Taking away | facts to 20 | 2-digit − 1-digit | 2-digit − 2-digit, within 100 | 3-digit − 2-digit | 3-digit − 3-digit |
 | Times tables | 2×, 5×, 10× | 3× and 4× | all Stage 3 tables | 6× and 8× | 7×, 9×, 11×, 12× |
 | Dividing | ÷ 2, 5, 10 | ÷ 3 and 4 | all Stage 3 tables | ÷ 6 and 8 | ÷ 7, 9, 11, 12 |
+| Fractions | halves | quarters and thirds | three quarters; parts of a whole | fifths, tenths, ⅔ | ⅖, ³⁄₁₀ and similar |
+| Money | totals of whole amounts | smaller coins; simple change | change from 5 or 10 | a price × how many | totals, then change |
+| Time | o'clock, half past | quarter past and to | any 5 minutes | when does it end? | minutes between times |
+| Word problems | one step, within 20 | one step, within 100 | Stage 3 tables; two steps | two steps mixing × with + or − | harder two-step |
 
-- Daily Sprint and Ghost Race ask about 60% of questions at the current difficulty. The rest are easier review.
-- Typed answers at the current difficulty fill a window of the last 12. Once 10 or more of them are at least 85% right, the difficulty goes up, and the child sees "⬆️ Harder adding unlocked!".
+- Each round asks about 60% of questions at the current difficulty. The rest are easier review.
+- Answers at the current difficulty fill a window of the last 12. In the timed modes only typed answers count; in the calm modes only first tries count. Once 10 or more of them are at least 85% right, the difficulty goes up, and the child sees "⬆️ Harder adding unlocked!".
 - If the last 8 fall below 60%, it goes down quietly, with no message, so a struggling child never sees a "demotion".
 - Everything starts at 2. Nothing goes above 3 (the end of Stage 3) unless a grown-up allows it.
 
-A missed fact comes back two or three questions later in the same round. After the round, the results screen shows how to work it out: a dot picture for times tables, a "through ten" step for sums, and a link to the matching Maths Trick.
+### Everyday Maths and Story Problems
+
+These two modes have no countdown, because reading a clock or a story shouldn't be a race. After every answer the app shows how it works. If the child is stuck, **💡 Show me** explains the question first.
+
+- **Fractions:** halves, quarters, thirds and three quarters of amounts, such as ¾ of 24. Typed answers. A dot picture of the equal groups appears after answering.
+- **Money:** totals and change, with price tags. The currency follows the iPad's region (dirhams on a UAE iPad, for example), and a grown-up can change it in Settings.
+- **Time:**
+  - reading an analogue clock: o'clock and half past, then quarter past and quarter to, then any 5 minutes;
+  - time passing: "the film starts at 3:15 and lasts 40 minutes…";
+  - facts such as minutes in an hour.
+- **Word problems:** one- and two-step stories using all four operations. After each answer the number sentence is shown, e.g. "33 − 4 = 29, then 29 + 2 = 31". Characters are always named, never "he" or "she".
+
+Answers with decimals or times (2.60, 3:45) are four choices, because the number pad has no decimal point or colon. The wrong choices are slips children really make: for 6:45, they're 5:45 and 7:45 (reading the wrong hour) and 9:30 (mixing up the hands).
+
+### Missed facts come back
+
+A missed fact comes back two or three questions later in the same round. It also comes back on later days:
+
+- After a miss, the fact returns **1, 3, 7 and 14 days** later, as about one Daily Sprint or Ghost Race question in five.
+- Answering it right on each of those visits moves it to the next gap. After the 14-day visit it's done.
+- Another miss starts it again from 1 day.
+
+The results screen says how many came back, and the parents' report lists what's due.
+
+After each timed round, the results screen also shows how to work out the facts that were missed: a dot picture for times tables, a "through ten" step for sums, and a link to the matching Maths Trick.
 
 ### Maths Tricks
 
@@ -92,6 +126,10 @@ The wrong options are always tricks that genuinely don't fit the problem, so the
 - **Speed rank:** based on median answer time. A rank, once earned, is never taken away.
 - **Times-tables grid:** fills green as facts are mastered.
 
+### More than one child
+
+Each child has their own progress, avatar, streak, rewards and settings. Add children in **Settings → Players**. With two or more, the app opens on a **"Who's playing?"** screen, and a **👥 Switch player** link appears on the home screen. The grown-ups area has a switcher at the top to choose whose report and settings you're looking at.
+
 ### For grown-ups
 
 Press and hold **Hold for grown-ups** on the home screen for 2 seconds.
@@ -99,14 +137,16 @@ Press and hold **Hold for grown-ups** on the home screen for 2 seconds.
 - **Progress:**
   - the last 7 days compared with the week before;
   - what's going well, and up to three next steps, each with a button that starts the right activity;
-  - skills by area, rated *Strong*, *Getting there* or *Needs practice*;
+  - skills by area, including fractions, money, time and word problems, rated *Strong*, *Getting there* or *Needs practice*;
   - each Stage 3 times table, with its tricky facts named;
-  - facts that keep going wrong, and facts that are right but slow;
+  - facts that keep going wrong, facts that are right but slow, and missed facts due to come back;
   - a 14-day practice chart and a check-up chart.
 - **Settings:**
+  - **Players:** add, rename and remove children. Removing takes two taps, because it deletes that child's progress.
   - **Practice lock:** keep Daily Sprint and Ghost Race on one times table or one topic, for example before a school test. While it's on, a lock shows on the child's home screen and a banner shows on the report, so it isn't forgotten. Locked rounds don't change the difficulty.
   - **Difficulty:** see each difficulty and nudge it with − and +. "Allow harder than Stage 3" opens difficulties 4 and 5.
-  - Daily streak reminders, and backup and restore.
+  - **Money:** the currency used in money questions.
+  - Daily streak reminders, and backup and restore. A backup holds every child.
 
 Ratings use each fact's last 6 answers, so they describe how things are going now. "Strong" means 90% right in about 3 seconds or less: the fact is remembered, not worked out.
 
@@ -123,8 +163,8 @@ After that it works offline. Always open it from the icon. Progress saved by the
 ## Privacy
 
 - No accounts, no analytics, no ads, no third-party scripts.
-- Progress is stored only in the iPad's local storage. The **Settings → Back up progress** button saves a copy to Files.
-- The daily reminder push carries no data. The iPad writes the message itself from its own saved streak.
+- Progress is stored only in the iPad's local storage, one entry per child. The **Settings → Back up progress** button saves a copy of everyone to Files.
+- The daily reminder push carries no data. The iPad writes the message itself from its own saved streaks, naming whichever children still need a round.
 
 ## How it works
 
@@ -144,9 +184,11 @@ The script inside `index.html` is split into labelled sections:
 
 | Section | Contents |
 |---|---|
-| `storage` | Progress saved in `localStorage` under one key, with a version number so old saves are upgraded, not lost. |
+| `storage` | Each child's progress in `localStorage` under its own key (the first child keeps the original key, so older installs still load), plus the list of players. Saves carry a version number, so old saves are upgraded, not lost. |
 | `questions` | Question generator, aligned to Stage 3. Each question remembers its difficulty tier. |
 | `adapt` | The self-adjusting difficulty and the grown-up practice lock. |
+| `everyday` | Fractions, money, time and word-problem generators, the currency, and the two calm modes' settings. |
+| `review` | The 1, 3, 7 and 14-day schedule for missed facts. |
 | `hints`, `tricks` | Worked steps and pictures, plus `trickFits`, which decides which tricks suit a problem in Which trick?. |
 | `options` | The tap grid. |
 | `mastery` | Per-fact records (last 6 results, speed, streak of quick right answers) and fact families: 3 × 4, 4 × 3, 12 ÷ 3 and 12 ÷ 4 count as one. |
@@ -196,7 +238,9 @@ To publish a change, commit and push to `main`. GitHub Pages redeploys in about 
 
 ## Not built yet
 
-- Fractions, money and time questions, such as half of 18, change from $5, and reading a clock.
-- Word problems.
-- Bringing missed facts back on later days (spaced repetition across sessions). Today they come back within the same round.
-- More than one child on the same iPad.
+These were in the original plan's parent controls but haven't been built:
+
+- A setting for how long a round is. Rounds are fixed: 60 seconds, 25, 10 or 6 questions.
+- Turning individual topics off.
+- A "reset progress" button. Removing a player and adding them again does the same.
+- Choosing the reminder time in the app. Today it's set in the workflow file.

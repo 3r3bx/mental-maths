@@ -47,6 +47,25 @@ function notice(s){
   return {title: '🔥 Keep your streak going!', body: `${you} ${s.streak}-day streak needs one round today.`, due: true};
 }
 
+/* One push a day covers every player on the iPad. Older saves held a
+   single player's streak rather than a list. */
+function joinNames(xs){
+  return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
+}
+
+function noticeAll(st){
+  const kids = Array.isArray(st.kids) ? st.kids : [st];
+  if(kids.length === 1) return notice(kids[0]);
+  const all = kids.map(k => ({k, n:notice(k)}));
+  const waiting = all.filter(x => x.n.due);
+  if(!waiting.length) return {title:'✅ Streaks safe!', body:`${joinNames(all.map(x => x.k.name))}: every streak is safe today. See you tomorrow!`, due:false};
+  if(waiting.length === 1){
+    const {k, n} = waiting[0];
+    return {...n, body:n.body.startsWith(k.name) ? n.body : `${k.name}: ${n.body}`};
+  }
+  return {title:'🔥 Time for maths!', body:`${joinNames(waiting.map(x => x.k.name))} each need one round today to keep their streaks going.`, due:true};
+}
+
 self.addEventListener('push', e => {
   e.waitUntil((async () => {
     let s = {};
@@ -55,7 +74,7 @@ self.addEventListener('push', e => {
       const r = await c.match(new URL('state.json', self.registration.scope).href);
       if (r) s = await r.json();
     } catch {}
-    const n = notice(s);
+    const n = noticeAll(s);
     if (n.due && self.navigator.setAppBadge) self.navigator.setAppBadge(1).catch(() => {});
     await self.registration.showNotification(n.title, {
       body: n.body, icon: 'icon-180.png', badge: 'icon-180.png', tag: 'streak'
