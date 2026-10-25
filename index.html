@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mental Maths">
+<meta name="theme-color" content="#1B2A41">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Mental Maths</title>
+<style>
+  :root{
+    --bg:#1B2A41;
+    --bg-deep:#132032;
+    --card:#25395A;
+    --card-hi:#2E4570;
+    --ink:#F2F6FB;
+    --ink-soft:#A9BBD4;
+    --ink-faint:#6F85A6;
+    --accent:#FFC857;
+    --accent-ink:#2A2008;
+    --accent-edge:#D9A233;
+    --good:#4ECD8E;
+    --good-deep:#1E6B47;
+    --bad:#FF6B6B;
+    --bad-deep:#7A2A2A;
+    --learn:#2B4A7A;
+    --key:#2E4570;
+    --key-hi:#3A5588;
+    --safe-t:env(safe-area-inset-top,0px);
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none!important;}
+
+  html,body{
+    margin:0;height:100%;overflow:hidden;
+    background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    -webkit-text-size-adjust:100%;
+    -webkit-user-select:none;user-select:none;
+    touch-action:manipulation;
+    overscroll-behavior:none;
+  }
+
+  #app{
+    position:fixed;inset:0;
+    padding:calc(var(--safe-t) + 10px) 14px calc(var(--safe-b) + 10px);
+    display:flex;flex-direction:column;
+  }
+
+  .screen{
+    flex:1;min-height:0;
+    display:none;
+    flex-direction:column;
+  }
+  .screen.on{display:flex;}
+  .screen.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .inner{
+    margin:auto;width:100%;max-width:660px;
+    display:flex;flex-direction:column;align-items:center;
+    gap:clamp(14px,2.6vh,22px);
+    padding:6px 0 18px;
+    text-align:center;
+  }
+
+  h1,h2{margin:0;letter-spacing:-0.02em;}
+  .hint{color:var(--ink-faint);font-size:13.5px;max-width:34ch;line-height:1.5;margin:0;}
+
+  /* ============ HOME ============ */
+  .brand{display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .brand h1{font-size:clamp(32px,8vw,50px);font-weight:800;line-height:1;}
+  .brand .sub{color:var(--ink-soft);font-size:clamp(13.5px,3vw,15.5px);max-width:40ch;line-height:1.45;}
+  .brand .sub b{color:var(--ink);}
+
+  .chips{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;}
+  .chip{
+    background:var(--card);border-radius:999px;
+    padding:8px 16px;font-size:14px;font-weight:650;
+    display:flex;gap:7px;align-items:center;
+    color:var(--ink-soft);
+  }
+  .chip b{color:var(--ink);font-variant-numeric:tabular-nums;}
+  .chip.hot b{color:var(--accent);}
+
+  .goal{
+    display:flex;align-items:center;gap:12px;
+    background:var(--card);border-radius:999px;
+    padding:9px 18px 9px 12px;
+    font-size:14.5px;color:var(--ink-soft);font-weight:600;
+  }
+  .goal .dots{display:flex;gap:6px;}
+  .goal .dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink-faint);}
+  .goal .dots i.on{background:var(--good);border-color:var(--good);}
+  .goal b{color:var(--ink);}
+  .goal.done b{color:var(--good);}
+
+  .modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;}
+  .mode{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);
+    border-radius:20px;padding:16px 16px 14px;
+    text-align:left;
+    display:flex;flex-direction:column;gap:4px;
+    min-height:136px;
+    box-shadow:0 5px 0 var(--bg-deep);
+    transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .mode:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bg-deep);}
+  .mode .ic{font-size:30px;line-height:1;}
+  .mode .nm{font-size:clamp(17px,4vw,20px);font-weight:800;margin-top:6px;}
+  .mode .ds{font-size:13.5px;color:var(--ink-soft);line-height:1.35;}
+  .mode .ft{margin-top:auto;padding-top:8px;font-size:13px;font-weight:750;color:var(--accent);font-variant-numeric:tabular-nums;}
+  .mode.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 5px 0 var(--accent-edge);}
+  .mode.primary:active{box-shadow:0 1px 0 var(--accent-edge);}
+  .mode.primary .ds{color:#5A4613;}
+  .mode.primary .ft{color:var(--accent-ink);}
+  .mode.due .ft{color:var(--good);}
+
+  .opts{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;}
+  .seg{display:flex;background:var(--bg-deep);border-radius:14px;padding:4px;gap:4px;}
+  .seg button{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:none;color:var(--ink-soft);
+    font-size:15px;font-weight:700;
+    padding:10px 16px;border-radius:10px;min-height:44px;
+  }
+  .seg button[aria-pressed="true"]{background:var(--card-hi);color:var(--ink);}
+  .iconbtn{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--bg-deep);color:var(--ink);
+    width:52px;height:52px;border-radius:14px;font-size:22px;
+  }
+  .link{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:none;color:var(--ink-soft);
+    font-size:15.5px;font-weight:700;padding:10px 14px;min-height:44px;
+  }
+  .banner{
+    background:var(--bg-deep);border:1.5px dashed var(--ink-faint);
+    border-radius:14px;padding:11px 16px;
+    font-size:13.5px;line-height:1.5;color:var(--ink-soft);max-width:44ch;
+  }
+  .banner b{color:var(--ink);}
+
+  /* ============ PICK / LEARN / GRID ============ */
+  .topbar{display:flex;align-items:center;gap:14px;width:100%;text-align:left;}
+  .topbar h2{font-size:clamp(20px,4.6vw,25px);font-weight:800;}
+  .back{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink-soft);
+    font-size:16px;font-weight:700;padding:10px 16px;border-radius:12px;min-height:44px;
+    flex-shrink:0;
+  }
+
+  .tables{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));
+    gap:12px;width:100%;padding-top:10px;
+  }
+  .tbtn{
+    position:relative;
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);
+    border-radius:18px;padding:18px 10px 13px;min-height:112px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    box-shadow:0 5px 0 var(--bg-deep);
+    transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .tbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bg-deep);}
+  .tbtn .tn{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+  .tbtn .star{position:absolute;top:8px;right:10px;font-size:14px;}
+  .tbtn .try{
+    position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:var(--accent-ink);
+    font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:999px;white-space:nowrap;
+  }
+  .tbtn.suggest{box-shadow:0 0 0 3px var(--accent),0 5px 0 var(--bg-deep);}
+  .mini{display:flex;gap:3px;}
+  .mini i{width:8px;height:8px;border-radius:2px;background:var(--bg-deep);}
+  .mini i.learning{background:var(--ink-faint);}
+  .mini i.tricky{background:var(--bad);}
+  .mini i.mastered{background:var(--good);}
+
+  .lcard{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px;}
+  .lrow{
+    display:grid;grid-template-columns:1fr auto 26px;align-items:center;gap:12px;
+    background:var(--card);border-radius:12px;padding:9px 16px;
+    font-size:clamp(20px,4.6vw,26px);font-weight:700;font-variant-numeric:tabular-nums;
+    text-align:left;
+  }
+  .lrow b{color:var(--accent);}
+  .lrow em{font-style:normal;text-align:center;font-size:18px;}
+  .lrow.tricky{background:var(--bad-deep);}
+  .lrow.tricky em{color:var(--bad);}
+  .lrow.mastered em{color:var(--good);}
+
+  .mgrid{
+    display:grid;grid-template-columns:40px repeat(9,minmax(0,1fr));
+    gap:4px;width:100%;max-width:620px;
+  }
+  .mgrid .hd{font-size:12px;color:var(--ink-faint);font-weight:700;display:flex;align-items:center;justify-content:center;padding-bottom:2px;}
+  .mgrid .rh{font-size:15px;font-weight:800;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;gap:1px;}
+  .mgrid .rh.s3{color:var(--accent);}
+  .mgrid .rh small{font-size:9px;}
+  .cell{
+    aspect-ratio:1;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(11px,2.4vw,16px);font-weight:700;font-variant-numeric:tabular-nums;
+    background:var(--bg-deep);color:var(--ink-faint);
+  }
+  .cell.learning{background:var(--learn);color:var(--ink);}
+  .cell.tricky{background:var(--bad-deep);color:var(--bad);outline:2px dashed var(--bad);outline-offset:-2px;}
+  .cell.mastered{background:var(--good-deep);color:var(--good);box-shadow:inset 0 0 0 2px var(--good);}
+  .legend{display:flex;gap:8px 14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--ink-soft);}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .legend i{width:14px;height:14px;border-radius:4px;background:var(--bg-deep);}
+  .legend i.learning{background:var(--learn);}
+  .legend i.tricky{background:var(--bad-deep);outline:2px dashed var(--bad);outline-offset:-2px;}
+  .legend i.mastered{background:var(--good-deep);box-shadow:inset 0 0 0 2px var(--good);}
+  .msum{font-size:17px;color:var(--ink-soft);font-weight:650;margin:0;}
+  .msum b{color:var(--good);font-size:21px;font-variant-numeric:tabular-nums;}
+
+  /* ============ GAME ============ */
+  #game{gap:10px;}
+
+  .hud{
+    display:grid;grid-template-columns:1fr auto 1fr;
+    align-items:center;gap:10px;
+    flex-shrink:0;
+  }
+  .hud .score{font-size:15px;color:var(--ink-soft);font-weight:650;}
+  .hud .score b{color:var(--ink);font-size:19px;font-variant-numeric:tabular-nums;}
+  .hud .right{text-align:right;}
+  .clock{
+    font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;
+    color:var(--ink);min-width:62px;text-align:center;
+    letter-spacing:-0.01em;
+  }
+  .clock.warm{color:var(--accent);font-size:15px;font-weight:700;letter-spacing:0.04em;}
+  .clock.low{color:var(--bad);}
+
+  .timebar{
+    height:7px;border-radius:4px;background:var(--bg-deep);
+    overflow:hidden;flex-shrink:0;
+  }
+  .timebar i{
+    display:block;height:100%;width:100%;
+    background:var(--accent);border-radius:4px;
+    transform-origin:left center;
+  }
+  .timebar.warm i{background:var(--good);}
+  .timebar.low i{background:var(--bad);}
+
+  .track{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+  .lane{position:relative;height:30px;background:var(--bg-deep);border-radius:15px;}
+  .lane .who{
+    position:absolute;top:50%;left:0;transform:translateY(-50%);
+    width:28px;text-align:center;font-size:21px;line-height:1;
+  }
+  .lane .tag{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    font-size:12px;font-weight:750;color:var(--ink-faint);
+    font-variant-numeric:tabular-nums;
+  }
+  .lane.ghost .who{opacity:0.7;}
+
+  .qwrap{
+    flex:1;min-height:0;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:clamp(10px,2.4vh,20px);
+    position:relative;
+  }
+  .warmtag{
+    font-size:12px;font-weight:750;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--accent);
+    opacity:0;
+  }
+  .warmtag.on{opacity:1;}
+
+  .question{
+    font-size:clamp(46px,13vw,86px);font-weight:800;
+    font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+    line-height:1;text-align:center;
+  }
+
+  .answer{
+    font-size:clamp(38px,10vw,64px);font-weight:800;
+    font-variant-numeric:tabular-nums;
+    min-height:1.15em;min-width:3.2em;
+    padding:4px 20px;border-radius:16px;
+    background:var(--bg-deep);
+    display:flex;align-items:center;justify-content:center;
+    letter-spacing:0.02em;
+    transition:background .14s ease,color .14s ease;
+  }
+  .answer.empty{color:var(--ink-faint);}
+  .answer.right{background:var(--good-deep);color:var(--good);}
+  .answer.wrong{background:var(--bad-deep);color:var(--bad);}
+
+  .shake{animation:shake .32s ease;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-9px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-5px);}
+    80%{transform:translateX(3px);}
+  }
+  .pop{animation:pop .26s ease;}
+  @keyframes pop{
+    0%{transform:scale(1);}
+    45%{transform:scale(1.11);}
+    100%{transform:scale(1);}
+  }
+
+  .truth{
+    font-size:17px;font-weight:700;color:var(--bad);
+    font-variant-numeric:tabular-nums;
+    height:1.3em;
+  }
+  .truth.good{color:var(--good);}
+
+  /* ---- keypad and answer grid ---- */
+  .pad,.choices{
+    display:grid;
+    gap:clamp(7px,1.5vh,11px);
+    flex-shrink:0;
+    width:100%;margin:0 auto;
+  }
+  .pad{grid-template-columns:repeat(3,1fr);max-width:430px;}
+  .choices{grid-template-columns:repeat(4,1fr);max-width:540px;}
+  .pad button,.choices button{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--key);color:var(--ink);
+    font-weight:700;font-variant-numeric:tabular-nums;
+    height:clamp(58px,9.2vh,78px);
+    border-radius:15px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .06s ease,transform .06s ease;
+  }
+  .pad button{font-size:clamp(25px,6vw,33px);}
+  .choices button{font-size:clamp(21px,5vw,29px);}
+  .pad button:active,.choices button:active{background:var(--key-hi);transform:scale(0.95);}
+  .pad button.go{background:var(--good);color:#0C2A1B;font-size:clamp(22px,5vw,28px);}
+  .pad button.go:active{background:#6FE0A6;}
+  .pad button.del{color:var(--ink-soft);font-size:clamp(22px,5vw,27px);}
+  .choices button.right{background:var(--good);color:#0C2A1B;}
+  .choices button.wrong{background:var(--bad);color:#2A0C0C;}
+
+  .quit{
+    position:absolute;top:0;right:0;
+    appearance:none;border:none;background:none;cursor:pointer;
+    color:var(--ink-faint);font-size:15px;font-family:inherit;
+    padding:8px 12px;font-weight:600;
+  }
+
+  /* ============ RESULTS ============ */
+  .bigscore{
+    font-size:clamp(66px,19vw,118px);font-weight:800;line-height:0.95;
+    font-variant-numeric:tabular-nums;color:var(--accent);
+    letter-spacing:-0.03em;
+  }
+  .bigscore .of{font-size:0.3em;color:var(--ink-soft);font-weight:650;display:block;margin-top:8px;letter-spacing:0;}
+  .verdict{font-size:clamp(20px,5vw,27px);font-weight:750;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:540px;}
+  .badge{
+    background:var(--card);color:var(--ink);
+    padding:8px 16px;border-radius:999px;
+    font-size:14.5px;font-weight:750;
+  }
+  .badge.gold{background:var(--accent);color:var(--accent-ink);}
+  .badge.green{background:var(--good-deep);color:var(--good);}
+  .stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .stat{background:var(--card);border-radius:14px;padding:12px 20px;min-width:92px;}
+  .stat .v{font-size:25px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .stat .k{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.08em;font-weight:650;margin-top:2px;}
+  .stat.ok .v{color:var(--good);}
+  .stat.no .v{color:var(--bad);}
+
+  .practise{
+    background:var(--card);border-radius:16px;
+    padding:14px 18px;width:100%;max-width:420px;
+    display:flex;flex-direction:column;gap:12px;text-align:left;
+  }
+  .practise .h{
+    font-size:11.5px;text-transform:uppercase;letter-spacing:0.1em;
+    color:var(--ink-soft);font-weight:700;
+  }
+  .prow{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--bg-deep);padding-top:11px;}
+  .practise .h + .prow{border-top:none;padding-top:0;}
+  .pq{display:flex;justify-content:space-between;font-size:17px;font-weight:650;font-variant-numeric:tabular-nums;}
+  .pq b{color:var(--accent);}
+  .ph{display:flex;gap:12px;align-items:center;font-size:14px;color:var(--ink-soft);line-height:1.4;}
+  .array{display:grid;gap:3px;flex-shrink:0;}
+  .array i{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+  .btnrow{display:flex;gap:11px;flex-wrap:wrap;justify-content:center;}
+  .btn2,.playbtn{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--accent);color:var(--accent-ink);
+    font-weight:800;border-radius:17px;
+    box-shadow:0 5px 0 var(--accent-edge);
+    transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .btn2{font-size:19px;padding:16px 36px;}
+  .playbtn{font-size:clamp(21px,5vw,26px);padding:18px 54px;}
+  .btn2:active,.playbtn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-edge);}
+  .btn2.ghost{
+    background:var(--card);color:var(--ink-soft);box-shadow:0 5px 0 var(--bg-deep);
+    font-size:16px;padding:16px 26px;
+  }
+  .btn2.ghost:active{box-shadow:0 1px 0 var(--bg-deep);}
+
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===== HOME ===== -->
+  <div class="screen scroll on" id="home"><div class="inner">
+    <div class="brand">
+      <h1>Mental Maths</h1>
+      <div class="sub" id="h-next"></div>
+    </div>
+    <div class="chips">
+      <div class="chip hot">🔥 <b id="h-streak">0</b> day streak</div>
+      <div class="chip" id="h-rank"></div>
+    </div>
+    <div class="goal" id="h-goal">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span id="h-goaltext"></span>
+    </div>
+    <div class="modes">
+      <button class="mode primary" type="button" data-mode="sprint">
+        <span class="ic">⚡</span><span class="nm">Daily Sprint</span>
+        <span class="ds">60 seconds of mixed facts</span>
+        <span class="ft" id="m-sprint"></span>
+      </button>
+      <button class="mode" type="button" data-mode="focus">
+        <span class="ic">🎯</span><span class="nm">Focus</span>
+        <span class="ds">Practise one times table</span>
+        <span class="ft" id="m-focus"></span>
+      </button>
+      <button class="mode" type="button" data-mode="ghost">
+        <span class="ic">👻</span><span class="nm">Ghost Race</span>
+        <span class="ds">Race against your best round</span>
+        <span class="ft" id="m-ghost"></span>
+      </button>
+      <button class="mode" type="button" data-mode="check" id="m-checkcard">
+        <span class="ic">📋</span><span class="nm">Check-up</span>
+        <span class="ds">25 questions, 6 seconds each</span>
+        <span class="ft" id="m-check"></span>
+      </button>
+    </div>
+    <div class="opts">
+      <div class="seg" role="group" aria-label="How to answer">
+        <button type="button" data-input="type">⌨️ Type it</button>
+        <button type="button" data-input="tap">👆 Tap it</button>
+      </div>
+      <button class="iconbtn" type="button" id="h-sound" aria-label="Sound on"></button>
+    </div>
+    <button class="link" type="button" id="h-grid">My times tables grid →</button>
+    <div class="banner" id="h-install" hidden>
+      To keep progress safe, add this to your Home Screen: tap <b>Share</b>, then <b>Add to Home Screen</b>, and always open it from that icon.
+    </div>
+  </div></div>
+
+  <!-- ===== FOCUS: PICK A TABLE ===== -->
+  <div class="screen scroll" id="pick"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>Pick a times table</h2></div>
+    <div class="tables" id="p-tables"></div>
+    <p class="hint">⭐ means it's on your school's Stage 3 list. The little squares fill green as you master each fact.</p>
+  </div></div>
+
+  <!-- ===== FOCUS: LOOK FIRST ===== -->
+  <div class="screen scroll" id="learn"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="pick">‹ Back</button><h2 id="l-title"></h2></div>
+    <div class="lcard" id="l-rows"></div>
+    <p class="hint" id="l-hint"></p>
+    <button class="playbtn" type="button" id="l-start">I'm ready</button>
+  </div></div>
+
+  <!-- ===== MASTERY GRID ===== -->
+  <div class="screen scroll" id="grid"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>My times tables</h2></div>
+    <p class="msum" id="mg-sum"></p>
+    <div class="mgrid" id="mg"></div>
+    <div class="legend">
+      <span><i></i>Not yet</span>
+      <span><i class="learning"></i>Learning</span>
+      <span><i class="tricky"></i>Tricky</span>
+      <span><i class="mastered"></i>Mastered</span>
+    </div>
+    <p class="hint">When you master 3 × 4, the 4 × 3 square turns green too. They're the same fact.</p>
+  </div></div>
+
+  <!-- ===== GAME ===== -->
+  <div class="screen" id="game">
+    <div class="hud">
+      <div class="score">score <b id="g-score">0</b></div>
+      <div class="clock" id="g-clock">1:00</div>
+      <div class="score right">in a row <b id="g-run">0</b></div>
+    </div>
+    <div class="timebar" id="g-bar"><i></i></div>
+    <div class="track" id="g-track" hidden>
+      <div class="lane"><span class="who" id="t-you">🚀</span><span class="tag">you <b id="t-youn">0</b></span></div>
+      <div class="lane ghost"><span class="who" id="t-ghost">👻</span><span class="tag">ghost <b id="t-ghostn">0</b></span></div>
+    </div>
+    <div class="qwrap">
+      <button class="quit" type="button" id="quit">Stop</button>
+      <div class="warmtag" id="g-warm"></div>
+      <div class="question" id="g-q"></div>
+      <div class="answer empty" id="g-a">?</div>
+      <div class="truth" id="g-truth"></div>
+    </div>
+    <div class="pad" id="pad"></div>
+    <div class="choices" id="choices" hidden></div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div class="screen scroll" id="done"><div class="inner">
+    <div class="bigscore"><span id="d-score">0</span><span class="of" id="d-of">right</span></div>
+    <div class="verdict" id="d-verdict"></div>
+    <div class="badges" id="d-badges"></div>
+    <div class="stats">
+      <div class="stat ok"><div class="v" id="d-right">0</div><div class="k">right</div></div>
+      <div class="stat no"><div class="v" id="d-wrong">0</div><div class="k">missed</div></div>
+      <div class="stat"><div class="v" id="d-speed">—</div><div class="k">per answer</div></div>
+    </div>
+    <div id="d-practise"></div>
+    <div class="btnrow">
+      <button class="btn2" type="button" id="again">One more go</button>
+      <button class="btn2 ghost" type="button" id="home2">Done</button>
+    </div>
+  </div></div>
+
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   storage.js — versioned localStorage
+   ============================================================ */
+const KEY = 'mm_v1';          // key kept from Phase 1; `v` inside drives migration
+const GOAL = 3;               // rounds per day
+
+const DEFAULT_STATE = {
+  v: 2,
+  best: {},           // 'sprint' | 'focus3' ... -> best score
+  streak: 0,
+  lastPlayed: null,   // 'YYYY-MM-DD'
+  goal: {date: null, rounds: 0},
+  rank: 0,            // index into RANKS; earned ranks are never taken away
+  recentMs: [],       // last 60 typed fact-answer times, for the speed rank
+  checkups: [],       // {date, score, of}
+  sessions: [],       // {date, mode, score, right, wrong, msPer}
+  facts: {},          // id -> {n, ok, ms, seen, run}
+  sound: true,
+  input: 'type'       // 'type' | 'tap'
+};
+
+const fresh = () => JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+function migrate(s){
+  // Phase 1 stored a single number as `best`
+  if(!s.v || s.v < 2){
+    if(typeof s.best === 'number') s.best = s.best ? {sprint: s.best} : {};
+    s.v = 2;
+  }
+  return s;
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return fresh();
+    return {...fresh(), ...migrate(JSON.parse(raw))};
+  }catch(e){
+    return fresh();
+  }
+}
+
+function saveState(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+}
+
+let S = loadState();
+
+function todayStr(d){
+  const t = d || new Date();
+  return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0');
+}
+
+/* day-difference between two YYYY-MM-DD strings */
+function dayGap(a, b){
+  const pa = a.split('-').map(Number), pb = b.split('-').map(Number);
+  const da = Date.UTC(pa[0], pa[1]-1, pa[2]);
+  const db = Date.UTC(pb[0], pb[1]-1, pb[2]);
+  return Math.round((db - da) / 86400000);
+}
+
+/* streak counts days with at least one finished round */
+function bumpStreak(){
+  const t = todayStr();
+  if(S.lastPlayed === t) return;
+  if(S.lastPlayed === null){ S.streak = 1; }
+  else {
+    const gap = dayGap(S.lastPlayed, t);
+    if(gap === 1) S.streak += 1;
+    else if(gap > 1) S.streak = 1;
+  }
+  S.lastPlayed = t;
+}
+
+function roundsToday(){ return S.goal.date === todayStr() ? S.goal.rounds : 0; }
+
+function bumpGoal(){
+  const t = todayStr();
+  if(S.goal.date !== t) S.goal = {date: t, rounds: 0};
+  S.goal.rounds += 1;
+}
+
+const median = arr => {
+  if(!arr.length) return 0;
+  const s = [...arr].sort((x,y)=>x-y);
+  return s[Math.floor(s.length/2)];
+};
+
+/* ============================================================
+   questions.js — tiers aligned to Cambridge Primary Stage 3
+   Each question: {text, answer, id, op, a, b}
+   `id` is the stable fact key the mastery records use.
+   ============================================================ */
+const R = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+/* times-table ladder. Stage 3 asks for 2, 3, 4, 5 and 10 by heart;
+   3 and 4 are the gap coming from PYP, so they get their own tier. */
+const TABLES = {1:[2,5,10], 2:[3,4], 3:[2,3,4,5,10], 4:[6,8], 5:[7,9,11,12]};
+const STAGE3 = [2,3,4,5,10];
+
+function mkAdd(a, b){ return {text:`${a} + ${b}`, answer:a+b, id:`add:${Math.min(a,b)}+${Math.max(a,b)}`, op:'add', a, b}; }
+function mkSub(a, b){ return {text:`${a} − ${b}`, answer:a-b, id:`sub:${a}-${b}`, op:'sub', a, b}; }
+function mkDiv(t, n){ return {text:`${t*n} ÷ ${t}`, answer:n, id:`div:${t*n}/${t}`, op:'div', a:t*n, b:t}; }
+function mkMul(t, n){
+  // either order, so 3 × 7 and 7 × 3 are both practised
+  const [a, b] = Math.random() < 0.5 ? [t, n] : [n, t];
+  return {text:`${a} × ${b}`, answer:a*b, id:`mul:${Math.min(a,b)}x${Math.max(a,b)}`, op:'mul', a, b};
+}
+
+function qAdd(tier){
+  let a, b;
+  if(tier === 1){ a = R(2,12); b = R(2, Math.min(9, 20-a)); }    // facts to 20
+  else if(tier === 2){ a = R(12,89); b = R(2,9); }                // 2-digit + 1-digit
+  else if(tier === 3){ a = R(12,69); b = R(11,29); }              // 2-digit + 2-digit, within 100
+  else if(tier === 4){ a = R(100,600); b = R(11,99); }
+  else { a = R(120,480); b = R(120,480); }
+  return mkAdd(a, b);
+}
+
+function qSub(tier){
+  let a, b;
+  if(tier === 1){ a = R(6,20); b = R(2, Math.min(9, a-2)); }
+  else if(tier === 2){ a = R(21,99); b = R(2,9); }
+  else if(tier === 3){ a = R(40,99); b = R(11, a-11); }
+  else if(tier === 4){ a = R(150,999); b = R(11,99); }
+  else { a = R(300,999); b = R(110, a-50); }
+  return mkSub(a, b);
+}
+
+/* warm-ups are deliberately gentle: small sums and the easy tables */
+function warmupQuestion(){
+  const r = Math.random();
+  if(r < 0.4) return mkAdd(R(2,9), R(2,9));
+  if(r < 0.7){ const a = R(5,15); return mkSub(a, R(1, a-1)); }
+  return mkMul(pick([2,5,10]), R(2,6));
+}
+
+/* A recipe is a weighted list of {op, tier} or {op, tables}. */
+function fromRecipe(recipe){
+  const total = recipe.reduce((s,r)=>s+r.w, 0);
+  let x = Math.random() * total;
+  let r = recipe[recipe.length-1];
+  for(const c of recipe){ x -= c.w; if(x <= 0){ r = c; break; } }
+  if(r.op === 'add') return qAdd(r.tier);
+  if(r.op === 'sub') return qSub(r.tier);
+  const t = pick(r.tables || TABLES[r.tier]);
+  return r.op === 'mul' ? mkMul(t, R(2,10)) : mkDiv(t, R(2,10));
+}
+
+function nextQuestion(recipe, avoid){
+  let q = fromRecipe(recipe);
+  for(let i = 0; i < 8 && avoid.has(q.id); i++) q = fromRecipe(recipe);
+  return q;
+}
+
+/* the Stage 3 mix: facts to 20 lead, 3x and 4x weighted up */
+const STAGE3_MIX = [
+  {op:'add', tier:1, w:18}, {op:'sub', tier:1, w:16},
+  {op:'add', tier:2, w:7},  {op:'sub', tier:2, w:6},
+  {op:'add', tier:3, w:4},  {op:'sub', tier:3, w:3},
+  {op:'mul', tier:1, w:9},  {op:'mul', tier:2, w:14},
+  {op:'div', tier:1, w:6},  {op:'div', tier:2, w:9},
+  {op:'mul', tier:3, w:4},  {op:'div', tier:3, w:4}
+];
+const CHECK_MIX = [{op:'mul', tables:STAGE3, w:80}, {op:'div', tables:STAGE3, w:20}];
+const focusRecipe = t => [{op:'mul', tables:[t], w:70}, {op:'div', tables:[t], w:30}];
+
+/* ============================================================
+   hints.js — how to work it out, shown after a miss
+   ============================================================ */
+function hintFor(q){
+  const {a, b, answer} = q;
+  if(q.op === 'mul') return {dots:{rows:a, cols:b}, text:`${a} rows of ${b}`};
+  if(q.op === 'div') return {dots:{rows:b, cols:answer}, text:`${a} dots in ${b} rows makes ${answer} in each row`};
+  if(q.op === 'add'){
+    if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} + ${t} = ${a+t}, then + ${b%10} = ${answer}`}; }
+    if(b < 10 && a % 10 + b > 10){ const up = 10 - a%10; return {text:`${a} + ${up} = ${a+up}, then + ${b-up} = ${answer}`}; }
+    return null;
+  }
+  if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} − ${t} = ${a-t}, then − ${b%10} = ${answer}`}; }
+  if(b < 10 && a % 10 > 0 && a % 10 < b){ const d = a%10; return {text:`${a} − ${d} = ${a-d}, then − ${b-d} = ${answer}`}; }
+  return null;
+}
+
+/* ============================================================
+   options.js — the 12-button answer grid for tap mode
+   ============================================================ */
+function optionsFor(q, table){
+  // Focus mode keeps one fixed grid per table, so a child learns where each answer sits
+  if(table && q.op === 'mul') return Array.from({length:12}, (_,i)=>(i+1)*table);
+  if(table && q.op === 'div') return Array.from({length:12}, (_,i)=>i+1);
+
+  const ans = q.answer;
+  // near-misses are preferred, so a wrong tap says something about the mistake
+  const near = [];
+  if(q.op === 'mul') near.push((q.a+1)*q.b, (q.a-1)*q.b, q.a*(q.b+1), q.a*(q.b-1), q.a+q.b);
+  else if(q.op === 'div') near.push(ans+1, ans-1, q.a-q.b, q.b);
+  else if(q.op === 'add') near.push(ans+1, ans-1, ans+10, ans-10, Math.abs(q.a-q.b));
+  else near.push(ans+1, ans-1, ans+10, ans-10, q.a+q.b);
+  near.push(Number(String(ans).split('').reverse().join('')));
+
+  // pick the answer's slot first, so its position in the grid gives nothing away
+  const W = Math.max(14, Math.round(ans * 0.35));
+  const below = Math.min(R(0, 11), ans - 1);
+  const set = new Set([ans]);
+  const fill = (lo, hi, want) => {
+    let got = 0;
+    for(const v of near){
+      if(got < want && Number.isInteger(v) && v >= lo && v <= hi && !set.has(v)){ set.add(v); got++; }
+    }
+    while(got < want){
+      const v = R(lo, hi);
+      if(!set.has(v)){ set.add(v); got++; }
+    }
+  };
+  fill(Math.max(1, ans - W), ans - 1, below);   // the window always holds enough numbers:
+  fill(ans + 1, ans + W, 11 - below);           // W >= 14 and `below` <= ans - 1
+  return [...set].sort((x,y)=>x-y);
+}
+
+/* ============================================================
+   mastery.js — per-fact records and fact families
+   ============================================================ */
+const MASTER_MS = 4000;   // "known" means correct and under 4 seconds, 3 times running
+
+function recordFact(q, ok, ms, typed){
+  const f = S.facts[q.id] || {n:0, ok:0, ms:0, seen:0, run:0};
+  f.n += 1;
+  if(ok) f.ok += 1;
+  f.ms = f.ms ? Math.round(f.ms * 0.7 + ms * 0.3) : Math.round(ms);
+  f.seen = Date.now();
+  // only typed answers build mastery; a wrong answer of any kind resets it
+  if(!ok) f.run = 0;
+  else if(typed && ms < MASTER_MS) f.run = (f.run || 0) + 1;
+  S.facts[q.id] = f;
+}
+
+/* t × n, n × t, and both divisions are one family */
+function factStatus(t, n){
+  const p = t * n;
+  const ids = [`mul:${Math.min(t,n)}x${Math.max(t,n)}`, `div:${p}/${t}`, `div:${p}/${n}`];
+  let N = 0, OK = 0;
+  for(const id of ids){ const f = S.facts[id]; if(f){ N += f.n; OK += f.ok; } }
+  if(N === 0) return 'none';
+  const m = S.facts[ids[0]];
+  if(m && (m.run || 0) >= 3) return 'mastered';
+  if(N >= 2 && OK / N < 0.5) return 'tricky';
+  return 'learning';
+}
+
+function tableProgress(t){
+  const cells = [];
+  for(let n = 2; n <= 10; n++) cells.push(factStatus(t, n));
+  return {cells, mastered: cells.filter(c => c === 'mastered').length};
+}
+
+/* weakest Stage 3 table first, in teaching order; then the harder tables */
+function suggestTable(){
+  let best = null;
+  for(const t of [3,4,2,5,10]){
+    const m = tableProgress(t).mastered;
+    if(m < 7 && (best === null || m < best.m)) best = {t, m};
+  }
+  if(best) return best.t;
+  for(const t of [6,8,7,9,11,12]){
+    const m = tableProgress(t).mastered;
+    if(best === null || m < best.m) best = {t, m};
+  }
+  return best.t;
+}
+
+/* ============================================================
+   rank.js — speed rank from median answer time
+   ============================================================ */
+const RANKS = [
+  {name:'Starter',   icon:'🌱', ms:Infinity},
+  {name:'Climber',   icon:'🧗', ms:5000},
+  {name:'Speedster', icon:'🛼', ms:4000},
+  {name:'Rocket',    icon:'🚀', ms:3000},
+  {name:'Lightning', icon:'⚡', ms:2200},
+  {name:'Legend',    icon:'👑', ms:1600}
+];
+const RANK_SAMPLES = 20;
+
+/* times tables, division, and add/subtract within 20 — not the long sums */
+const isFactSample = q => q.op === 'mul' || q.op === 'div' || (q.a <= 20 && q.b <= 20 && q.answer <= 20);
+
+function rankFromSpeed(){
+  if(S.recentMs.length < RANK_SAMPLES) return 0;
+  const m = median(S.recentMs);
+  let i = 0;
+  RANKS.forEach((r, k) => { if(m <= r.ms) i = k; });
+  return i;
+}
+
+/* ============================================================
+   modes.js
+   ============================================================ */
+const MODES = {
+  sprint:{id:'sprint', name:'Daily Sprint', seconds:60, warmups:3, recipe:STAGE3_MIX, retry:true, bestKey:'sprint'},
+  ghost: {id:'ghost',  name:'Ghost Race',   seconds:60, warmups:3, recipe:STAGE3_MIX, retry:true, bestKey:'sprint', ghost:true},
+  focus: {id:'focus',  name:'Focus',        seconds:60, warmups:3, retry:true},
+  check: {id:'check',  name:'Check-up',     questions:25, perQ:6, warmups:3, recipe:CHECK_MIX, retry:false, typedOnly:true}
+};
+
+const IDLE_MS = 1000;       // a wrong typed answer is judged after this long without a keypress
+const GHOST_DEFAULT = 10;   // ghost pace before there's a best round to race
+
+/* ============================================================
+   sound.js — tiny Web Audio blips, no files
+   ============================================================ */
+const Snd = {
+  ctx: null,
+  wake(){
+    if(!this.ctx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      this.ctx = new AC();
+    }
+    if(this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  tone(freq, dur, type, vol, at){
+    if(!S.sound || !this.ctx) return;
+    const t = this.ctx.currentTime + (at || 0);
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  },
+  key(){   this.tone(520, 0.05, 'triangle', 0.05); },
+  right(){ this.tone(880, 0.09, 'sine', 0.11); this.tone(1320, 0.14, 'sine', 0.09, 0.07); },
+  wrong(){ this.tone(196, 0.22, 'triangle', 0.11); },
+  done(){  [660, 880, 1100, 1320].forEach((f,i)=>this.tone(f, 0.16, 'sine', 0.09, i*0.09)); }
+};
+
+/* ============================================================
+   ui.js
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const SCREENS = ['home','pick','learn','grid','game','done'];
+
+function show(name){
+  for(const n of SCREENS) $(n).classList.toggle('on', n === name);
+  $(name).scrollTop = 0;
+}
+
+const el = {
+  q:$('g-q'), a:$('g-a'), truth:$('g-truth'), warm:$('g-warm'),
+  score:$('g-score'), run:$('g-run'), clock:$('g-clock'),
+  bar:$('g-bar'), barFill:$('g-bar').firstElementChild,
+  pad:$('pad'), choices:$('choices'),
+  track:$('g-track'), you:$('t-you'), ghost:$('t-ghost'), youN:$('t-youn'), ghostN:$('t-ghostn')
+};
+
+const fmtS = ms => (ms/1000).toFixed(1) + 's';
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function isStandalone(){
+  return window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+}
+
+/* ---- home ---- */
+function paintHome(){
+  $('h-streak').textContent = S.streak;
+  const r = RANKS[S.rank];
+  $('h-rank').innerHTML = `${r.icon} <b>${r.name}</b>`;
+
+  const next = RANKS[S.rank + 1];
+  const n = S.recentMs.length;
+  let line;
+  if(!next) line = 'You\'re a <b>Legend</b>. Keep that speed up!';
+  else if(n < RANK_SAMPLES) line = `Answer ${plural(RANK_SAMPLES - n, 'more fact')} to get your speed rank`;
+  else line = `Next rank: <b>${next.icon} ${next.name}</b> at ${fmtS(next.ms)} per answer · you're at ${fmtS(median(S.recentMs))}`;
+  $('h-next').innerHTML = line;
+
+  const done = roundsToday();
+  $('h-goal').classList.toggle('done', done >= GOAL);
+  $('h-goal').querySelectorAll('.dots i').forEach((d,i)=>d.classList.toggle('on', i < done));
+  $('h-goaltext').innerHTML = done >= GOAL
+    ? 'Today\'s goal: <b>done! 🎉</b>'
+    : `Today's goal: <b>${done} of ${GOAL}</b> rounds`;
+
+  $('m-sprint').textContent = S.best.sprint ? `Best: ${S.best.sprint}` : 'Start here';
+  $('m-focus').textContent = `Try the ${suggestTable()}× table`;
+  $('m-ghost').textContent = `Ghost to beat: ${S.best.sprint || GHOST_DEFAULT}`;
+
+  const last = S.checkups[S.checkups.length - 1];
+  let due = true, ct = 'Not done yet';
+  if(last){
+    const days = dayGap(last.date, todayStr());
+    due = days >= 7;
+    ct = due ? `Due today · last ${last.score}/${last.of}` : `Last ${last.score}/${last.of} · next in ${plural(7 - days, 'day')}`;
+  }
+  $('m-check').textContent = ct;
+  $('m-checkcard').classList.toggle('due', due);
+
+  document.querySelectorAll('[data-input]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.input === S.input)));
+  $('h-sound').textContent = S.sound ? '🔊' : '🔇';
+  $('h-sound').setAttribute('aria-label', S.sound ? 'Sound on' : 'Sound off');
+  $('h-install').hidden = !isIOS() || isStandalone();
+}
+
+/* ---- focus: pick and look first ---- */
+let learnTable = 3;
+
+function showPick(){
+  const sug = suggestTable();
+  const box = $('p-tables');
+  box.innerHTML = '';
+  for(let t = 2; t <= 12; t++){
+    const p = tableProgress(t);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tbtn' + (t === sug ? ' suggest' : '');
+    b.innerHTML =
+      (t === sug ? '<span class="try">Try this</span>' : '') +
+      (STAGE3.includes(t) ? '<span class="star" aria-label="On the school list">⭐</span>' : '') +
+      `<span class="tn">${t}×</span>` +
+      `<span class="mini">${p.cells.map(c=>`<i class="${c}"></i>`).join('')}</span>`;
+    b.addEventListener('click', ()=>showLearn(t));
+    box.appendChild(b);
+  }
+  show('pick');
+}
+
+function showLearn(t){
+  learnTable = t;
+  $('l-title').textContent = `The ${t} times table`;
+  let tricky = 0;
+  const rows = [];
+  for(let n = 2; n <= 10; n++){
+    const s = factStatus(t, n);
+    if(s === 'tricky') tricky++;
+    const mark = s === 'mastered' ? '✓' : s === 'tricky' ? '!' : '';
+    rows.push(`<div class="lrow ${s}"><span>${t} × ${n}</span><b>${t*n}</b><em>${mark}</em></div>`);
+  }
+  $('l-rows').innerHTML = rows.join('');
+  $('l-hint').textContent = tricky
+    ? 'Read it through once. The red ones are the facts you find tricky.'
+    : 'Read it through once, then see how many you can get in 60 seconds.';
+  show('learn');
+}
+
+/* ---- mastery grid ---- */
+function showGrid(){
+  let h = '<div></div>';
+  for(let n = 2; n <= 10; n++) h += `<div class="hd">×${n}</div>`;
+  let mastered = 0, total = 0;
+  for(let t = 2; t <= 12; t++){
+    const s3 = STAGE3.includes(t);
+    h += `<div class="rh${s3 ? ' s3' : ''}">${t}${s3 ? '<small>⭐</small>' : ''}</div>`;
+    for(let n = 2; n <= 10; n++){
+      const s = factStatus(t, n);
+      total++;
+      if(s === 'mastered') mastered++;
+      h += `<div class="cell ${s}">${t*n}</div>`;
+    }
+  }
+  $('mg').innerHTML = h;
+  $('mg-sum').innerHTML = `<b>${mastered}</b> of ${total} squares mastered`;
+  show('grid');
+}
+
+/* ---- keypad ---- */
+['1','2','3','4','5','6','7','8','9','⌫','0','↵'].forEach(k=>{
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = k;
+  if(k === '↵'){ b.className = 'go'; b.setAttribute('aria-label','Enter'); }
+  else if(k === '⌫'){ b.className = 'del'; b.setAttribute('aria-label','Delete'); }
+  b.addEventListener('click', ()=>press(k));
+  el.pad.appendChild(b);
+});
+
+/* ============================================================
+   game loop
+   ============================================================ */
+let G = null;
+let last = {id:'sprint', opts:{}};
+
+function startMode(id, opts){
+  opts = opts || {};
+  const m = MODES[id];
+  last = {id, opts};
+  G = {
+    mode:m,
+    input: m.typedOnly ? 'type' : S.input,
+    table: opts.table || null,
+    recipe: id === 'focus' ? focusRecipe(opts.table) : m.recipe,
+    phase:'warm',             // 'warm' | 'live' | 'over'
+    warmLeft:m.warmups,
+    q:null, typed:'', lastId:null,
+    score:0, run:0, bestRun:0,
+    right:0, wrong:0, fixed:0,
+    missed:[], times:[],
+    retry:[], asked:0,
+    qStart:0, qEnd:0, endAt:0,
+    frozenAt:null,
+    locked:false, raf:0, autoT:0, nextT:0,
+    ghostTarget: m.ghost ? (S.best.sprint || GHOST_DEFAULT) : 0
+  };
+
+  el.score.textContent = '0';
+  el.run.textContent = '0';
+  el.truth.textContent = '';
+  el.truth.className = 'truth';
+  el.warm.textContent = `${id === 'focus' ? opts.table + '× Focus' : m.name} · warm-up, no clock`;
+  el.warm.classList.add('on');
+  el.bar.className = 'timebar warm';
+  el.barFill.style.transform = 'scaleX(1)';
+  el.clock.className = 'clock warm';
+  el.clock.textContent = 'WARM-UP';
+  el.pad.hidden = G.input !== 'type';
+  el.choices.hidden = G.input !== 'tap';
+  el.track.hidden = !m.ghost;
+  if(m.ghost) paintTrack(0);
+
+  show('game');
+  serve();
+}
+
+function serve(){
+  clearTimeout(G.autoT);
+  G.typed = '';
+  G.locked = false;
+
+  let q;
+  if(G.phase === 'warm'){
+    q = warmupQuestion();
+  } else {
+    // a missed fact comes back a couple of questions later
+    const due = G.retry.findIndex(r => r.due <= G.asked);
+    if(due >= 0){
+      const r = G.retry.splice(due, 1)[0];
+      q = {...r.q, tries:r.tries};
+    } else {
+      const avoid = new Set(G.retry.map(r => r.q.id));
+      if(G.lastId) avoid.add(G.lastId);
+      q = nextQuestion(G.recipe, avoid);
+    }
+    G.asked++;
+  }
+  G.q = q;
+  G.lastId = q.id;
+  G.qStart = performance.now();
+  if(G.mode.perQ && G.phase === 'live'){
+    G.qEnd = G.qStart + G.mode.perQ * 1000;
+    el.clock.textContent = `${G.asked}/${G.mode.questions}`;
+    el.barFill.style.transform = 'scaleX(1)';
+    el.bar.classList.remove('low');
+  }
+
+  el.q.textContent = q.text;
+  renderAnswer();
+  el.truth.textContent = '';
+  el.truth.className = 'truth';
+  if(G.input === 'tap') renderChoices();
+}
+
+function renderAnswer(){
+  if(G.typed === ''){
+    el.a.textContent = '?';
+    el.a.className = 'answer empty';
+  } else {
+    el.a.textContent = G.typed;
+    el.a.className = 'answer';
+  }
+}
+
+function renderChoices(){
+  el.choices.innerHTML = optionsFor(G.q, G.table)
+    .map(v=>`<button type="button" data-v="${v}">${v}</button>`).join('');
+}
+
+function markChoice(v, cls){
+  const b = el.choices.querySelector(`[data-v="${v}"]`);
+  if(b) b.classList.add(cls);
+}
+
+function press(k){
+  if(!G || G.phase === 'over' || G.locked || G.input !== 'type') return;
+  Snd.key();
+  if(k === '⌫'){
+    clearTimeout(G.autoT);
+    G.typed = G.typed.slice(0, -1);
+    renderAnswer();
+  } else if(k === '↵'){
+    clearTimeout(G.autoT);
+    if(G.typed !== '') submit(parseInt(G.typed, 10), 'type');
+  } else {
+    if(G.typed.length >= 4) return;
+    if(G.typed === '' && k === '0') return;   // no leading zero
+    G.typed += k;
+    renderAnswer();
+    afterDigit();
+  }
+}
+
+/* Right answers submit the instant they're typed. Anything else waits for
+   a pause, so the timing never hints at how many digits the answer has. */
+function afterDigit(){
+  clearTimeout(G.autoT);
+  const v = parseInt(G.typed, 10);
+  if(v === G.q.answer || G.typed.length >= 4){ submit(v, 'type'); return; }
+  const g = G;
+  G.autoT = setTimeout(()=>{
+    if(G === g && !G.locked && G.typed !== '') submit(parseInt(G.typed, 10), 'type');
+  }, IDLE_MS);
+}
+
+function tap(v){
+  if(!G || G.phase === 'over' || G.locked) return;
+  Snd.key();
+  el.a.textContent = v;
+  submit(v, 'tap');
+}
+
+function submit(got, how){
+  if(G.locked) return;
+  G.locked = true;
+  clearTimeout(G.autoT);
+
+  const q = G.q;
+  const ms = Math.max(0, performance.now() - G.qStart);
+  const ok = got === q.answer;
+  const live = G.phase === 'live';
+  const typed = how === 'type';
+
+  recordFact(q, ok, ms, typed);
+
+  if(ok){
+    Snd.right();
+    el.a.className = 'answer right pop';
+    if(how === 'tap') markChoice(got, 'right');
+    if(live){
+      G.right += 1;
+      G.score += 1;
+      G.run += 1;
+      G.bestRun = Math.max(G.bestRun, G.run);
+      G.times.push(ms);
+      if(typed && isFactSample(q)){
+        S.recentMs.push(Math.round(ms));
+        if(S.recentMs.length > 60) S.recentMs = S.recentMs.slice(-60);
+      }
+      if(q.tries){
+        G.fixed += 1;
+        el.truth.textContent = '✓ Fixed it!';
+        el.truth.className = 'truth good';
+      }
+    }
+  } else {
+    Snd.wrong();
+    el.a.className = 'answer wrong shake';
+    if(how === 'timeout') el.a.textContent = '⏱';
+    if(how === 'tap'){ markChoice(got, 'wrong'); markChoice(q.answer, 'right'); }
+    el.truth.textContent = `${q.text} = ${q.answer}`;
+    el.truth.className = 'truth';
+    if(live){
+      G.wrong += 1;
+      G.run = 0;
+      const {tries, ...base} = q;
+      if(!G.missed.some(m => m.id === base.id)) G.missed.push(base);
+      const n = (tries || 0) + 1;
+      if(G.mode.retry && n <= 2) G.retry.push({q:base, due:G.asked + 2 + R(0,1), tries:n});
+    }
+  }
+  el.score.textContent = G.score;
+  el.run.textContent = G.run;
+
+  const g = G;
+  G.nextT = setTimeout(()=>{
+    if(G !== g || G.phase === 'over') return;
+    if(G.phase === 'warm'){
+      G.warmLeft -= 1;
+      if(G.warmLeft <= 0){ goLive(); return; }
+    } else if(G.mode.questions && G.asked >= G.mode.questions){
+      finish();
+      return;
+    }
+    serve();
+  }, ok ? 260 : 1150);
+}
+
+function goLive(){
+  G.phase = 'live';
+  const now = performance.now();
+  if(G.mode.seconds) G.endAt = now + G.mode.seconds * 1000;
+  // backgrounded during the last warm-up: start the round frozen
+  if(document.hidden) G.frozenAt = now;
+  el.warm.classList.remove('on');
+  el.bar.classList.remove('warm');
+  el.clock.className = 'clock';
+  serve();
+  tick();
+}
+
+function tick(){
+  if(!G || G.phase !== 'live' || G.frozenAt !== null) return;
+  const now = performance.now();
+
+  if(G.mode.seconds){
+    const total = G.mode.seconds * 1000;
+    const left = G.endAt - now;
+    if(left <= 0){
+      el.clock.textContent = '0:00';
+      el.barFill.style.transform = 'scaleX(0)';
+      finish();
+      return;
+    }
+    const secs = Math.ceil(left / 1000);
+    el.clock.textContent = Math.floor(secs/60) + ':' + String(secs % 60).padStart(2,'0');
+    el.barFill.style.transform = 'scaleX(' + (left / total) + ')';
+    const low = secs <= 10;
+    el.clock.classList.toggle('low', low);
+    el.bar.classList.toggle('low', low);
+    if(G.mode.ghost) paintTrack(1 - left / total);
+  } else if(!G.locked){
+    // check-up: each question has its own clock
+    const total = G.mode.perQ * 1000;
+    const left = G.qEnd - now;
+    if(left <= 0){
+      el.barFill.style.transform = 'scaleX(0)';
+      submit(null, 'timeout');
+    } else {
+      el.barFill.style.transform = 'scaleX(' + (left / total) + ')';
+      el.bar.classList.toggle('low', left <= 2000);
+    }
+  }
+  G.raf = requestAnimationFrame(tick);
+}
+
+function paintTrack(progress){
+  const ghost = G.ghostTarget * Math.min(1, Math.max(0, progress));
+  const L = Math.max(G.ghostTarget, 10) + 3;
+  const place = (node, v) => {
+    const p = Math.min(1, v / L);
+    node.style.left = `calc(${p * 100}% - ${p * 28}px)`;
+  };
+  place(el.you, G.score);
+  place(el.ghost, ghost);
+  el.youN.textContent = G.score;
+  el.ghostN.textContent = Math.floor(ghost);
+}
+
+function finish(){
+  if(!G || G.phase === 'over') return;
+  G.phase = 'over';
+  cancelAnimationFrame(G.raf);
+  clearTimeout(G.autoT);
+  clearTimeout(G.nextT);
+
+  const m = G.mode;
+  const med = median(G.times);
+  const key = m.id === 'focus' ? 'focus' + G.table : m.bestKey;
+  let isPB = false;
+  if(key && G.score > (S.best[key] || 0)){ S.best[key] = G.score; isPB = true; }
+
+  let prevCheck = null;
+  if(m.id === 'check'){
+    prevCheck = S.checkups[S.checkups.length - 1] || null;
+    S.checkups.push({date:todayStr(), score:G.score, of:m.questions});
+    if(S.checkups.length > 100) S.checkups = S.checkups.slice(-100);
+  }
+
+  bumpStreak();
+  const goalBefore = roundsToday();
+  bumpGoal();
+  const goalJustMet = goalBefore < GOAL && roundsToday() >= GOAL;
+
+  const rankNow = Math.max(S.rank, rankFromSpeed());
+  const rankUp = rankNow > S.rank;
+  S.rank = rankNow;
+
+  S.sessions.push({
+    date:todayStr(), mode:m.id + (G.table ? G.table : ''), score:G.score,
+    right:G.right, wrong:G.wrong, msPer:Math.round(med)
+  });
+  if(S.sessions.length > 400) S.sessions = S.sessions.slice(-400);
+  saveState();
+
+  paintResults({isPB, med, prevCheck, goalJustMet, rankUp});
+  Snd.done();
+  show('done');
+}
+
+function paintResults(r){
+  const m = G.mode;
+  const total = G.right + G.wrong;
+  const acc = total ? Math.round(G.right / total * 100) : 0;
+
+  $('d-score').textContent = G.score;
+  $('d-of').textContent = m.questions ? `out of ${m.questions}` : (total ? `right out of ${total}` : 'right');
+  $('d-right').textContent = G.right;
+  $('d-wrong').textContent = G.wrong;
+  $('d-speed').textContent = r.med ? fmtS(r.med) : '—';
+
+  let v;
+  if(m.questions){
+    if(G.score >= 23)      v = 'Brilliant check-up! 🌟';
+    else if(G.score >= 18) v = 'Strong result. 💪';
+    else if(G.score >= 12) v = 'Good effort. Keep practising!';
+    else                   v = 'Lots to practise. Focus mode will help.';
+  } else {
+    if(total === 0)        v = 'Have a go!';
+    else if(acc >= 95)     v = 'Almost perfect! 🌟';
+    else if(acc >= 80)     v = 'Really strong. 💪';
+    else if(acc >= 60)     v = 'Good effort. Keep going!';
+    else                   v = 'Tricky round. Try again!';
+    if(G.bestRun >= 8)     v += ` ${G.bestRun} in a row!`;
+  }
+  $('d-verdict').textContent = v;
+
+  const badges = [];
+  if(m.ghost){
+    const d = G.score - G.ghostTarget;
+    if(d > 0)        badges.push(['gold', `👻 You beat your ghost by ${d}!`]);
+    else if(d === 0) badges.push(['', '👻 Dead heat with your ghost!']);
+    else             badges.push(['', `👻 Ghost wins by ${-d}${-d <= 2 ? '. So close!' : ''}`]);
+  } else if(r.isPB && G.score > 0){
+    badges.push(['gold', '🏆 New personal best']);
+  }
+  if(m.id === 'check'){
+    if(!r.prevCheck)                      badges.push(['', '📋 First check-up done. Next one in a week']);
+    else if(G.score > r.prevCheck.score)  badges.push(['green', `📋 ${G.score - r.prevCheck.score} more than last check-up`]);
+    else                                  badges.push(['', `📋 Last check-up: ${r.prevCheck.score}/${r.prevCheck.of}`]);
+  }
+  if(G.fixed)  badges.push(['green', `🔁 Fixed ${G.fixed} on the next try`]);
+  if(r.rankUp){ const k = RANKS[S.rank]; badges.push(['gold', `${k.icon} Rank up! You're a ${k.name} now`]); }
+  if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
+  $('d-badges').innerHTML = badges.map(([c, t])=>`<div class="badge ${c}">${t}</div>`).join('');
+
+  const list = G.missed.slice(0, 4);
+  $('d-practise').innerHTML = list.length
+    ? '<div class="practise"><div class="h">Worth practising</div>' +
+      list.map(q=>{
+        const h = hintFor(q);
+        const dots = h && h.dots
+          ? `<span class="array" style="grid-template-columns:repeat(${h.dots.cols},7px)">${'<i></i>'.repeat(h.dots.rows * h.dots.cols)}</span>`
+          : '';
+        return `<div class="prow"><div class="pq"><span>${q.text}</span><b>= ${q.answer}</b></div>` +
+          (h ? `<div class="ph">${dots}<span>${h.text}</span></div>` : '') + '</div>';
+      }).join('') + '</div>'
+    : '';
+}
+
+function abandon(){
+  if(!G) return;
+  cancelAnimationFrame(G.raf);
+  clearTimeout(G.autoT);
+  clearTimeout(G.nextT);
+  // a stopped round scores nothing and doesn't count toward the streak or goal
+  G.phase = 'over';
+  G = null;
+  paintHome();
+  show('home');
+}
+
+/* ============================================================
+   wiring
+   ============================================================ */
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
+  const id = b.dataset.mode;
+  if(id === 'focus') showPick();
+  else startMode(id);
+}));
+document.querySelectorAll('[data-input]').forEach(b=>b.addEventListener('click', ()=>{
+  S.input = b.dataset.input;
+  saveState();
+  paintHome();
+}));
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click', ()=>{
+  if(b.dataset.go === 'home'){ paintHome(); show('home'); }
+  else showPick();
+}));
+$('h-sound').addEventListener('click', ()=>{
+  S.sound = !S.sound;
+  saveState();
+  paintHome();
+  if(S.sound){ Snd.wake(); Snd.right(); }
+});
+$('h-grid').addEventListener('click', showGrid);
+$('l-start').addEventListener('click', ()=>startMode('focus', {table:learnTable}));
+$('again').addEventListener('click', ()=>startMode(last.id, last.opts));
+$('home2').addEventListener('click', ()=>{ paintHome(); show('home'); });
+$('quit').addEventListener('click', abandon);
+el.choices.addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(b) tap(Number(b.dataset.v));
+});
+
+/* iOS only lets audio start inside a touch */
+document.addEventListener('pointerdown', ()=>Snd.wake(), {capture:true});
+
+/* physical keyboard, handy for testing on a Mac */
+window.addEventListener('keydown', e=>{
+  if(!$('game').classList.contains('on')) return;
+  if(e.key >= '0' && e.key <= '9') press(e.key);
+  else if(e.key === 'Backspace'){ e.preventDefault(); press('⌫'); }
+  else if(e.key === 'Enter') press('↵');
+});
+
+/* block pinch zoom inside the app */
+document.addEventListener('gesturestart', e=>e.preventDefault());
+document.addEventListener('touchmove', e=>{ if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
+
+/* Backgrounding the app (a notification, a parent taking the iPad) must not
+   end the round, nor hand out free thinking time. Freeze every clock on the
+   way out and shift them forward by the time away on the way back. */
+document.addEventListener('visibilitychange', ()=>{
+  if(!G || G.phase !== 'live') return;
+  if(document.hidden){
+    if(G.frozenAt !== null) return;
+    G.frozenAt = performance.now();
+    cancelAnimationFrame(G.raf);
+    clearTimeout(G.autoT);
+  } else if(G.frozenAt !== null){
+    const away = performance.now() - G.frozenAt;
+    G.frozenAt = null;
+    G.endAt += away;
+    G.qEnd += away;
+    G.qStart += away;
+    if(!G.locked && G.typed !== '') afterDigit();
+    tick();
+  }
+});
+
+/* offline support once it's served from a web address */
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+paintHome();
+</script>
+</body>
+</html>
