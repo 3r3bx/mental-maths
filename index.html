@@ -30,6 +30,13 @@
     --bad-deep:#7A2A2A;
     --learn:#2B4A7A;
     --xp:#7FB2FF;
+    /* grown-ups report: status and chart colours, checked with the
+       colour-blindness and contrast validator against --card */
+    --st-good:#1FA39A;
+    --st-warn:#C4861E;
+    --st-bad:#D9507E;
+    --bar:#BA852A;
+    --grid:#33496E;
     --key:#2E4570;
     --key-hi:#3A5588;
     --safe-t:env(safe-area-inset-top,0px);
@@ -581,6 +588,92 @@
   .modal .unl span{background:var(--bg-deep);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;}
   #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30;}
 
+  /* ============ GROWN-UPS REPORT ============ */
+  .inner.wide{max-width:780px;}
+  .report{width:100%;display:flex;flex-direction:column;gap:14px;text-align:left;}
+  .rhead{margin:0;font-size:17px;line-height:1.5;color:var(--ink-soft);text-wrap:pretty;}
+  .rhead b{color:var(--ink);}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;}
+  .tile{background:var(--card);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;}
+  .tile .k{font-size:12.5px;font-weight:650;color:var(--ink-soft);}
+  .tile .v{font-size:26px;font-weight:800;line-height:1.15;}
+  .tile .v small{font-size:14px;color:var(--ink-soft);font-weight:650;}
+  .tile .dl{font-size:12.5px;font-weight:650;color:var(--ink-faint);}
+  .dl .up,.dl .down{font-weight:800;}
+  .dl .good{color:var(--good);}
+  .dl .bad{color:var(--bad);}
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;}
+  .panel .sub{margin-top:-6px;font-size:13.5px;}
+  .ilist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+  .ilist li{display:grid;grid-template-columns:26px 1fr;gap:10px;font-size:15px;line-height:1.45;color:var(--ink-soft);}
+  .ilist li .ic{font-size:18px;line-height:1.3;text-align:center;}
+  .ilist li b{color:var(--ink);}
+  .ilist .go{
+    grid-column:2;justify-self:start;margin-top:2px;
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--bg-deep);color:var(--accent);
+    font-size:14px;font-weight:750;padding:8px 14px;border-radius:999px;min-height:36px;
+  }
+  .noneyet{font-size:14.5px;color:var(--ink-faint);margin:0;}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+    background:var(--bg-deep);color:var(--ink);border-radius:999px;
+    padding:3px 10px 3px 4px;font-size:12.5px;font-weight:750;
+  }
+  .pill i{
+    width:18px;height:18px;border-radius:50%;font-style:normal;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:900;color:#fff;background:var(--ink-faint);
+  }
+  .pill.good i{background:var(--st-good);}
+  .pill.warn i{background:var(--st-warn);}
+  .pill.bad i{background:var(--st-bad);}
+  .meters{display:flex;flex-direction:column;gap:14px;}
+  .mrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;}
+  .mrow .mn{font-size:15px;font-weight:750;}
+  .mrow .mt{grid-column:1 / -1;height:8px;border-radius:4px;background:var(--bg-deep);overflow:hidden;}
+  .mrow .mt i{display:block;height:100%;border-radius:4px;background:var(--ink-faint);}
+  .mrow.good .mt i{background:var(--st-good);}
+  .mrow.warn .mt i{background:var(--st-warn);}
+  .mrow.bad .mt i{background:var(--st-bad);}
+  .mrow .md{grid-column:1 / -1;font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .facts{display:flex;flex-wrap:wrap;gap:8px;}
+  .fact{background:var(--bg-deep);border-radius:10px;padding:7px 11px;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .fact small{display:block;font-size:11.5px;font-weight:650;color:var(--ink-soft);}
+
+  .chart{position:relative;}
+  .cht{width:100%;height:auto;display:block;overflow:visible;}
+  .cht .gl{stroke:var(--grid);stroke-width:1;}
+  .cht .ax{fill:var(--ink-faint);font-size:12px;font-weight:650;}
+  .cht .ax.now{fill:var(--ink);}
+  .cht .col{fill:var(--bar);}
+  .cht .gline{stroke:var(--st-good);stroke-width:1.5;}
+  .cht .gl-lab{fill:var(--ink-soft);font-size:12px;font-weight:750;}
+  .cht .val{fill:var(--ink);font-size:13px;font-weight:800;}
+  .cht .hit{fill:transparent;cursor:pointer;outline:none;}
+  .cht .hit:focus-visible{stroke:var(--accent);stroke-width:2;}
+  .tip{
+    position:absolute;transform:translate(-50%,calc(-100% - 10px));pointer-events:none;z-index:2;
+    background:var(--ink);color:var(--bg);border-radius:10px;padding:7px 10px;
+    font-size:13px;font-weight:650;line-height:1.35;white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,0.35);
+  }
+  .tablelink{
+    appearance:none;border:none;background:none;cursor:pointer;font-family:inherit;
+    color:var(--ink-soft);font-size:13px;font-weight:700;padding:6px 0;text-decoration:underline;text-underline-offset:3px;
+    align-self:flex-start;
+  }
+  .dtable{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;}
+  .dtable th,.dtable td{text-align:left;padding:6px 8px 6px 0;border-bottom:1px solid var(--grid);}
+  .dtable th{color:var(--ink-faint);font-size:12px;font-weight:700;}
+  .dtable td{color:var(--ink-soft);}
+  .trow{display:flex;flex-wrap:wrap;gap:8px;}
+  .tchip{background:var(--bg-deep);border-radius:10px;padding:7px 11px;font-size:13.5px;font-weight:700;}
+  .tchip .stars{font-size:12px;margin-left:4px;}
+  .filebtn{position:relative;overflow:hidden;display:inline-flex;align-items:center;}
+  .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+
   /* ============ MATHS TRICKS ============ */
   .mode.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;min-height:0;padding:16px 18px;}
   .mode.wide .ic{font-size:36px;}
@@ -836,8 +929,14 @@
   </div></div>
 
   <!-- ===== GROWN-UPS ===== -->
-  <div class="screen scroll" id="adult"><div class="inner">
+  <div class="screen scroll" id="adult"><div class="inner wide">
     <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>For grown-ups</h2></div>
+    <div class="seg" role="group" aria-label="Grown-ups sections">
+      <button type="button" data-atab="progress" aria-pressed="true">📈 Progress</button>
+      <button type="button" data-atab="settings" aria-pressed="false">⚙️ Settings</button>
+    </div>
+    <div class="report" id="a-progress"></div>
+    <div class="report" id="a-settings" hidden>
     <div class="panel">
       <h3>🔔 Streak reminders</h3>
       <p>Once a day at <b>5:00 pm</b>, this iPad gets a reminder. If today's round isn't done yet, it warns that the streak is at risk. If it is done, it says the streak is safe.</p>
@@ -854,8 +953,18 @@
       <p>Needs iPadOS 16.4 or later, with the app opened from its Home Screen icon.</p>
     </div>
     <div class="panel">
-      <h3>📈 At a glance</h3>
-      <p id="a-stats"></p>
+      <h3>💾 Back up progress</h3>
+      <p>Progress is stored only on this iPad, and Safari can occasionally clear it. Save a backup now and then, for example to Files or iCloud Drive. You can also use a backup to move progress to a new iPad.</p>
+      <div class="row">
+        <button class="btn2 small" type="button" id="b-save">Save a backup</button>
+        <label class="btn2 small ghost filebtn">Restore a backup<input type="file" id="b-file" accept=".json,application/json"></label>
+      </div>
+      <div class="note" id="b-note" hidden></div>
+      <div class="row" id="b-confirm" hidden>
+        <button class="btn2 small" type="button" id="b-apply">Replace this iPad's progress</button>
+        <button class="btn2 small ghost" type="button" id="b-cancel">Cancel</button>
+      </div>
+    </div>
     </div>
   </div></div>
 
@@ -1425,12 +1534,20 @@ function optionsFor(q, table){
    ============================================================ */
 const MASTER_MS = 4000;   // "known" means correct and under 4 seconds, 3 times running
 
+/* recent results: the stored history, or an estimate for facts saved before it existed */
+function recentOf(f){
+  if(f.h) return {n:f.h.length, ok:f.h.split('').filter(c => c === '1').length};
+  const n = Math.min(f.n, 6);
+  return {n, ok:Math.round(f.n ? f.ok / f.n * n : 0)};
+}
+
 function recordFact(q, ok, ms, typed){
   const f = S.facts[q.id] || {n:0, ok:0, ms:0, seen:0, run:0};
   f.n += 1;
   if(ok) f.ok += 1;
   f.ms = f.ms ? Math.round(f.ms * 0.7 + ms * 0.3) : Math.round(ms);
   f.seen = Date.now();
+  f.h = ((f.h || '') + (ok ? '1' : '0')).slice(-6);   // the last 6 results, newest last
   // only typed answers build mastery; a wrong answer of any kind resets it
   if(!ok) f.run = 0;
   else if(typed && ms < MASTER_MS) f.run = (f.run || 0) + 1;
@@ -1442,11 +1559,12 @@ function factStatus(t, n){
   const p = t * n;
   const ids = [`mul:${Math.min(t,n)}x${Math.max(t,n)}`, `div:${p}/${t}`, `div:${p}/${n}`];
   let N = 0, OK = 0;
-  for(const id of ids){ const f = S.facts[id]; if(f){ N += f.n; OK += f.ok; } }
+  // judged on recent results, so an early wobble doesn't stick forever
+  for(const id of ids){ const f = S.facts[id]; if(f){ const r = recentOf(f); N += r.n; OK += r.ok; } }
   if(N === 0) return 'none';
   const m = S.facts[ids[0]];
   if(m && (m.run || 0) >= 3) return 'mastered';
-  if(N >= 2 && OK / N < 0.5) return 'tricky';
+  if(N >= 2 && OK / N <= 0.5) return 'tricky';   // right half the time or less, lately
   return 'learning';
 }
 
@@ -1542,8 +1660,8 @@ function settleRound(xp, coins){
   return {streak, milestone, goalJustMet, xp, coins, xpBefore};
 }
 
-function logSession(mode, score, right, wrong, ms){
-  S.sessions.push({date:todayStr(), mode, score, right, wrong, msPer:Math.round(ms)});
+function logSession(mode, score, right, wrong, ms, areas){
+  S.sessions.push({date:todayStr(), mode, score, right, wrong, msPer:Math.round(ms), areas:areas || {}});
   if(S.sessions.length > 400) S.sessions = S.sessions.slice(-400);
 }
 
@@ -1654,6 +1772,175 @@ const MODES = {
 
 const IDLE_MS = 1000;       // a wrong typed answer is judged after this long without a keypress
 const GHOST_DEFAULT = 10;   // ghost pace before there's a best round to race
+
+/* ============================================================
+   report.js — what the grown-ups progress page says
+   Ratings use each fact's last 6 results, so they describe how
+   things are going now rather than averaging in the first week.
+   ============================================================ */
+const STATUS = {
+  strong:{label:'Strong',         icon:'✓', cls:'good'},
+  ok:    {label:'Getting there',  icon:'◐', cls:'warn'},
+  work:  {label:'Needs practice', icon:'!', cls:'bad'},
+  none:  {label:'Not started',    icon:'–', cls:'none'}
+};
+const FLUENT_MS = 3000;   // within 3 seconds: remembered, not worked out
+const SLOW_MS = 5000;     // right but slower than this: still being worked out
+
+const AREAS = [
+  {id:'add20',  name:'Adding within 20',           trick:'bridge'},
+  {id:'sub20',  name:'Taking away within 20',      trick:'countup'},
+  {id:'add100', name:'Adding bigger numbers',      trick:'split'},
+  {id:'sub100', name:'Taking away bigger numbers', trick:'takeparts'},
+  {id:'mul',    name:'Times tables',               trick:null},
+  {id:'div',    name:'Dividing',                   trick:'thinkmult'}
+];
+
+function areaOf(q){
+  if(q.op === 'add') return q.answer <= 20 ? 'add20' : 'add100';
+  if(q.op === 'sub') return q.a <= 20 ? 'sub20' : 'sub100';
+  return q.op;
+}
+
+/* fact ids look like add:7+8, sub:14-6, mul:3x7, div:24/4 */
+function parseFact(id){
+  const m = id.match(/^(add|sub|mul|div):(\d+)[+\-x\/](\d+)$/);
+  if(!m) return null;
+  const op = m[1], a = +m[2], b = +m[3];
+  const answer = op === 'add' ? a + b : op === 'sub' ? a - b : op === 'mul' ? a * b : a / b;
+  return {op, a, b, answer, text:`${a} ${{add:'+', sub:'−', mul:'×', div:'÷'}[op]} ${b}`};
+}
+
+const pct = v => Math.round(v * 100) + '%';
+const listJoin = xs => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1];
+
+function areaStatus(s){
+  if(s.n < 8) return 'none';
+  if(s.acc >= 0.9 && s.speed <= FLUENT_MS) return 'strong';
+  if(s.acc >= 0.8) return 'ok';
+  return 'work';
+}
+
+function areaStats(){
+  const out = Object.fromEntries(AREAS.map(a => [a.id, {n:0, ok:0, ms:[], facts:0}]));
+  for(const [id, f] of Object.entries(S.facts)){
+    const q = parseFact(id);
+    const s = q && out[areaOf(q)];
+    if(!s) continue;
+    const r = recentOf(f);
+    s.n += r.n; s.ok += r.ok; s.facts++;
+    if(f.ok > 0 && f.ms) s.ms.push(f.ms);
+  }
+  for(const s of Object.values(out)){
+    s.acc = s.n ? s.ok / s.n : null;
+    s.speed = s.ms.length ? median(s.ms) : null;
+    s.status = areaStatus(s);
+  }
+  return out;
+}
+
+/* a times table is "needs practice" only when it has facts that keep going wrong */
+function tableStatus(t){
+  const p = tableProgress(t);
+  if(p.cells.every(c => c === 'none')) return 'none';
+  if(p.mastered >= 8) return 'strong';
+  if(p.cells.filter(c => c === 'tricky').length >= 2) return 'work';
+  return 'ok';
+}
+
+/* the same rule as the times-table grid: right half the time or less, lately */
+function trickyFacts(){
+  return Object.entries(S.facts).map(([id, f]) => ({...parseFact(id), ...recentOf(f)}))
+    .filter(x => x.op && x.n >= 2 && x.ok / x.n <= 0.5)
+    .sort((x, y) => x.ok / x.n - y.ok / y.n || y.n - x.n);
+}
+
+/* known facts that are still slow; long sums are slow by nature, so they're left out */
+function slowFacts(){
+  return Object.entries(S.facts).map(([id, f]) => ({...parseFact(id), ...recentOf(f), ms:f.ms}))
+    .filter(x => x.op && ['add20', 'sub20', 'mul', 'div'].includes(areaOf(x)) && x.n >= 2 && x.ok / x.n >= 0.75 && x.ms > SLOW_MS)
+    .sort((x, y) => y.ms - x.ms);
+}
+
+/* one 7-day window: 0 = the last 7 days including today, 1 = the 7 before */
+function weekStats(offset){
+  const today = todayStr();
+  const ss = S.sessions.filter(s => { const g = dayGap(s.date, today); return g >= offset * 7 && g < offset * 7 + 7; });
+  const right = ss.reduce((t, s) => t + (s.right || 0), 0), q = right + ss.reduce((t, s) => t + (s.wrong || 0), 0);
+  const speeds = ss.filter(s => s.msPer > 0).map(s => s.msPer);
+  const areas = {};
+  for(const s of ss) for(const [k, [r, w]] of Object.entries(s.areas || {})){ const a = areas[k] ||= [0, 0]; a[0] += r; a[1] += w; }
+  return {days:new Set(ss.map(s => s.date)).size, rounds:ss.length, q, acc:q ? right / q : null, ms:speeds.length ? median(speeds) : null, areas};
+}
+
+function daySeries(days){
+  const out = [];
+  for(let d = days - 1; d >= 0; d--){
+    const dt = new Date(); dt.setDate(dt.getDate() - d);
+    const date = todayStr(dt), ss = S.sessions.filter(s => s.date === date);
+    const right = ss.reduce((t, s) => t + (s.right || 0), 0), q = right + ss.reduce((t, s) => t + (s.wrong || 0), 0);
+    out.push({date, dt, rounds:ss.length, q, acc:q ? right / q : null});
+  }
+  return out;
+}
+
+function strengths(){
+  const out = [], areas = areaStats();
+  for(const a of AREAS){
+    const s = areas[a.id];
+    if(s.status === 'strong') out.push({icon:'✓', html:`<b>${a.name}</b>: ${pct(s.acc)} right, about ${fmtS(s.speed)} an answer.`});
+  }
+  const known = [2,3,4,5,6,7,8,9,10,11,12].filter(t => tableProgress(t).mastered >= 8);
+  if(known.length) out.push({icon:'✖️', html:`Knows the <b>${listJoin(known.map(t => t + '×'))}</b> ${known.length === 1 ? 'table' : 'tables'} by heart.`});
+  const tricks = TRICKS.filter(t => trickStars(t.id) === 3);
+  if(tricks.length) out.push({icon:'🧠', html:`Has mastered the <b>${listJoin(tricks.map(t => t.name))}</b> ${tricks.length === 1 ? 'trick' : 'tricks'}.`});
+  const streak = liveStreak();
+  if(streak >= 3) out.push({icon:'🔥', html:`<b>${streak}-day streak.</b> Practising every day.`});
+  const cu = S.checkups;
+  if(cu.length >= 2 && cu[cu.length - 1].score > cu[cu.length - 2].score)
+    out.push({icon:'📋', html:`Check-up score up from <b>${cu[cu.length - 2].score}</b> to <b>${cu[cu.length - 1].score}</b> out of ${cu[cu.length - 1].of}.`});
+  return out.slice(0, 5);
+}
+
+/* at most 3 next steps, each with something to tap that starts it */
+function nextSteps(){
+  if(!S.sessions.length) return [{icon:'👋', html:'<b>Nothing to report yet.</b> After a few rounds, this page shows what\'s going well and what to practise next.', act:{label:'Start a Daily Sprint', go:'mode:sprint'}}];
+  const steps = [], areas = areaStats();
+
+  // the Stage 3 table to focus on: tricky facts first, then fewest mastered, in teaching order
+  const order = [3, 4, 2, 5, 10];
+  const tables = order.map(t => ({t, p:tableProgress(t)})).filter(x => x.p.mastered < 8);
+  const trickyIn = x => x.p.cells.filter(c => c === 'tricky').length;
+  tables.sort((x, y) => trickyIn(y) - trickyIn(x) || x.p.mastered - y.p.mastered);
+  if(tables.length){
+    const {t, p} = tables[0];
+    const worst = trickyFacts().filter(f => f.op === 'mul' && (f.a === t || f.b === t)).slice(0, 3).map(f => f.text);
+    steps.push({icon:'🎯', html:`<b>The ${t}× table.</b> ${p.mastered} of 9 facts mastered${worst.length ? `; trickiest: ${worst.join(', ')}` : ''}. It's on the Stage 3 list.`,
+      act:{label:`Practise the ${t}× table`, go:`focus:${t}`}});
+  }
+
+  // the weakest other area, with the trick that teaches it
+  const weak = AREAS.filter(a => a.trick && ['work', 'ok'].includes(areas[a.id].status))
+    .sort((x, y) => areas[x.id].acc - areas[y.id].acc)[0];
+  if(weak){
+    const s = areas[weak.id], tr = TRICK[weak.trick];
+    steps.push({icon:tr.icon, html:`<b>${weak.name}.</b> ${pct(s.acc)} right recently${s.speed ? `, about ${fmtS(s.speed)} an answer` : ''}. The <b>${tr.name}</b> trick helps with this.`,
+      act:{label:'Open the trick', go:`trick:${tr.id}`}});
+  }
+
+  const slow = slowFacts();
+  if(slow.length >= 2) steps.push({icon:'⏱', html:`<b>Right, but slow:</b> ${slow.slice(0, 3).map(f => f.text).join(', ')}. Still being worked out rather than remembered. Short daily sprints turn these into instant recall.`,
+    act:{label:'Start a Daily Sprint', go:'mode:sprint'}});
+
+  const wk = weekStats(0);
+  if(wk.days < 4) steps.push({icon:'📅', html:`<b>Little and often.</b> Played on ${wk.days} of the last 7 days. A few minutes every day builds recall faster than one long session.`});
+
+  const last = S.checkups[S.checkups.length - 1];
+  if(!last || dayGap(last.date, todayStr()) >= 7) steps.push({icon:'📋', html:`<b>Weekly check-up ${last ? 'is due' : 'not done yet'}.</b> 25 quick questions on the Stage 3 tables, to track progress week to week.`,
+    act:{label:'Start the check-up', go:'mode:check'}});
+
+  return steps.slice(0, 3);
+}
 
 /* ============================================================
    sound.js — tiny Web Audio blips, no files
@@ -1875,6 +2162,7 @@ function startMode(id, opts){
     score:0, run:0, bestRun:0,
     right:0, wrong:0, fixed:0,
     xp:0, coins:0,
+    areas:{},                 // skill area -> [right, wrong] this round, for the grown-ups report
     missed:[], times:[],
     retry:[], asked:0,
     qStart:0, qEnd:0, endAt:0,
@@ -2010,6 +2298,7 @@ function submit(got, how){
   const typed = how === 'type';
 
   recordFact(q, ok, ms, typed);
+  if(live) (G.areas[areaOf(q)] ||= [0, 0])[ok ? 0 : 1]++;
 
   if(ok){
     Snd.right();
@@ -2170,7 +2459,7 @@ function finish(){
   if(m.id === 'check'){                   xp += XP.check; coins += COIN.check; }
   const r = settleRound(xp, coins);
 
-  logSession(m.id + (G.table ? G.table : ''), G.score, G.right, G.wrong, med);
+  logSession(m.id + (G.table ? G.table : ''), G.score, G.right, G.wrong, med, G.areas);
   saveRound();
   paintResults({isPB, med, prevCheck, rankUp, ...r});
   Snd.done();
@@ -2477,15 +2766,255 @@ async function enableReminders(){
   }
 }
 
+/* ============================================================
+   grown-ups: progress report
+   ============================================================ */
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const WEEKDAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const dateOf = str => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtDate = d => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+
+function deltaHtml(now, prev, goodWhenUp, fmt){
+  if(now == null) return '';
+  if(prev == null) return 'nothing last week';
+  const d = now - prev;
+  if(fmt(Math.abs(d)) === fmt(0)) return 'same as last week';
+  const good = (d > 0) === goodWhenUp;
+  return `<span class="${d > 0 ? 'up' : 'down'} ${good ? 'good' : 'bad'}">${d > 0 ? '▲' : '▼'} ${fmt(Math.abs(d))}</span> vs last week`;
+}
+
+const ptsFmt = v => { const n = Math.round(v * 100); return `${n} ${n === 1 ? 'pt' : 'pts'}`; };
+
+const pillHtml = st => `<span class="pill ${STATUS[st].cls}"><i>${STATUS[st].icon}</i>${STATUS[st].label}</span>`;
+
+function meterRow(name, status, frac, detail){
+  return `<div class="mrow ${STATUS[status].cls}"><span class="mn">${name}</span>${pillHtml(status)}` +
+    `<span class="mt"><i style="width:${Math.round((frac || 0) * 100)}%"></i></span><span class="md">${detail}</span></div>`;
+}
+
+const listHtml = items => `<ul class="ilist">${items.map(x =>
+  `<li><span class="ic">${x.icon}</span><span>${x.html}</span>` +
+  (x.act ? `<button class="go" type="button" data-rgo="${x.act.go}">${x.act.label} →</button>` : '') + '</li>').join('')}</ul>`;
+
+/* Columns grow from one baseline, 4px rounded tops, hairline grid. Every
+   column has a focusable hit area that shows its tooltip on tap or focus. */
+function columnChart({data, max, ticks, goal, valueLast, label}){
+  const W = 600, H = 200, L = 34, R = 10, T = 18, B = 30;
+  const ph = H - T - B, base = T + ph, band = (W - L - R) / data.length, bw = Math.min(24, band * 0.62);
+  const y = v => +(T + ph - v / max * ph).toFixed(1);
+  let s = `<svg class="cht" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">`;
+  for(const t of ticks) s += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`;
+  data.forEach((d, i) => {
+    const cx = L + band * i + band / 2, x0 = +(cx - bw / 2).toFixed(1);
+    if(d.v > 0){
+      const top = y(d.v), r = Math.min(4, base - top);
+      s += `<path class="col" d="M${x0},${base} V${top + r} Q${x0},${top} ${x0 + r},${top} H${x0 + bw - r} Q${x0 + bw},${top} ${x0 + bw},${top + r} V${base} Z"/>`;
+    }
+    s += `<text class="ax${d.now ? ' now' : ''}" x="${cx}" y="${H - 9}" text-anchor="middle">${d.x}</text>`;
+  });
+  if(goal != null) s += `<line class="gline" x1="${L}" x2="${W - R}" y1="${y(goal)}" y2="${y(goal)}"/>` +
+    `<text class="gl-lab" x="${W - R}" y="${y(goal) - 6}" text-anchor="end">Goal: ${goal} a day</text>`;
+  if(valueLast){
+    const i = data.length - 1;
+    s += `<text class="val" x="${L + band * i + band / 2}" y="${y(data[i].v) - 7}" text-anchor="middle">${data[i].v}</text>`;
+  }
+  data.forEach((d, i) => {
+    s += `<rect class="hit" x="${L + band * i}" y="${T}" width="${band}" height="${ph}" tabindex="0" role="button" ` +
+      `aria-label="${esc(d.tip)}" data-tip="${esc(d.tip)}" data-x="${L + band * i + band / 2}" data-y="${d.v > 0 ? y(d.v) : base}"/>`;
+  });
+  return `<div class="chart">${s}</svg><div class="tip" hidden></div></div>`;
+}
+
+/* every chart has a table twin, for exact numbers and screen readers */
+const tableHtml = (id, head, rows) =>
+  `<button class="tablelink" type="button" data-table="${id}">Show as a table</button>` +
+  `<table class="dtable" id="${id}" hidden><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead>` +
+  `<tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+
+function paintReport(){
+  const who = S.name ? esc(S.name) : 'Your child';
+  const w0 = weekStats(0), w1 = weekStats(1), had = w1.rounds > 0, streak = liveStreak();
+  let h = '';
+
+  // ---- the week, in a sentence and five numbers
+  h += `<p class="rhead">${
+    !S.sessions.length ? `${who} hasn't played yet. This page fills in after the first few rounds.`
+    : w0.rounds ? `In the last 7 days, ${who} played on <b>${plural(w0.days, 'day')}</b> and answered <b>${w0.q} questions</b>, getting <b>${pct(w0.acc)}</b> right${w0.ms ? `, at about <b>${fmtS(w0.ms)}</b> an answer` : ''}. Current streak: <b>${plural(streak, 'day')}</b>.`
+    : `${who} hasn't played in the last 7 days.`}</p>`;
+  const tile = (k, v, d) => `<div class="tile"><span class="k">${k}</span><span class="v">${v}</span><span class="dl">${d}</span></div>`;
+  h += '<div class="tiles">' +
+    tile('Days played', `${w0.days}<small> of 7</small>`, deltaHtml(w0.days, had ? w1.days : null, true, n => n)) +
+    tile('Rounds', w0.rounds, deltaHtml(w0.rounds, had ? w1.rounds : null, true, n => n)) +
+    tile('Questions', w0.q, deltaHtml(w0.q, had ? w1.q : null, true, n => n)) +
+    tile('Right', w0.acc == null ? '–' : pct(w0.acc), deltaHtml(w0.acc, w1.acc, true, ptsFmt)) +
+    tile('Per answer', w0.ms == null ? '–' : fmtS(w0.ms), deltaHtml(w0.ms, w1.ms, false, v => fmtS(v))) + '</div>';
+
+  // ---- what's going well, what to do next
+  const good = strengths();
+  h += '<div class="two">' +
+    `<div class="panel"><h3>✅ Doing well</h3>${good.length ? listHtml(good) : '<p class="noneyet">Still early days. Strengths show up here once there are a few rounds to go on.</p>'}</div>` +
+    `<div class="panel"><h3>🎯 Work on next</h3>${listHtml(nextSteps())}</div></div>`;
+
+  // ---- skills by area
+  const areas = areaStats();
+  h += '<div class="panel"><h3>Skills</h3><p class="sub">Each fact\'s last 6 answers. <b>Strong</b> means 90% right in about 3 seconds or less: remembered, not worked out.</p><div class="meters">' +
+    AREAS.map(a => {
+      const s = areas[a.id];
+      if(s.status === 'none') return meterRow(a.name, 'none', 0, s.n ? 'A few more answers needed before this can be rated.' : 'Not practised yet.');
+      const a0 = w0.areas[a.id], a1 = w1.areas[a.id];
+      const trend = a0 && a1 && a0[0] + a0[1] >= 10 && a1[0] + a1[1] >= 10
+        ? ' · ' + deltaHtml(a0[0] / (a0[0] + a0[1]), a1[0] / (a1[0] + a1[1]), true, ptsFmt) : '';
+      return meterRow(a.name, s.status, s.acc,
+        `${pct(s.acc)} right · about ${fmtS(s.speed)} an answer · ${plural(s.facts, 'fact')} practised${trend}`);
+    }).join('') + '</div></div>';
+
+  // ---- times tables
+  const tricky = trickyFacts();
+  // other tables appear once 4 of their facts have been practised; a stray 3 × 7 shouldn't add a 7× row
+  const shownTables = [2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12].filter(t =>
+    STAGE3.includes(t) || tableProgress(t).cells.filter(c => c !== 'none').length >= 4);
+  h += '<div class="panel"><h3>Times tables</h3><p class="sub">⭐ marks the Stage 3 tables. A fact counts as mastered after 3 quick right answers in a row.</p><div class="meters">' +
+    shownTables.map(t => {
+      const p = tableProgress(t), st = tableStatus(t);
+      const worst = tricky.filter(f => f.op === 'mul' && (f.a === t || f.b === t)).slice(0, 3).map(f => f.text);
+      return meterRow(`${t}× table${STAGE3.includes(t) ? ' ⭐' : ''}`, st, p.mastered / 9,
+        st === 'none' ? 'Not practised yet.' : `${p.mastered} of 9 mastered${worst.length ? ` · tricky: ${worst.join(', ')}` : ''}`);
+    }).join('') + '</div>' +
+    '<button class="go tablelink" type="button" data-rgo="grid" style="text-decoration:none">See the full times-table grid →</button></div>';
+
+  // ---- the exact facts
+  const slow = slowFacts();
+  const chips = (xs, sub) => xs.length ? `<div class="facts">${xs.map(f => `<span class="fact">${f.text}<small>${sub(f)}</small></span>`).join('')}</div>` : '';
+  h += '<div class="panel"><h3>Facts to practise</h3>' +
+    '<p class="sub"><b>Keeps getting wrong</b>: right only half the time or less, lately.</p>' +
+    (chips(tricky.slice(0, 10), f => `${f.ok} of ${f.n} right`) || '<p class="noneyet">None at the moment.</p>') +
+    '<p class="sub" style="margin-top:4px"><b>Right, but slow</b>: still being worked out, not yet remembered.</p>' +
+    (chips(slow.slice(0, 8), f => fmtS(f.ms)) || '<p class="noneyet">None at the moment.</p>') + '</div>';
+
+  // ---- activity, 14 days
+  const days = daySeries(14);
+  const maxR = Math.max(4, ...days.map(d => d.rounds));
+  const top = maxR + (maxR % 2);
+  const met = days.filter(d => d.rounds >= GOAL).length;
+  h += `<div class="panel"><h3>Practice, last 14 days</h3><p class="sub">Rounds played each day. Daily goal met on <b>${met} of 14 days</b>. Tap a day for details.</p>` +
+    columnChart({label:'Rounds played per day over the last 14 days', max:top, goal:GOAL,
+      ticks:Array.from({length:top / 2 + 1}, (_, i) => i * 2),
+      data:days.map((d, i) => ({v:d.rounds, now:i === 13, x:i === 13 ? 'Today' : WEEKDAYS[d.dt.getDay()],
+        tip:`${WEEKDAYS[d.dt.getDay()]} ${fmtDate(d.dt)}: ${plural(d.rounds, 'round')}${d.q ? `, ${d.q} questions, ${pct(d.acc)} right` : ''}`}))}) +
+    tableHtml('tb-days', ['Day', 'Rounds', 'Questions', 'Right'],
+      days.map(d => [`${WEEKDAYS[d.dt.getDay()]} ${fmtDate(d.dt)}`, d.rounds, d.q, d.acc == null ? '–' : pct(d.acc)])) + '</div>';
+
+  // ---- check-ups
+  const cu = S.checkups.slice(-8);
+  h += '<div class="panel"><h3>Weekly check-ups</h3>';
+  if(!cu.length){
+    h += '<p class="noneyet">No check-ups yet. The check-up is 25 times-table questions with 6 seconds each, and it\'s due once a week.</p>';
+  } else {
+    const last = cu[cu.length - 1], prev = cu[cu.length - 2];
+    h += `<p class="sub">Score out of ${last.of}. Latest: <b>${last.score}</b>${prev ? ` (${last.score === prev.score ? 'same as' : last.score > prev.score ? `up ${last.score - prev.score} from` : `down ${prev.score - last.score} from`} the one before)` : ''}.</p>` +
+      columnChart({label:'Check-up scores over time', max:last.of, ticks:[0, 5, 10, 15, 20, 25], valueLast:true,
+        data:cu.map(c => ({v:c.score, x:fmtDate(dateOf(c.date)), tip:`${fmtDate(dateOf(c.date))}: ${c.score} out of ${c.of}`}))}) +
+      tableHtml('tb-checks', ['Date', 'Score'], cu.map(c => [fmtDate(dateOf(c.date)), `${c.score} / ${c.of}`]));
+  }
+  h += '</div>';
+
+  // ---- maths tricks
+  const learned = TRICKS.filter(t => trickStars(t.id) >= 1), mastered = TRICKS.filter(t => trickStars(t.id) === 3);
+  const next = TRICK[suggestTrick()];
+  h += `<div class="panel"><h3>Maths Tricks</h3><p class="sub"><b>${learned.length} of ${TRICKS.length}</b> learned · <b>${mastered.length}</b> mastered (3 stars).</p>` +
+    (learned.length ? `<div class="trow">${learned.map(t => `<span class="tchip">${t.icon} ${t.name}<span class="stars">${starStr(trickStars(t.id))}</span></span>`).join('')}</div>` : '') +
+    listHtml([{icon:next.icon, html:`Next to learn: <b>${next.name}</b>. ${next.blurb}`, act:{label:'Open the trick', go:`trick:${next.id}`}}]) + '</div>';
+
+  $('a-progress').innerHTML = h;
+}
+
+function adultTab(name){
+  document.querySelectorAll('[data-atab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.atab === name)));
+  $('a-progress').hidden = name !== 'progress';
+  $('a-settings').hidden = name !== 'settings';
+}
+
+/* tooltips: tap or hover a column, or focus it from the keyboard */
+function chartTip(e){
+  const hit = e.target.closest ? e.target.closest('.hit') : null;
+  document.querySelectorAll('.chart .tip').forEach(t => { if(!hit || t.parentNode !== hit.closest('.chart')) t.hidden = true; });
+  if(!hit) return;
+  const chart = hit.closest('.chart'), tip = chart.querySelector('.tip');
+  const k = chart.querySelector('svg').getBoundingClientRect().width / 600;
+  tip.textContent = hit.dataset.tip;
+  tip.hidden = false;
+  const half = tip.offsetWidth / 2 + 4;
+  tip.style.left = Math.max(half, Math.min(chart.clientWidth - half, hit.dataset.x * k)) + 'px';
+  tip.style.top = (hit.dataset.y * k) + 'px';
+}
+
+/* ============================================================
+   grown-ups: backup and restore
+   ============================================================ */
+let pendingRestore = null;
+
+function backupNote(text, err){
+  const n = $('b-note');
+  n.hidden = !text;
+  n.textContent = text || '';
+  n.className = 'note' + (err ? ' err' : '');
+}
+
+async function saveBackup(){
+  const name = `mental-maths-backup-${todayStr()}.json`;
+  const blob = new Blob([JSON.stringify(S)], {type:'application/json'});
+  // on iPad the share sheet offers "Save to Files"
+  const file = new File([blob], name, {type:'application/json'});
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file], title:'Mental Maths backup'});
+      backupNote('Backup ready. Choose "Save to Files" to keep it somewhere safe.');
+      return;
+    }catch(e){
+      if(e.name === 'AbortError') return;
+    }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  backupNote(`Backup saved as ${name}.`);
+}
+
+async function readBackup(file){
+  try{
+    const data = JSON.parse(await file.text());
+    if(!data || typeof data !== 'object' || !data.facts || !Array.isArray(data.sessions)) throw new Error('not a backup');
+    pendingRestore = data;
+    backupNote(`This backup${data.name ? ` for ${data.name}` : ''} is at level ${levelOf(data.xp || 0)}, with ${plural(data.sessions.length, 'round')}, last played ${data.lastPlayed || 'never'}. Restoring replaces all progress on this iPad.`);
+    $('b-confirm').hidden = false;
+  }catch(e){
+    pendingRestore = null;
+    $('b-confirm').hidden = true;
+    backupNote('That file isn\'t a Mental Maths backup. Choose the .json file saved from this screen.', true);
+  }
+}
+
+function applyRestore(){
+  if(!pendingRestore) return;
+  S = {...fresh(), ...migrate(pendingRestore)};
+  pendingRestore = null;
+  saveState();
+  mirrorState();
+  $('b-confirm').hidden = true;
+  backupNote('Progress restored.');
+  paintReport();
+}
+
 async function showAdult(){
-  const lp = levelProgress(S.xp);
-  const last = S.checkups[S.checkups.length - 1];
-  $('a-stats').innerHTML =
-    `Streak: <b>${liveStreak()} days</b> · freezes: <b>${S.freezes}</b><br>` +
-    `Level <b>${lp.L}</b> (${S.xp} XP) · <b>${S.coins}</b> coins · <b>${S.owned.length}</b> shop items<br>` +
-    `Rounds today: <b>${roundsToday()}</b> of ${GOAL} · all rounds: <b>${S.sessions.length}</b><br>` +
-    `Last check-up: <b>${last ? `${last.score}/${last.of} on ${last.date}` : 'not done yet'}</b>`;
+  paintReport();
+  adultTab('progress');
   reminderNote('');
+  backupNote('');
+  $('b-confirm').hidden = true;
   $('a-codewrap').hidden = true;
   $('a-on').textContent = 'Turn on reminders';
   show('adult');
@@ -3001,6 +3530,36 @@ $('lu-ok').addEventListener('click', ()=>{ $('levelup').hidden = true; });
   b.addEventListener('contextmenu', e=>e.preventDefault());
 })();
 $('a-on').addEventListener('click', enableReminders);
+document.querySelectorAll('[data-atab]').forEach(b=>b.addEventListener('click', ()=>adultTab(b.dataset.atab)));
+$('a-progress').addEventListener('click', e=>{
+  const t = e.target.closest('[data-table]');
+  if(t){
+    const tb = $(t.dataset.table);
+    tb.hidden = !tb.hidden;
+    t.textContent = tb.hidden ? 'Show as a table' : 'Hide the table';
+    return;
+  }
+  // "work on next" buttons start the activity, ready to hand the iPad over
+  const g = e.target.closest('[data-rgo]');
+  if(g){
+    const [kind, arg] = g.dataset.rgo.split(':');
+    if(kind === 'focus') showLearn(Number(arg));
+    else if(kind === 'trick') openTrick(arg);
+    else if(kind === 'mode') startMode(arg);
+    else if(kind === 'grid') showGrid();
+    return;
+  }
+  chartTip(e);
+});
+['pointerover', 'focusin'].forEach(ev=>$('a-progress').addEventListener(ev, chartTip));
+$('b-save').addEventListener('click', saveBackup);
+$('b-file').addEventListener('change', e=>{
+  const f = e.target.files[0];
+  e.target.value = '';
+  if(f) readBackup(f);
+});
+$('b-apply').addEventListener('click', applyRestore);
+$('b-cancel').addEventListener('click', ()=>{ pendingRestore = null; $('b-confirm').hidden = true; backupNote(''); });
 $('a-copy').addEventListener('click', ()=>{
   const code = $('a-code').value;
   navigator.clipboard.writeText(code)
