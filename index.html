@@ -581,6 +581,167 @@
   .modal .unl span{background:var(--bg-deep);border-radius:12px;padding:8px 12px;font-size:14px;font-weight:700;}
   #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30;}
 
+  /* ============ MATHS TRICKS ============ */
+  .mode.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;min-height:0;padding:16px 18px;}
+  .mode.wide .ic{font-size:36px;}
+  .mode.wide .txt{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
+  .mode.wide .nm{margin-top:0;}
+  .mode.wide .ft{margin-top:0;padding-top:0;white-space:nowrap;}
+
+  .tgroup{width:100%;display:flex;flex-direction:column;gap:10px;text-align:left;}
+  .tgroup h3{margin:8px 0 0;font-size:15px;font-weight:750;color:var(--ink-soft);}
+  .tcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:4px;}
+  .tcard{
+    position:relative;
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);
+    border-radius:18px;padding:14px 14px 12px;text-align:left;
+    display:flex;flex-direction:column;gap:5px;
+    box-shadow:0 5px 0 var(--bg-deep);
+    transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .tcard:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bg-deep);}
+  .tcard.next{box-shadow:0 0 0 3px var(--accent),0 5px 0 var(--bg-deep);}
+  .tcard .ti{font-size:28px;line-height:1;}
+  .tcard .tn{font-size:16px;font-weight:800;line-height:1.25;}
+  .tcard .tx{font-size:14px;color:var(--ink-soft);font-weight:650;font-variant-numeric:tabular-nums;}
+  .tcard .tag{
+    position:absolute;top:10px;right:10px;
+    font-size:10.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;
+    padding:3px 8px;border-radius:999px;background:var(--bg-deep);color:var(--ink-soft);
+  }
+  .tcard .tag.next{background:var(--accent);color:var(--accent-ink);}
+  .stars{letter-spacing:2px;font-size:15px;}
+  .stars .off{color:var(--ink-faint);}
+
+  /* ---- trick player ---- */
+  #trick{gap:10px;}
+  .tbar h2{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(18px,4vw,22px);}
+  .tprog{display:flex;gap:6px;flex-shrink:0;}
+  .tprog i{width:11px;height:11px;border-radius:50%;background:var(--card-hi);}
+  .tprog i.done{background:var(--good);}
+  .tprog i.cur{background:var(--accent);}
+  .kmain{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;}
+  .kstage{
+    flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.8vh,16px);
+    padding:4px 0 8px;
+  }
+  .kstage > :first-child{margin-top:auto;}
+  .kstage > :last-child{margin-bottom:auto;}
+  .kside{flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+  .kact{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .kact:empty{display:none;}
+  @media (min-width:900px) and (min-aspect-ratio:5/4){
+    .kmain{flex-direction:row;align-items:stretch;}
+    .kside{width:400px;justify-content:center;}
+  }
+
+  .kintro{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;max-width:460px;}
+  .kintro .kicon{font-size:72px;line-height:1;}
+  .kintro h2{font-size:clamp(24px,5.5vw,32px);font-weight:800;text-wrap:balance;}
+  .kblurb{margin:0;font-size:18px;line-height:1.45;color:var(--ink-soft);text-wrap:balance;}
+  .kex{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;background:var(--card);border-radius:14px;padding:10px 20px;}
+  .kintro .stars{font-size:34px;letter-spacing:6px;}
+
+  .kprob{
+    font-size:clamp(38px,9.5vw,64px);font-weight:800;line-height:1.05;
+    font-variant-numeric:tabular-nums;letter-spacing:-0.02em;text-align:center;
+  }
+  .kprob .eq{color:var(--good);}
+  .kprob .q{color:var(--ink-faint);}
+  .kvis{width:100%;max-width:640px;display:flex;justify-content:center;align-items:center;}
+  .bubble{display:flex;align-items:center;gap:14px;width:100%;max-width:560px;padding-top:6px;}
+  .bubble .say{
+    position:relative;flex:1;
+    background:var(--ink);color:var(--bg);
+    border-radius:16px;padding:11px 16px;
+    font-size:clamp(15.5px,3.4vw,18px);font-weight:650;line-height:1.4;text-align:left;
+  }
+  .bubble .say::before{
+    content:'';position:absolute;left:-9px;top:50%;transform:translateY(-50%);
+    border:9px solid transparent;border-left:0;border-right-color:var(--ink);
+  }
+  .klines{display:flex;flex-direction:column;gap:8px;width:100%;max-width:470px;}
+  .kline{
+    background:var(--card);border-radius:14px;padding:9px 14px;text-align:center;
+    font-size:clamp(21px,4.8vw,28px);font-weight:750;font-variant-numeric:tabular-nums;
+    white-space:pre-wrap;
+  }
+  .kline.info{background:none;padding:2px 8px;font-size:clamp(16px,3.6vw,19px);font-weight:650;color:var(--ink-soft);white-space:normal;}
+  .kline.cur{box-shadow:0 0 0 3px var(--accent);}
+  .blank{
+    display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;
+    min-width:1.9em;height:1.45em;padding:0 8px;margin:0 2px;border-radius:10px;
+    background:var(--good-deep);color:var(--good);
+  }
+  .kline.cur .blank{background:var(--bg-deep);color:var(--ink);}
+  .kline.cur .blank.empty{color:var(--ink-faint);}
+  .kline.cur .blank.wrong{background:var(--bad-deep);color:var(--bad);}
+  .kline.shown .blank{background:var(--learn);color:var(--ink);}
+  .learnbtn{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;align-self:flex-start;
+    background:var(--bg-deep);color:var(--accent);
+    font-size:13.5px;font-weight:750;padding:7px 12px;border-radius:999px;
+  }
+
+  /* ---- trick pictures ---- */
+  .nl{width:100%;height:auto;overflow:visible;}
+  .nl-axis{stroke:var(--ink-soft);stroke-width:3;stroke-linecap:round;}
+  .nl-tick{stroke:var(--ink-faint);stroke-width:2;}
+  .nl-faint{fill:var(--ink-faint);font-size:15px;font-weight:650;text-anchor:middle;}
+  .nl-num{fill:var(--ink);font-size:20px;font-weight:800;text-anchor:middle;}
+  .nl-pt{fill:var(--ink);}
+  .nl-pt.cur{fill:var(--accent);}
+  .nl-jump{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round;}
+  .nl-lab{fill:var(--accent);font-size:21px;font-weight:800;text-anchor:middle;}
+  .nl-ah{fill:var(--accent);}
+
+  .frames{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .frame{
+    display:grid;grid-template-columns:repeat(5,30px);grid-auto-rows:30px;gap:5px;
+    padding:7px;background:var(--bg-deep);border-radius:12px;
+  }
+  .frame.hi{box-shadow:0 0 0 3px var(--accent);}
+  .frame i{border-radius:50%;box-shadow:inset 0 0 0 2px var(--card-hi);}
+  .kvis .c1{background:var(--accent);box-shadow:none;}
+  .kvis .c2{background:var(--xp);box-shadow:none;}
+  .kvis .c3{background:var(--good);box-shadow:none;}
+
+  .drows{display:flex;flex-direction:column;gap:8px;}
+  .drow{display:flex;gap:5px;}
+  .drow i{width:var(--d);height:var(--d);border-radius:50%;background:var(--accent);}
+  .drow i.dim{background:var(--card-hi);}
+  .drow i.x{background:var(--good);box-shadow:0 0 0 3px var(--ink);}
+
+  .blocks{display:flex;gap:22px;align-items:flex-end;}
+  .bk{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .bk-row{display:flex;gap:10px;align-items:flex-end;}
+  .bk-t{display:flex;gap:4px;align-items:flex-end;transition:opacity .3s ease;}
+  .bk-o{display:grid;grid-template-columns:repeat(3,14px);gap:3px;align-content:end;transition:opacity .3s ease;}
+  .rod{width:14px;height:98px;border-radius:3px;background:repeating-linear-gradient(to top,var(--c) 0 8px,rgba(10,18,30,0.35) 8px 10px);}
+  .cube{width:14px;height:14px;border-radius:3px;background:var(--c);}
+  .bk.g0{--c:var(--accent);}
+  .bk.g1{--c:var(--xp);}
+  .bk.dim-t .bk-t,.bk.dim-o .bk-o{opacity:0.22;}
+  .bk-lab{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .bk-plus{font-size:30px;font-weight:800;color:var(--ink-soft);align-self:center;}
+
+  .arr{display:grid;gap:4px;}
+  .arr i{width:var(--d);height:var(--d);border-radius:50%;transition:background .3s ease;}
+  .arr i.a{background:var(--accent);}
+  .arr i.b{background:var(--xp);}
+  .arr i.dim{background:var(--card-hi);}
+  .arr i.off{background:transparent;box-shadow:inset 0 0 0 2px var(--bad);}
+
+  .pv{display:grid;grid-template-columns:repeat(3,68px);gap:6px;text-align:center;font-variant-numeric:tabular-nums;}
+  .pv .h{font-size:13px;font-weight:750;color:var(--ink-soft);}
+  .pv .d{font-size:36px;font-weight:800;background:var(--bg-deep);border-radius:12px;padding:6px 0;min-height:56px;}
+  .pv .d.n{color:var(--accent);}
+  .pv .d.z{color:var(--good);}
+  .pv .d.q{color:var(--ink-faint);}
+  .pv .pvx{grid-column:1 / -1;font-size:15px;font-weight:700;color:var(--ink-soft);}
+
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
 </style>
@@ -634,6 +795,11 @@
         <span class="ic">📋</span><span class="nm">Check-up</span>
         <span class="ds">25 questions, 6 seconds each</span>
         <span class="ft" id="m-check"></span>
+      </button>
+      <button class="mode wide" type="button" data-mode="tricks">
+        <span class="ic">🧠</span>
+        <span class="txt"><span class="nm">Maths Tricks</span><span class="ds">Learn clever shortcuts, like 14 + 24 = 30 + 8</span></span>
+        <span class="ft" id="m-tricks"></span>
       </button>
     </div>
     <div class="opts">
@@ -722,6 +888,27 @@
     <p class="hint">When you master 3 × 4, the 4 × 3 square turns green too. They're the same fact.</p>
   </div></div>
 
+  <!-- ===== MATHS TRICKS: LIST ===== -->
+  <div class="screen scroll" id="tricks"><div class="inner">
+    <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>Maths Tricks</h2></div>
+    <p class="msum" id="t-sum"></p>
+    <p class="hint">Watch a clever shortcut, try it with help, then use it on your own. Each trick has 3 stars to earn.</p>
+    <div class="tgroup"><h3>➕ Adding and taking away</h3><div class="tcards" id="t-add"></div></div>
+    <div class="tgroup"><h3>✖️ Times and sharing</h3><div class="tcards" id="t-times"></div></div>
+  </div></div>
+
+  <!-- ===== MATHS TRICKS: PLAYER ===== -->
+  <div class="screen" id="trick">
+    <div class="topbar tbar"><button class="back" type="button" id="k-back">‹ Tricks</button><h2 id="k-name"></h2><div class="tprog" id="k-prog"></div></div>
+    <div class="kmain">
+      <div class="kstage" id="k-stage"></div>
+      <div class="kside">
+        <div class="pad" id="k-pad"></div>
+        <div class="kact" id="k-act"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== GAME ===== -->
   <div class="screen" id="game">
     <div class="hud">
@@ -805,7 +992,8 @@ const DEFAULT_STATE = {
   owned: [],          // bought item ids (free items are always owned)
   wear: {base:'fox', hat:null, item:null, pet:null, bg:'night', frame:'plain'},
   freezes: 0,         // streak freezes held
-  streakMilestone: 0  // highest milestone paid out in the current streak
+  streakMilestone: 0, // highest milestone paid out in the current streak
+  tricks: {}          // trick id -> {stars: 0-3}
 };
 
 const fresh = () => JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -976,18 +1164,224 @@ const focusRecipe = t => [{op:'mul', tables:[t], w:70}, {op:'div', tables:[t], w
 /* ============================================================
    hints.js — how to work it out, shown after a miss
    ============================================================ */
+/* `trick` names the Maths Tricks lesson that teaches this kind of fact */
 function hintFor(q){
   const {a, b, answer} = q;
-  if(q.op === 'mul') return {dots:{rows:a, cols:b}, text:`${a} rows of ${b}`};
-  if(q.op === 'div') return {dots:{rows:b, cols:answer}, text:`${a} dots in ${b} rows makes ${answer} in each row`};
+  if(q.op === 'mul'){
+    const has = n => a === n || b === n;
+    const trick = has(10) ? 'times10' : has(5) ? 'five' : has(4) ? 'doubledouble' : has(9) ? 'nines' : null;
+    return {dots:{rows:a, cols:b}, text:`${a} rows of ${b}`, trick};
+  }
+  if(q.op === 'div') return {dots:{rows:b, cols:answer}, text:`${a} dots in ${b} rows makes ${answer} in each row`, trick:'thinkmult'};
   if(q.op === 'add'){
-    if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} + ${t} = ${a+t}, then + ${b%10} = ${answer}`}; }
-    if(b < 10 && a % 10 + b > 10){ const up = 10 - a%10; return {text:`${a} + ${up} = ${a+up}, then + ${b-up} = ${answer}`}; }
+    if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} + ${t} = ${a+t}, then + ${b%10} = ${answer}`, trick:'split'}; }
+    if(b < 10 && a % 10 + b > 10){ const up = 10 - a%10; return {text:`${a} + ${up} = ${a+up}, then + ${b-up} = ${answer}`, trick:'bridge'}; }
     return null;
   }
-  if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} − ${t} = ${a-t}, then − ${b%10} = ${answer}`}; }
+  if(b >= 10 && b % 10){ const t = b - b%10; return {text:`${a} − ${t} = ${a-t}, then − ${b%10} = ${answer}`, trick:'takeparts'}; }
   if(b < 10 && a % 10 > 0 && a % 10 < b){ const d = a%10; return {text:`${a} − ${d} = ${a-d}, then − ${b-d} = ${answer}`}; }
   return null;
+}
+
+/* ============================================================
+   tricks.js — mental maths strategies, taught as worked examples
+   A trick makes a problem plus its steps. A step is an equation
+   with one blank ({parts, ans, say}), or a line to read
+   ({info, say}). `vis` describes the picture that goes with it.
+   ============================================================ */
+const BLANK = null;
+const either = (x, y) => Math.random() < 0.5 ? x : y;
+
+const TRICKS = [
+  {
+    id:'friends', name:'Ten friends', icon:'🤝', group:'add', school:true,
+    blurb:'Look for two numbers that make 10. Adding 10 is easy!',
+    example:[6, 9, 4],
+    gen:() => { const a = R(1,9), b = R(2,9); return Math.random() < 0.6 ? [a, b, 10 - a] : [b, a, 10 - a]; },
+    make:(x, y, z) => {
+      const n = [x, y, z];
+      const [i, j] = x + y === 10 ? [0,1] : x + z === 10 ? [0,2] : [1,2];
+      const p = n[i], q = n[j], r = n[3 - i - j];
+      return {text:`${x} + ${y} + ${z}`, answer:x + y + z, steps:[
+        {parts:[`${p} + ${q} = `, BLANK], ans:10, say:`Look for two numbers that make 10. ${p} and ${q} are ten friends!`},
+        {parts:[`10 + ${r} = `, BLANK], ans:10 + r, say:`Now add the ${r}. Adding to 10 is easy.`}
+      ], vis:{type:'frames', frames:[[{n:p, c:'c1'}, {n:q, c:'c2'}], [{n:r, c:'c3'}]]}};
+    }
+  },
+  {
+    id:'bridge', name:'Bridge through 10', icon:'🌉', group:'add', school:true,
+    blurb:'Jump to the next ten first, then add what is left.',
+    example:[8, 5],
+    gen:L => {
+      if(L < 2){ const a = R(5,9); return [a, R(11 - a, 9)]; }
+      const a = R(1,8) * 10 + R(4,9);
+      return [a, R(11 - a % 10, 9)];
+    },
+    make:(a, b) => {
+      const up = 10 - a % 10, t = a + up;
+      return {text:`${a} + ${b}`, answer:a + b, steps:[
+        {parts:[`${a} + `, BLANK, ` = ${t}`], ans:up, say:`How many more does ${a} need to get to ${t}?`},
+        {parts:[`${b} = ${up} + `, BLANK], ans:b - up, say:`Split the ${b}. Use ${up} to get to ${t}. How much is left?`},
+        {parts:[`${t} + ${b - up} = `, BLANK], ans:a + b, say:`Now add what's left.`}
+      ], vis:{type:'line', start:a, jumps:[{to:t, label:`+${up}`}, {to:a + b, label:`+${b - up}`}], reveal:[0,1,1,2]}};
+    }
+  },
+  {
+    id:'neardouble', name:'Near doubles', icon:'👯', group:'add', school:true,
+    blurb:'When two numbers are next-door neighbours, double the smaller one and add 1.',
+    example:[6, 7],
+    gen:L => { const a = L < 2 ? R(3,9) : R(11,19); return either([a, a + 1], [a + 1, a]); },
+    make:(x, y) => {
+      const a = Math.min(x, y);
+      return {text:`${x} + ${y}`, answer:x + y, steps:[
+        {parts:[`${a} + ${a} = `, BLANK], ans:2 * a, say:`${a} and ${a + 1} are neighbours. Double the smaller one.`},
+        {parts:[`${2 * a} + 1 = `, BLANK], ans:2 * a + 1, say:`${a + 1} is one more than ${a}, so add 1.`}
+      ], vis:{type:'rows', rows:[a, a + 1]}};
+    }
+  },
+  {
+    id:'split', name:'Split tens and ones', icon:'🧱', group:'add', school:true,
+    blurb:'Add the tens, add the ones, then put them back together.',
+    example:[14, 24],
+    gen:L => {
+      const oa = R(1,8), a = R(1,5) * 10 + oa;
+      return [a, R(1, L < 2 ? 4 : 3) * 10 + (L < 2 ? R(1, 9 - oa) : R(10 - oa, 9))];
+    },
+    make:(a, b) => {
+      const ta = a - a % 10, oa = a % 10, tb = b - b % 10, ob = b % 10;
+      return {text:`${a} + ${b}`, answer:a + b, steps:[
+        {info:`${a} is ${ta} and ${oa}.   ${b} is ${tb} and ${ob}.`, say:'Split each number into tens and ones.'},
+        {parts:[`${ta} + ${tb} = `, BLANK], ans:ta + tb, say:'Add the tens.'},
+        {parts:[`${oa} + ${ob} = `, BLANK], ans:oa + ob, say:'Add the ones.'},
+        {parts:[`${ta + tb} + ${oa + ob} = `, BLANK], ans:a + b, say:'Put the tens and ones back together.'}
+      ], vis:{type:'blocks', nums:[a, b], focus:['all', 'tens', 'ones', 'all']}};
+    }
+  },
+  {
+    id:'nine', name:'Add 9: add 10, take 1', icon:'🪄', group:'add', school:true,
+    blurb:'9 is nearly 10. Add 10, then take 1 away. It works for 19 and 29 too!',
+    example:[46, 9],
+    gen:L => { const b = L < 2 ? 9 : pick([19, 29]); return [R(12, 89 - b), b]; },
+    make:(a, b) => {
+      const r = b + 1;
+      return {text:`${a} + ${b}`, answer:a + b, steps:[
+        {parts:[`${a} + ${r} = `, BLANK], ans:a + r, say:`${b} is nearly ${r}. Add ${r} first. That's easy!`},
+        {parts:[`${a + r} − 1 = `, BLANK], ans:a + b, say:'You added 1 too many, so take 1 away.'}
+      ], vis:{type:'line', start:a, jumps:[{to:a + r, label:`+${r}`}, {to:a + b, label:'−1'}], reveal:[0,1,2]}};
+    }
+  },
+  {
+    id:'takeparts', name:'Take away in parts', icon:'✂️', group:'add', school:true,
+    blurb:'Take away the tens first, then the ones.',
+    example:[57, 23],
+    gen:L => {
+      const ta = R(4,9) * 10, tb = R(1, ta / 10 - 2) * 10;
+      if(L < 2){ const oa = R(2,9); return [ta + oa, tb + R(1, oa)]; }
+      const oa = R(0,7);
+      return [ta + oa, tb + R(oa + 1, 9)];
+    },
+    make:(a, b) => {
+      const tb = b - b % 10, ob = b % 10;
+      return {text:`${a} − ${b}`, answer:a - b, steps:[
+        {parts:[`${a} − ${tb} = `, BLANK], ans:a - tb, say:`${b} is ${tb} and ${ob}. Take away the ${tb} first.`},
+        {parts:[`${a - tb} − ${ob} = `, BLANK], ans:a - b, say:`Now take away the ${ob}.`}
+      ], vis:{type:'line', start:a, jumps:[{to:a - tb, label:`−${tb}`}, {to:a - b, label:`−${ob}`}], reveal:[0,1,2]}};
+    }
+  },
+  {
+    id:'countup', name:'Count up to find the difference', icon:'🐸', group:'add', school:true,
+    blurb:'When two numbers are close together, hop up from the smaller one. Add up the hops.',
+    example:[42, 38],
+    gen:() => { const b = R(1,8) * 10 + R(5,9); return [b - b % 10 + 10 + R(1,6), b]; },
+    make:(a, b) => {
+      const nx = b - b % 10 + 10, u1 = nx - b, u2 = a - nx;
+      return {text:`${a} − ${b}`, answer:a - b, steps:[
+        {parts:[`${b} + `, BLANK, ` = ${nx}`], ans:u1, say:`${a} and ${b} are close together. Hop from ${b} up to ${nx}.`},
+        {parts:[`${nx} + `, BLANK, ` = ${a}`], ans:u2, say:`Now hop from ${nx} up to ${a}.`},
+        {parts:[`${u1} + ${u2} = `, BLANK], ans:a - b, say:'Add up your hops. That\'s the difference!'}
+      ], vis:{type:'line', start:b, jumps:[{to:nx, label:`+${u1}`}, {to:a, label:`+${u2}`}], reveal:[0,1,2,2]}};
+    }
+  },
+  {
+    id:'times10', name:'Times 10: digits jump', icon:'🚀', group:'times', school:true,
+    blurb:'Times 10 makes every digit jump one place to the left. A 0 fills the ones.',
+    example:[23],
+    gen:L => [L < 2 ? R(2,9) : R(11,99)],
+    make:n => ({text:`${n} × 10`, answer:n * 10, steps:[
+      {info:'Ones become tens. Tens become hundreds.', say:'Times 10 makes every digit jump one place to the left.'},
+      {parts:[`${n} × 10 = `, BLANK], ans:n * 10, say:'The digits jump left, and a 0 fills the ones.'}
+    ], vis:{type:'place', n}})
+  },
+  {
+    id:'five', name:'Times 5 is half of times 10', icon:'🖐️', group:'times', school:true,
+    blurb:'5 is half of 10. Times by 10, then halve it.',
+    example:[8],
+    gen:() => [R(2,12)],
+    make:n => ({text:either(`5 × ${n}`, `${n} × 5`), answer:5 * n, steps:[
+      {parts:[`${n} × 10 = `, BLANK], ans:10 * n, say:'5 is half of 10. Times by 10 first.'},
+      {parts:[`Half of ${10 * n} = `, BLANK], ans:5 * n, say:`Now halve it.`}
+    ], vis:{type:'array', rows:n, cols:10, mark:(r, c, i) => c < 5 || i < 1 ? 'a' : 'dim'}})
+  },
+  {
+    id:'doubledouble', name:'Times 4: double double', icon:'🔁', group:'times', school:true,
+    blurb:'4 is double 2. Double the number, then double it again.',
+    example:[7],
+    gen:() => [R(3,12)],
+    make:n => ({text:either(`4 × ${n}`, `${n} × 4`), answer:4 * n, steps:[
+      {parts:[`Double ${n} = `, BLANK], ans:2 * n, say:`Double ${n} first. That makes 2 lots of ${n}.`},
+      {parts:[`Double ${2 * n} = `, BLANK], ans:4 * n, say:'Double it again to make 4 lots!'}
+    ], vis:{type:'array', rows:4, cols:n, mark:(r, c, i) => r < 2 ? 'a' : i < 1 ? 'dim' : 'b'}})
+  },
+  {
+    id:'thinkmult', name:'Divide by thinking times', icon:'🔄', group:'times', school:true,
+    blurb:'Dividing is times backwards. Ask: what times this number makes that one?',
+    example:[4, 6],
+    gen:() => [pick(STAGE3), R(2,10)],
+    make:(t, n) => ({text:`${t * n} ÷ ${t}`, answer:n, steps:[
+      {parts:[BLANK, ` × ${t} = ${t * n}`], ans:n, say:`What times ${t} makes ${t * n}?`},
+      {parts:[`So ${t * n} ÷ ${t} = `, BLANK], ans:n, say:'That number is your answer!'}
+    ], vis:{type:'array', rows:t, cols:n, mark:() => 'a'}})
+  },
+  {
+    id:'nines', name:'Times 9: times 10, take one', icon:'9️⃣', group:'times', school:false,
+    blurb:'9 is one less than 10. Times by 10, then take one lot away.',
+    example:[6],
+    gen:() => [R(2,10)],
+    make:n => ({text:either(`9 × ${n}`, `${n} × 9`), answer:9 * n, steps:[
+      {parts:[`${n} × 10 = `, BLANK], ans:10 * n, say:'9 is one less than 10. Times by 10 first.'},
+      {parts:[`${10 * n} − ${n} = `, BLANK], ans:9 * n, say:`That's one ${n} too many, so take ${n} away.`}
+    ], vis:{type:'array', rows:n, cols:10, mark:(r, c, i) => c === 9 && i >= 1 ? 'off' : 'a'}})
+  }
+];
+const TRICK = Object.fromEntries(TRICKS.map(t => [t.id, t]));
+
+const trickStars = id => (S.tricks[id] || {}).stars || 0;
+
+/* first school trick not yet learned, then the one with fewest stars */
+function suggestTrick(){
+  const next = TRICKS.find(t => t.school && trickStars(t.id) < 1) ||
+    [...TRICKS].sort((x, y) => trickStars(x.id) - trickStars(y.id))[0];
+  return next.id;
+}
+
+/* a set of problems with no repeats */
+function trickSet(t, n, level){
+  const seen = new Set(), out = [];
+  for(let tries = 0; out.length < n && tries < 200; tries++){
+    const p = t.make(...t.gen(typeof level === 'function' ? level(out.length) : level));
+    if(seen.has(p.text)) continue;
+    seen.add(p.text);
+    out.push(p);
+  }
+  return out;
+}
+
+/* stars for a "Use it" round: all right on their own and quick = 3, one slip = 2 */
+function useStars(res){
+  const clean = res.filter(r => r.ok).length;
+  if(clean === res.length && res.every(r => r.ms < 10000)) return 3;
+  if(clean >= res.length - 1) return 2;
+  return 1;
 }
 
 /* ============================================================
@@ -1130,6 +1524,27 @@ function claimMilestones(){
     if(S.streak >= days && S.streakMilestone < days){ S.streakMilestone = days; coins += c; hit = days; }
   }
   return {coins, hit};
+}
+
+/* Every finished round, game or trick: streak, daily goal, milestone
+   coins, then the round's own XP and coins. */
+function settleRound(xp, coins){
+  const streak = bumpStreak();
+  const milestone = claimMilestones();
+  const goalBefore = roundsToday();
+  bumpGoal();
+  const goalJustMet = goalBefore < GOAL && roundsToday() >= GOAL;
+  coins += milestone.coins;
+  if(goalJustMet){ xp += XP.goal; coins += COIN.goal; }
+  const xpBefore = S.xp;
+  S.xp += xp;
+  S.coins += coins;
+  return {streak, milestone, goalJustMet, xp, coins, xpBefore};
+}
+
+function logSession(mode, score, right, wrong, ms){
+  S.sessions.push({date:todayStr(), mode, score, right, wrong, msPer:Math.round(ms)});
+  if(S.sessions.length > 400) S.sessions = S.sessions.slice(-400);
 }
 
 /* ============================================================
@@ -1277,7 +1692,7 @@ const Snd = {
    ui.js
    ============================================================ */
 const $ = id => document.getElementById(id);
-const SCREENS = ['home','shop','adult','pick','learn','grid','game','done'];
+const SCREENS = ['home','shop','adult','tricks','trick','pick','learn','grid','game','done'];
 
 function show(name){
   for(const n of SCREENS) $(n).classList.toggle('on', n === name);
@@ -1348,6 +1763,8 @@ function paintHome(){
   $('m-sprint').textContent = S.best.sprint ? `Best: ${S.best.sprint}` : 'Start here';
   $('m-focus').textContent = `Try the ${suggestTable()}× table`;
   $('m-ghost').textContent = `Ghost to beat: ${S.best.sprint || GHOST_DEFAULT}`;
+  const trickTotal = TRICKS.reduce((s, t) => s + trickStars(t.id), 0);
+  $('m-tricks').textContent = trickTotal ? `⭐ ${trickTotal} / ${TRICKS.length * 3}` : 'New!';
 
   const last = S.checkups[S.checkups.length - 1];
   let due = true, ct = 'Not done yet';
@@ -1742,42 +2159,57 @@ function finish(){
     if(S.checkups.length > 100) S.checkups = S.checkups.slice(-100);
   }
 
-  const streak = bumpStreak();
-  const milestone = claimMilestones();
-  const goalBefore = roundsToday();
-  bumpGoal();
-  const goalJustMet = goalBefore < GOAL && roundsToday() >= GOAL;
-
   const rankNow = Math.max(S.rank, rankFromSpeed());
   const rankUp = rankNow > S.rank;
   S.rank = rankNow;
 
-  // rewards: per-answer XP and coins were counted during the round
-  const ghostBeat = m.ghost && G.score > G.ghostTarget;
-  let xp = G.xp + XP.round, coins = G.coins + milestone.coins;
-  if(isPB && G.score > 0 && !m.ghost){ xp += XP.best;  coins += COIN.best; }
-  if(ghostBeat){                       xp += XP.ghost; coins += COIN.ghost; }
-  if(m.id === 'check'){                xp += XP.check; coins += COIN.check; }
-  if(goalJustMet){                     xp += XP.goal;  coins += COIN.goal; }
-  const xpBefore = S.xp;
-  S.xp += xp;
-  S.coins += coins;
+  // per-answer XP and coins were counted during the round
+  let xp = G.xp + XP.round, coins = G.coins;
+  if(isPB && G.score > 0 && !m.ghost){    xp += XP.best;  coins += COIN.best; }
+  if(m.ghost && G.score > G.ghostTarget){ xp += XP.ghost; coins += COIN.ghost; }
+  if(m.id === 'check'){                   xp += XP.check; coins += COIN.check; }
+  const r = settleRound(xp, coins);
 
-  S.sessions.push({
-    date:todayStr(), mode:m.id + (G.table ? G.table : ''), score:G.score,
-    right:G.right, wrong:G.wrong, msPer:Math.round(med)
-  });
-  if(S.sessions.length > 400) S.sessions = S.sessions.slice(-400);
+  logSession(m.id + (G.table ? G.table : ''), G.score, G.right, G.wrong, med);
+  saveRound();
+  paintResults({isPB, med, prevCheck, rankUp, ...r});
+  Snd.done();
+  show('done');
+  celebrateLevel(r.xpBefore);
+}
+
+function saveRound(){
   saveState();
   mirrorState();
   if(navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
+}
 
-  paintResults({isPB, med, prevCheck, goalJustMet, rankUp, streak, milestone, xp, coins, xpBefore});
-  Snd.done();
-  show('done');
+function celebrateLevel(xpBefore){
   const from = levelOf(xpBefore), to = levelOf(S.xp);
   if(to > from) setTimeout(()=>showLevelUp(from, to), 900);
 }
+
+/* XP and coins gained, plus a level bar that fills from where it was */
+function rewardsHtml(r, barId){
+  const lp0 = levelProgress(r.xpBefore), lp1 = levelProgress(S.xp);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const bar = $(barId);
+    if(bar) bar.style.width = (lp1.frac * 100) + '%';
+  }));
+  return `<div class="rewards"><div class="gains"><div class="gain x">+${r.xp} XP</div><div class="gain c">+${r.coins} 🪙</div></div>` +
+    `<div class="lvlrow"><div class="lbl"><span>Level ${lp1.L}</span><span>${lp1.into} / ${lp1.need} XP</span></div>` +
+    `<div class="xpbar"><i id="${barId}" style="width:${lp1.L > lp0.L ? 0 : lp0.frac * 100}%"></i></div></div></div>`;
+}
+
+function streakBadges(r){
+  const b = [];
+  if(r.milestone.hit)    b.push(['gold', `🔥 ${r.milestone.hit}-day streak! +${r.milestone.coins} 🪙`]);
+  if(r.streak.froze)     b.push(['', `❄️ A streak freeze saved your ${S.streak - 1}-day streak`]);
+  if(r.streak.lost >= 2) b.push(['', '🔥 New streak started. Come back tomorrow!']);
+  return b;
+}
+
+const badgesHtml = list => list.map(([c, t])=>`<div class="badge ${c}">${t}</div>`).join('');
 
 function paintResults(r){
   const m = G.mode;
@@ -1806,18 +2238,9 @@ function paintResults(r){
   }
   $('d-verdict').textContent = v;
 
-  const lp0 = levelProgress(r.xpBefore), lp1 = levelProgress(S.xp);
-  $('d-rewards').innerHTML =
-    `<div class="gains"><div class="gain x">+${r.xp} XP</div><div class="gain c">+${r.coins} 🪙</div></div>` +
-    `<div class="lvlrow"><div class="lbl"><span>Level ${lp1.L}</span><span>${lp1.into} / ${lp1.need} XP</span></div>` +
-    `<div class="xpbar"><i id="d-xpfill" style="width:${lp1.L > lp0.L ? 0 : lp0.frac * 100}%"></i></div></div>`;
-  // fill the bar once the screen is showing, so the gain animates
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ $('d-xpfill').style.width = (lp1.frac * 100) + '%'; }));
+  $('d-rewards').innerHTML = rewardsHtml(r, 'd-xpfill');
 
-  const badges = [];
-  if(r.milestone.hit) badges.push(['gold', `🔥 ${r.milestone.hit}-day streak! +${r.milestone.coins} 🪙`]);
-  if(r.streak.froze)  badges.push(['', `❄️ A streak freeze saved your ${S.streak - 1}-day streak`]);
-  if(r.streak.lost >= 2) badges.push(['', '🔥 New streak started. Come back tomorrow!']);
+  const badges = streakBadges(r);
   if(m.ghost){
     const d = G.score - G.ghostTarget;
     if(d > 0)        badges.push(['gold', `👻 You beat your ghost by ${d}!`]);
@@ -1834,7 +2257,7 @@ function paintResults(r){
   if(G.fixed)  badges.push(['green', `🔁 Fixed ${G.fixed} on the next try`]);
   if(r.rankUp){ const k = RANKS[S.rank]; badges.push(['gold', `${k.icon} Rank up! You're a ${k.name} now`]); }
   if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
-  $('d-badges').innerHTML = badges.map(([c, t])=>`<div class="badge ${c}">${t}</div>`).join('');
+  $('d-badges').innerHTML = badgesHtml(badges);
 
   const list = G.missed.slice(0, 4);
   $('d-practise').innerHTML = list.length
@@ -1844,8 +2267,10 @@ function paintResults(r){
         const dots = h && h.dots
           ? `<span class="array" style="grid-template-columns:repeat(${h.dots.cols},7px)">${'<i></i>'.repeat(h.dots.rows * h.dots.cols)}</span>`
           : '';
+        const learn = h && h.trick
+          ? `<button class="learnbtn" type="button" data-trick="${h.trick}">💡 Learn the trick: ${TRICK[h.trick].name}</button>` : '';
         return `<div class="prow"><div class="pq"><span>${q.text}</span><b>= ${q.answer}</b></div>` +
-          (h ? `<div class="ph">${dots}<span>${h.text}</span></div>` : '') + '</div>';
+          (h ? `<div class="ph">${dots}<span>${h.text}</span></div>` : '') + learn + '</div>';
       }).join('') + '</div>'
     : '';
 }
@@ -2072,11 +2497,407 @@ async function showAdult(){
 }
 
 /* ============================================================
+   tricks — pictures
+   i = the step in focus, k = how many steps are complete
+   ============================================================ */
+let svgId = 0;
+
+function lineSvg(v, upto){
+  const pts = [v.start, ...v.jumps.map(j => j.to)];
+  let lo = Math.min(...pts), hi = Math.max(...pts);
+  const pad = Math.max(2, (hi - lo) * 0.15);
+  lo -= pad; hi += pad;
+  const W = 640, H = 176, y = 118;
+  const x = n => +(26 + (n - lo) / (hi - lo) * (W - 52)).toFixed(1);
+  const id = 'ah' + (++svgId);
+  let s = `<svg class="nl" viewBox="0 0 ${W} ${H}" role="img" aria-label="Number line">` +
+    `<defs><marker id="${id}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">` +
+    `<path class="nl-ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>` +
+    `<line class="nl-axis" x1="12" y1="${y}" x2="${W - 12}" y2="${y}"/>`;
+
+  // small ticks for ones on short lines, numbered ticks at every ten
+  const shown = pts.slice(0, upto + 1);
+  const every = hi - lo <= 32 ? 1 : hi - lo <= 70 ? 2 : 5;
+  for(let n = Math.ceil(lo); n <= hi; n++){
+    const ten = n % 10 === 0;
+    if(!ten && n % every) continue;
+    s += `<line class="nl-tick" x1="${x(n)}" x2="${x(n)}" y1="${y - (ten ? 10 : 5)}" y2="${y + (ten ? 10 : 5)}"/>`;
+    if(ten && !shown.includes(n)) s += `<text class="nl-faint" x="${x(n)}" y="${y + 33}">${n}</text>`;
+  }
+
+  let from = v.start;
+  v.jumps.slice(0, upto).forEach(j => {
+    const x1 = x(from), x2 = x(j.to), h = Math.min(78, 24 + Math.abs(x2 - x1) * 0.32);
+    s += `<path class="nl-jump" d="M${x1},${y - 5} Q${(x1 + x2) / 2},${y - 5 - h * 2} ${x2},${y - 5}" marker-end="url(#${id})"/>`;
+    s += `<text class="nl-lab" x="${(x1 + x2) / 2}" y="${y - 13 - h}">${j.label}</text>`;
+    from = j.to;
+  });
+
+  // numbers under the reached points; close neighbours are staggered
+  let lastX = -99, low = false;
+  shown.forEach((n, ix) => {
+    const px = x(n);
+    low = Math.abs(px - lastX) < 38 ? !low : false;
+    lastX = px;
+    s += `<circle class="nl-pt${ix === shown.length - 1 ? ' cur' : ''}" cx="${px}" cy="${y}" r="7"/>`;
+    s += `<text class="nl-num" x="${px}" y="${y + (low ? 54 : 34)}">${n}</text>`;
+  });
+  return s + '</svg>';
+}
+
+function visHtml(v, i, k){
+  if(v.type === 'line') return lineSvg(v, v.reveal[Math.min(k, v.reveal.length - 1)]);
+
+  if(v.type === 'frames'){
+    return '<div class="frames">' + v.frames.map((group, f) => {
+      const cells = [];
+      group.forEach(g => { for(let n = 0; n < g.n; n++) cells.push(g.c); });
+      while(cells.length < 10) cells.push('');
+      return `<div class="frame${f === 0 && i === 0 ? ' hi' : ''}">${cells.map(c => `<i class="${c}"></i>`).join('')}</div>`;
+    }).join('') + '</div>';
+  }
+
+  if(v.type === 'rows'){
+    const d = Math.min(26, Math.floor(470 / Math.max(...v.rows)) - 5);
+    return `<div class="drows" style="--d:${d}px">` + v.rows.map((n, r) =>
+      `<div class="drow">${Array.from({length:n}, (_, c) =>
+        `<i class="${r === 1 && c === n - 1 ? (i >= 1 ? 'x' : 'dim') : ''}"></i>`).join('')}</div>`).join('') + '</div>';
+  }
+
+  if(v.type === 'blocks'){
+    const focus = v.focus[i];
+    return '<div class="blocks">' + v.nums.map((n, g) =>
+      `<div class="bk g${g}${focus === 'tens' ? ' dim-o' : focus === 'ones' ? ' dim-t' : ''}">` +
+      `<div class="bk-row"><div class="bk-t">${'<i class="rod"></i>'.repeat(Math.floor(n / 10))}</div>` +
+      `<div class="bk-o">${'<i class="cube"></i>'.repeat(n % 10)}</div></div>` +
+      `<div class="bk-lab">${n}</div></div>`).join('<div class="bk-plus">+</div>') + '</div>';
+  }
+
+  if(v.type === 'array'){
+    const d = Math.max(7, Math.min(24, Math.floor(320 / v.cols) - 4, Math.floor(200 / v.rows) - 4));
+    let cells = '';
+    for(let r = 0; r < v.rows; r++) for(let c = 0; c < v.cols; c++) cells += `<i class="${v.mark(r, c, i)}"></i>`;
+    return `<div class="arr" style="--d:${d}px;grid-template-columns:repeat(${v.cols},${d}px)">${cells}</div>`;
+  }
+
+  if(v.type === 'place'){
+    const row = (s, cls) => s.padStart(3, ' ').split('').map((ch, ix) =>
+      `<div class="d ${ch === ' ' ? '' : cls(ix)}">${ch === ' ' ? '' : ch}</div>`).join('');
+    const after = k >= 2 ? row(String(v.n * 10), ix => ix === 2 ? 'z' : 'n') : '<div class="d q">?</div>'.repeat(3);
+    return `<div class="pv"><div class="h">Hundreds</div><div class="h">Tens</div><div class="h">Ones</div>` +
+      row(String(v.n), () => 'n') + '<div class="pvx">× 10 ↙ every digit jumps one place left</div>' + after + '</div>';
+  }
+  return '';
+}
+
+/* ============================================================
+   tricks — screens and lessons
+   A lesson goes: watch a worked example → fill in the steps of 3
+   problems (first star) → "Use it": 6 problems on their own.
+   ============================================================ */
+let T = null;
+const PRAISE = ['Brilliant!', 'You got it!', 'Super!', 'Nailed it!', 'Great thinking!'];
+const starStr = n => '⭐'.repeat(n) + '<span class="off">☆</span>'.repeat(3 - n);
+
+function showTricks(){
+  const sug = suggestTrick();
+  const total = TRICKS.reduce((s, t) => s + trickStars(t.id), 0);
+  $('t-sum').innerHTML = `<b>${total}</b> of ${TRICKS.length * 3} stars`;
+  const card = t => {
+    const ex = t.make(...t.example);
+    return `<button type="button" class="tcard${t.id === sug ? ' next' : ''}" data-trick="${t.id}">` +
+      (t.id === sug ? '<span class="tag next">Try next</span>' : !t.school ? '<span class="tag">Extra</span>' : '') +
+      `<span class="ti">${t.icon}</span><span class="tn">${t.name}</span>` +
+      `<span class="tx">${ex.text} = ${ex.answer}</span><span class="stars">${starStr(trickStars(t.id))}</span></button>`;
+  };
+  $('t-add').innerHTML = TRICKS.filter(t => t.group === 'add').map(card).join('');
+  $('t-times').innerHTML = TRICKS.filter(t => t.group === 'times').map(card).join('');
+  show('tricks');
+}
+
+function openTrick(id){
+  T = {t:TRICK[id], phase:'intro'};
+  $('k-name').textContent = `${T.t.icon} ${T.t.name}`;
+  renderTrick();
+  show('trick');
+}
+
+const bubble = say => `<div class="bubble">${avatarHtml(S.wear, 54)}<div class="say">${say}</div></div>`;
+const probHtml = (p, solved) => `<div class="kprob">${p.text} = ${solved ? `<span class="eq">${p.answer}</span>` : '<span class="q">?</span>'}</div>`;
+
+function stepLine(st, state, typed){
+  if(st.info) return `<div class="kline info">${st.info}</div>`;
+  const blank = state === 'cur'
+    ? `<span class="blank${typed ? '' : ' empty'}" id="k-blank">${typed || '?'}</span>`
+    : `<span class="blank">${st.ans}</span>`;
+  return `<div class="kline ${state}">${st.parts.map(p => p === BLANK ? blank : p).join('')}</div>`;
+}
+
+/* every line of a problem, already worked out */
+const workedLines = p => p.steps.map(s => stepLine(s, 'done')).join('');
+
+function renderTrick(){
+  const t = T.t, p = T.prob, stage = $('k-stage'), act = $('k-act');
+  const typing = T.phase === 'steps' || (T.phase === 'use' && !T.showing);
+  $('k-pad').hidden = !typing;
+  $('k-prog').innerHTML = T.probs && (T.phase === 'steps' || T.phase === 'use')
+    ? T.probs.map((_, n) => `<i class="${n < T.n ? 'done' : n === T.n ? 'cur' : ''}"></i>`).join('') : '';
+
+  if(T.phase === 'intro'){
+    const stars = trickStars(t.id), ex = t.make(...t.example);
+    stage.innerHTML = `<div class="kintro"><div class="kicon">${t.icon}</div><h2>${t.name}</h2>` +
+      `<p class="kblurb">${t.blurb}</p><div class="kex">${ex.text} = ${ex.answer}</div>` +
+      `<div class="stars">${starStr(stars)}</div><p class="hint">${
+        !stars ? 'Watch how it works, then try it yourself to earn your first star.'
+        : stars < 3 ? 'Use it on your own to earn more stars.' : 'Mastered! Use it again to keep it sharp.'}</p></div>`;
+    act.innerHTML = `<button class="btn2${stars ? ' ghost' : ''}" type="button" data-k="learn">👀 ${stars ? 'Watch again' : 'Learn it'}</button>` +
+      (stars ? '<button class="btn2" type="button" data-k="use">🚀 Use it</button>'
+             : '<button class="btn2 ghost" type="button" disabled>🔒 Use it</button>');
+    return;
+  }
+
+  if(T.phase === 'watch'){
+    const last = T.i === p.steps.length - 1;
+    stage.innerHTML = probHtml(p, last) + `<div class="kvis">${visHtml(p.vis, T.i, T.i + 1)}</div>` +
+      bubble(p.steps[T.i].say) +
+      `<div class="klines">${p.steps.slice(0, T.i + 1).map(s => stepLine(s, 'done')).join('')}</div>`;
+    act.innerHTML = (T.i > 0 ? '<button class="btn2 ghost" type="button" data-k="prev">◀ Back</button>' : '') +
+      (last ? '<button class="btn2" type="button" data-k="try">✏️ Your turn!</button>'
+            : '<button class="btn2" type="button" data-k="next">Next ▶</button>');
+    return;
+  }
+
+  if(T.phase === 'steps'){
+    const n = p.steps.length, focus = Math.min(T.i, n - 1);
+    const lines = p.steps.slice(0, T.solved ? n : T.i + 1).map((s, j) =>
+      stepLine(s, j === T.i && !T.solved ? 'cur' : T.shown.has(j) ? 'shown' : 'done', T.typed)).join('');
+    const say = T.solved ? `${pick(PRAISE)} ${p.text} = ${p.answer}`
+      : T.miss ? `Not quite. ${p.steps[T.i].say}` : p.steps[T.i].say;
+    stage.innerHTML = probHtml(p, T.solved) + `<div class="kvis">${visHtml(p.vis, focus, T.solved ? n : T.i)}</div>` +
+      bubble(say) + `<div class="klines">${lines}</div>`;
+    act.innerHTML = '';
+    return;
+  }
+
+  if(T.phase === 'use'){
+    if(T.showing){
+      const n = p.steps.length;
+      stage.innerHTML = probHtml(p, true) + `<div class="kvis">${visHtml(p.vis, n - 1, n)}</div>` +
+        bubble(T.msg || 'Here\'s the trick. Now you try!') + `<div class="klines">${workedLines(p)}</div>`;
+      act.innerHTML = `<button class="btn2" type="button" data-k="gotit">${T.after ? 'Next ▶' : 'Got it 👍'}</button>`;
+    } else {
+      stage.innerHTML = `<div class="kprob">${p.text}</div>` +
+        `<div class="answer${T.typed ? '' : ' empty'}" id="k-ans">${T.typed || '?'}</div>` +
+        bubble(T.msg || `Use the trick: ${t.blurb}`);
+      act.innerHTML = '<button class="btn2 ghost small" type="button" data-k="show">💡 Show me</button>';
+    }
+    return;
+  }
+
+  if(T.phase === 'end'){
+    const e = T.end;
+    stage.innerHTML = `<div class="kintro"><div class="stars" style="font-size:46px">${starStr(e.stars)}</div>` +
+      `<div class="verdict">${e.title}</div><p class="kblurb">${e.msg}</p></div>` +
+      rewardsHtml(e.r, 'k-xpfill') + `<div class="badges">${badgesHtml(e.badges)}</div>`;
+    act.innerHTML = (T.kind === 'learn'
+        ? '<button class="btn2" type="button" data-k="use">🚀 Use it now</button>'
+        : `<button class="btn2" type="button" data-k="use">${e.stars < 3 ? '🔁 Try again' : '🚀 Use it again'}</button>`) +
+      '<button class="btn2 ghost" type="button" data-k="list">Back to tricks</button>';
+  }
+}
+
+function startLearn(){
+  Object.assign(T, {kind:'learn', phase:'watch', prob:T.t.make(...T.t.example), i:0,
+    probs:null, xp:0, coins:0, right:0, wrong:0});
+  renderTrick();
+}
+
+function startSteps(){
+  const level = trickStars(T.t.id) >= 2 ? 2 : 1;
+  Object.assign(T, {phase:'steps', probs:trickSet(T.t, 3, level), n:0});
+  loadProblem();
+}
+
+function startUse(){
+  // after 2 stars, every other problem is the harder kind
+  const hard = trickStars(T.t.id) >= 2;
+  Object.assign(T, {kind:'use', phase:'use', probs:trickSet(T.t, 6, n => hard && n % 2 ? 2 : 1),
+    n:0, xp:0, coins:0, right:0, wrong:0, res:[]});
+  loadProblem();
+}
+
+function loadProblem(){
+  Object.assign(T, {prob:T.probs[T.n], i:0, typed:'', miss:0, tries:0, solved:false, locked:false,
+    shown:new Set(), helped:false, showing:false, after:null, msg:'', qStart:performance.now()});
+  if(T.phase === 'steps') skipInfo();
+  renderTrick();
+}
+
+/* lines to read are shown straight away; the child types the rest */
+function skipInfo(){
+  while(T.prob.steps[T.i] && T.prob.steps[T.i].info) T.i++;
+}
+
+function nextProblem(){
+  T.n++;
+  if(T.n >= T.probs.length) endTrick();
+  else loadProblem();
+}
+
+const kWant = () => T.phase === 'steps' ? T.prob.steps[T.i].ans : T.prob.answer;
+
+function kPress(k){
+  if(!T || T.locked || !(T.phase === 'steps' || (T.phase === 'use' && !T.showing))) return;
+  Snd.key();
+  if(k === '⌫'){
+    clearTimeout(T.autoT);
+    T.typed = T.typed.slice(0, -1);
+  } else if(k === '↵'){
+    clearTimeout(T.autoT);
+    if(T.typed) kSubmit();
+    return;
+  } else {
+    if(T.typed.length >= 4 || (T.typed === '' && k === '0')) return;
+    T.typed += k;
+  }
+  paintTyped();
+  // right answers go in at once; anything else after a pause, as in the games
+  clearTimeout(T.autoT);
+  if(T.typed && Number(T.typed) === kWant()){ kSubmit(); return; }
+  if(T.typed && k !== '⌫'){
+    const t0 = T;
+    T.autoT = setTimeout(()=>{ if(T === t0 && !T.locked && T.typed) kSubmit(); }, 1400);
+  }
+}
+
+function paintTyped(){
+  const b = $(T.phase === 'steps' ? 'k-blank' : 'k-ans');
+  if(!b) return;
+  b.textContent = T.typed || '?';
+  b.classList.toggle('empty', !T.typed);
+  b.classList.remove('wrong', 'shake');
+}
+
+function kSubmit(){
+  clearTimeout(T.autoT);
+  const ok = Number(T.typed) === kWant();
+  if(T.phase === 'steps') stepAnswer(ok); else useAnswer(ok);
+}
+
+function stepAnswer(ok){
+  if(ok){
+    Snd.right();
+    nextStep();
+    return;
+  }
+  Snd.wrong();
+  T.miss++;
+  T.locked = true;
+  const b = $('k-blank');
+  if(b) b.classList.add('wrong', 'shake');
+  setTimeout(()=>{
+    T.locked = false;
+    T.typed = '';
+    // a second miss shows the answer, so a stuck child is never trapped
+    if(T.miss >= 2){ T.shown.add(T.i); T.helped = true; nextStep(); }
+    else renderTrick();
+  }, 900);
+}
+
+function nextStep(){
+  T.i++;
+  T.typed = '';
+  T.miss = 0;
+  skipInfo();
+  if(T.i < T.prob.steps.length){ renderTrick(); return; }
+  T.solved = true;
+  T.locked = true;
+  if(T.helped) T.wrong++; else T.right++;
+  T.xp += 15;
+  T.coins += COIN.answer;
+  renderTrick();
+  setTimeout(()=>{ T.locked = false; nextProblem(); }, 1700);
+}
+
+function useAnswer(ok){
+  const ms = performance.now() - T.qStart;
+  const a = $('k-ans');
+  if(ok){
+    Snd.right();
+    if(a) a.className = 'answer right pop';
+    const clean = T.tries === 0 && !T.helped;
+    T.res.push({ok:clean, ms});
+    if(clean) T.right++; else T.wrong++;
+    T.xp += clean ? XP.typed : XP.tapped;
+    T.coins += COIN.answer;
+    T.locked = true;
+    setTimeout(()=>{ T.locked = false; nextProblem(); }, 800);
+    return;
+  }
+  Snd.wrong();
+  T.tries++;
+  if(a) a.className = 'answer wrong shake';
+  T.locked = true;
+  setTimeout(()=>{
+    T.locked = false;
+    T.typed = '';
+    if(T.tries >= 2){
+      // two misses: show how the trick solves it, then move on
+      T.res.push({ok:false, ms});
+      T.wrong++;
+      Object.assign(T, {showing:true, after:'next', msg:`It's ${T.prob.answer}. Here's how the trick works it out:`});
+    } else {
+      T.msg = 'Not quite. Try again, or tap 💡 Show me.';
+    }
+    renderTrick();
+  }, 900);
+}
+
+function endTrick(){
+  const id = T.t.id;
+  const before = trickStars(id);
+  const got = T.kind === 'learn' ? 1 : useStars(T.res);
+  const stars = Math.max(before, got);
+  S.tricks[id] = {stars};
+
+  let title, msg;
+  if(T.kind === 'learn'){
+    title = before ? 'Nice refresher!' : 'Your first star! ⭐';
+    msg = 'Now use the trick on your own to earn more stars.';
+  } else {
+    title = `${T.right} of ${T.probs.length} on your own`;
+    msg = got === 3 ? 'Trick mastered! 🏆'
+      : got === 2 ? 'So close! Get them all right on your own, each in under 10 seconds, for 3 stars.'
+      : 'Keep using it. Every go makes the trick easier.';
+  }
+
+  // star coins: 15, 25 and 50 for the first, second and third star
+  const STAR_COINS = [0, 15, 25, 50];
+  let starCoins = 0;
+  for(let s = before + 1; s <= stars; s++) starCoins += STAR_COINS[s];
+
+  const r = settleRound(T.xp + XP.round, T.coins + starCoins);
+  logSession('trick-' + id, T.right, T.right, T.wrong, 0);
+  saveRound();
+
+  const badges = streakBadges(r);
+  if(stars > before) badges.unshift(['gold', `⭐ ${stars === 3 ? 'Trick mastered' : 'New star'}! +${starCoins} 🪙`]);
+  if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
+  T.end = {stars, title, msg, r, badges};
+  T.phase = 'end';
+  renderTrick();
+  Snd.done();
+  if(stars > before) confetti(90);
+  celebrateLevel(r.xpBefore);
+}
+
+/* ============================================================
    wiring
    ============================================================ */
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
   const id = b.dataset.mode;
   if(id === 'focus') showPick();
+  else if(id === 'tricks') showTricks();
   else startMode(id);
 }));
 document.querySelectorAll('[data-input]').forEach(b=>b.addEventListener('click', ()=>{
@@ -2102,6 +2923,44 @@ $('quit').addEventListener('click', abandon);
 el.choices.addEventListener('click', e=>{
   const b = e.target.closest('button');
   if(b) tap(Number(b.dataset.v));
+});
+
+/* maths tricks */
+['1','2','3','4','5','6','7','8','9','⌫','0','↵'].forEach(k=>{
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = k;
+  if(k === '↵'){ b.className = 'go'; b.setAttribute('aria-label','Enter'); }
+  else if(k === '⌫'){ b.className = 'del'; b.setAttribute('aria-label','Delete'); }
+  b.addEventListener('click', ()=>kPress(k));
+  $('k-pad').appendChild(b);
+});
+['t-add', 't-times', 'd-practise'].forEach(id=>$(id).addEventListener('click', e=>{
+  const b = e.target.closest('[data-trick]');
+  if(b) openTrick(b.dataset.trick);
+}));
+$('k-back').addEventListener('click', ()=>{
+  // leaving mid-lesson keeps nothing, like stopping a game
+  if(T) clearTimeout(T.autoT);
+  T = null;
+  showTricks();
+});
+$('k-act').addEventListener('click', e=>{
+  const b = e.target.closest('[data-k]');
+  if(!b || !T) return;
+  const k = b.dataset.k;
+  if(k === 'learn') startLearn();
+  else if(k === 'use') startUse();
+  else if(k === 'next'){ T.i++; renderTrick(); }
+  else if(k === 'prev'){ T.i--; renderTrick(); }
+  else if(k === 'try') startSteps();
+  else if(k === 'show'){ T.helped = true; T.showing = true; T.msg = ''; renderTrick(); }
+  else if(k === 'gotit'){
+    T.showing = false;
+    if(T.after){ T.after = null; nextProblem(); }
+    else { T.msg = 'Your turn. Use the trick!'; renderTrick(); }
+  }
+  else if(k === 'list') showTricks();
 });
 
 $('h-shop').addEventListener('click', showShop);
@@ -2160,10 +3019,11 @@ document.addEventListener('pointerdown', ()=>Snd.wake(), {capture:true});
 
 /* physical keyboard, handy for testing on a Mac */
 window.addEventListener('keydown', e=>{
-  if(!$('game').classList.contains('on')) return;
-  if(e.key >= '0' && e.key <= '9') press(e.key);
-  else if(e.key === 'Backspace'){ e.preventDefault(); press('⌫'); }
-  else if(e.key === 'Enter') press('↵');
+  const fn = $('game').classList.contains('on') ? press : $('trick').classList.contains('on') ? kPress : null;
+  if(!fn) return;
+  if(e.key >= '0' && e.key <= '9') fn(e.key);
+  else if(e.key === 'Backspace'){ e.preventDefault(); fn('⌫'); }
+  else if(e.key === 'Enter') fn('↵');
 });
 
 /* block pinch zoom inside the app */
