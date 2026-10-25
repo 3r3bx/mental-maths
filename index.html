@@ -674,6 +674,53 @@
   .filebtn{position:relative;overflow:hidden;display:inline-flex;align-items:center;}
   .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer;}
 
+  /* ---- grown-ups: practice controls ---- */
+  .ctl{display:flex;flex-direction:column;gap:6px;}
+  .ctl label{font-size:14px;font-weight:750;color:var(--ink);}
+  .select{
+    appearance:none;-webkit-appearance:none;font-family:inherit;
+    background:var(--bg-deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23A9BBD4' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center;
+    color:var(--ink);border:1.5px solid var(--card-hi);border-radius:12px;
+    font-size:16px;font-weight:700;padding:11px 40px 11px 14px;min-height:46px;max-width:100%;
+  }
+  .lvrows{display:flex;flex-direction:column;gap:12px;}
+  .lvrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;}
+  .lvrow .ln{font-size:15px;font-weight:750;}
+  .lvrow .ld{grid-column:1;font-size:13px;color:var(--ink-soft);}
+  .lvrow .step{grid-row:1 / span 2;grid-column:2;display:flex;align-items:center;gap:6px;}
+  .step button{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    width:40px;height:40px;border-radius:10px;background:var(--bg-deep);color:var(--ink);
+    font-size:20px;font-weight:800;
+  }
+  .step button:disabled{opacity:0.35;cursor:default;}
+  .step b{min-width:44px;text-align:center;font-size:15px;font-variant-numeric:tabular-nums;}
+  .check{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:650;color:var(--ink-soft);}
+  .check input{width:22px;height:22px;accent-color:var(--accent);}
+  .lockbar{
+    background:#3A2E14;border:1.5px solid var(--accent);border-radius:14px;
+    padding:10px 14px;font-size:14.5px;font-weight:650;color:var(--ink);
+  }
+
+  /* ---- which trick? ---- */
+  .wopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;width:100%;max-width:620px;}
+  .wopt{
+    appearance:none;border:none;cursor:pointer;font-family:inherit;
+    background:var(--card);color:var(--ink);border-radius:18px;padding:16px 14px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+    box-shadow:0 5px 0 var(--bg-deep);transition:transform .08s ease,box-shadow .08s ease;
+  }
+  .wopt:active{transform:translateY(4px);box-shadow:0 1px 0 var(--bg-deep);}
+  .wopt .wi{font-size:34px;line-height:1;}
+  .wopt .wn{font-size:16px;font-weight:800;line-height:1.25;}
+  .wopt.right{background:var(--good-deep);box-shadow:0 0 0 3px var(--good);}
+  .wopt.wrong{background:var(--bad-deep);box-shadow:0 0 0 3px var(--bad);}
+  .wopt:disabled{cursor:default;}
+  .tcard.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;}
+  .tcard.wide .ti{font-size:36px;}
+  .tcard.locked{opacity:0.6;}
+  .tcard .tcol{display:flex;flex-direction:column;gap:3px;}
+
   /* ============ MATHS TRICKS ============ */
   .mode.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:14px;min-height:0;padding:16px 18px;}
   .mode.wide .ic{font-size:36px;}
@@ -871,7 +918,7 @@
     <div class="modes">
       <button class="mode primary" type="button" data-mode="sprint">
         <span class="ic">⚡</span><span class="nm">Daily Sprint</span>
-        <span class="ds">60 seconds of mixed facts</span>
+        <span class="ds" id="m-sprint-ds">60 seconds of mixed facts</span>
         <span class="ft" id="m-sprint"></span>
       </button>
       <button class="mode" type="button" data-mode="focus">
@@ -953,6 +1000,19 @@
       <p>Needs iPadOS 16.4 or later, with the app opened from its Home Screen icon.</p>
     </div>
     <div class="panel">
+      <h3>🎚️ Practice and difficulty</h3>
+      <div class="ctl">
+        <label for="c-lock">Daily Sprint and Ghost Race practise</label>
+        <select class="select" id="c-lock"></select>
+        <p>Locking keeps practice on one table or topic, for example before a school test. Focus mode and the check-up aren't affected.</p>
+      </div>
+      <div class="note" id="c-note" hidden></div>
+      <h3 style="margin-top:8px">Difficulty</h3>
+      <p>Each one moves by itself. It goes up after 10 recent answers at 85% or more right, and down if the last 8 fall below 60%. Use − and + to nudge it.</p>
+      <div class="lvrows" id="c-levels"></div>
+      <label class="check"><input type="checkbox" id="c-stretch"> Allow harder than Stage 3 (difficulties 4 and 5)</label>
+    </div>
+    <div class="panel">
       <h3>💾 Back up progress</h3>
       <p>Progress is stored only on this iPad, and Safari can occasionally clear it. Save a backup now and then, for example to Files or iCloud Drive. You can also use a backup to move progress to a new iPad.</p>
       <div class="row">
@@ -1002,6 +1062,7 @@
     <div class="topbar"><button class="back" type="button" data-go="home">‹ Back</button><h2>Maths Tricks</h2></div>
     <p class="msum" id="t-sum"></p>
     <p class="hint">Watch a clever shortcut, try it with help, then use it on your own. Each trick has 3 stars to earn.</p>
+    <div class="tcards" id="t-which" style="width:100%"></div>
     <div class="tgroup"><h3>➕ Adding and taking away</h3><div class="tcards" id="t-add"></div></div>
     <div class="tgroup"><h3>✖️ Times and sharing</h3><div class="tcards" id="t-times"></div></div>
   </div></div>
@@ -1102,7 +1163,11 @@ const DEFAULT_STATE = {
   wear: {base:'fox', hat:null, item:null, pet:null, bg:'night', frame:'plain'},
   freezes: 0,         // streak freezes held
   streakMilestone: 0, // highest milestone paid out in the current streak
-  tricks: {}          // trick id -> {stars: 0-3}
+  tricks: {},         // trick id -> {stars: 0-3}
+  levels: {add:2, sub:2, mul:2, div:2},    // difficulty per operation, 1-5
+  adapt: {add:'', sub:'', mul:'', div:''}, // recent typed results at the current difficulty
+  stretch: false,     // allow difficulty above Stage 3
+  lock: null          // grown-up lock: {kind:'table', t:4} or {kind:'topic', id:'add100'}
 };
 
 const fresh = () => JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -1215,7 +1280,7 @@ function mkMul(t, n){
 function qAdd(tier){
   let a, b;
   if(tier === 1){ a = R(2,12); b = R(2, Math.min(9, 20-a)); }    // facts to 20
-  else if(tier === 2){ a = R(12,89); b = R(2,9); }                // 2-digit + 1-digit
+  else if(tier === 2){ a = R(12,89); b = R(Math.max(2, 21 - a), 9); }  // 2-digit + 1-digit, always past 20
   else if(tier === 3){ a = R(12,69); b = R(11,29); }              // 2-digit + 2-digit, within 100
   else if(tier === 4){ a = R(100,600); b = R(11,99); }
   else { a = R(120,480); b = R(120,480); }
@@ -1246,10 +1311,15 @@ function fromRecipe(recipe){
   let x = Math.random() * total;
   let r = recipe[recipe.length-1];
   for(const c of recipe){ x -= c.w; if(x <= 0){ r = c; break; } }
-  if(r.op === 'add') return qAdd(r.tier);
-  if(r.op === 'sub') return qSub(r.tier);
-  const t = pick(r.tables || TABLES[r.tier]);
-  return r.op === 'mul' ? mkMul(t, R(2,10)) : mkDiv(t, R(2,10));
+  let q;
+  if(r.op === 'add') q = qAdd(r.tier);
+  else if(r.op === 'sub') q = qSub(r.tier);
+  else {
+    const t = pick(r.tables || TABLES[r.tier]);
+    q = r.op === 'mul' ? mkMul(t, R(2,10)) : mkDiv(t, R(2,10));
+  }
+  if(r.tier) q.tier = r.tier;   // the adaptive difficulty tracks answers at its own tier
+  return q;
 }
 
 function nextQuestion(recipe, avoid){
@@ -1305,6 +1375,7 @@ const TRICKS = [
   {
     id:'friends', name:'Ten friends', icon:'🤝', group:'add', school:true,
     blurb:'Look for two numbers that make 10. Adding 10 is easy!',
+    cue:'Two of the numbers make 10.',
     example:[6, 9, 4],
     gen:() => { const a = R(1,9), b = R(2,9); return Math.random() < 0.6 ? [a, b, 10 - a] : [b, a, 10 - a]; },
     make:(x, y, z) => {
@@ -1320,6 +1391,7 @@ const TRICKS = [
   {
     id:'bridge', name:'Bridge through 10', icon:'🌉', group:'add', school:true,
     blurb:'Jump to the next ten first, then add what is left.',
+    cue:'Adding a small number that takes you past a ten.',
     example:[8, 5],
     gen:L => {
       if(L < 2){ const a = R(5,9); return [a, R(11 - a, 9)]; }
@@ -1338,6 +1410,7 @@ const TRICKS = [
   {
     id:'neardouble', name:'Near doubles', icon:'👯', group:'add', school:true,
     blurb:'When two numbers are next-door neighbours, double the smaller one and add 1.',
+    cue:'The two numbers are next-door neighbours.',
     example:[6, 7],
     gen:L => { const a = L < 2 ? R(3,9) : R(11,19); return either([a, a + 1], [a + 1, a]); },
     make:(x, y) => {
@@ -1351,6 +1424,7 @@ const TRICKS = [
   {
     id:'split', name:'Split tens and ones', icon:'🧱', group:'add', school:true,
     blurb:'Add the tens, add the ones, then put them back together.',
+    cue:'Two 2-digit numbers: add the tens, then the ones.',
     example:[14, 24],
     gen:L => {
       const oa = R(1,8), a = R(1,5) * 10 + oa;
@@ -1369,6 +1443,7 @@ const TRICKS = [
   {
     id:'nine', name:'Add 9: add 10, take 1', icon:'🪄', group:'add', school:true,
     blurb:'9 is nearly 10. Add 10, then take 1 away. It works for 19 and 29 too!',
+    cue:'Adding 9, 19 or 29 is nearly adding a ten.',
     example:[46, 9],
     gen:L => { const b = L < 2 ? 9 : pick([19, 29]); return [R(12, 89 - b), b]; },
     make:(a, b) => {
@@ -1382,6 +1457,7 @@ const TRICKS = [
   {
     id:'takeparts', name:'Take away in parts', icon:'✂️', group:'add', school:true,
     blurb:'Take away the tens first, then the ones.',
+    cue:'Taking away a 2-digit number: tens first, then ones.',
     example:[57, 23],
     gen:L => {
       const ta = R(4,9) * 10, tb = R(1, ta / 10 - 2) * 10;
@@ -1400,6 +1476,7 @@ const TRICKS = [
   {
     id:'countup', name:'Count up to find the difference', icon:'🐸', group:'add', school:true,
     blurb:'When two numbers are close together, hop up from the smaller one. Add up the hops.',
+    cue:'The two numbers are close together, so count up.',
     example:[42, 38],
     gen:() => { const b = R(1,8) * 10 + R(5,9); return [b - b % 10 + 10 + R(1,6), b]; },
     make:(a, b) => {
@@ -1412,8 +1489,24 @@ const TRICKS = [
     }
   },
   {
+    id:'bonds100', name:'Bonds to 100', icon:'💯', group:'add', school:true,
+    blurb:'To make 100, hop to the next ten, then hop in tens to 100. Add up the hops.',
+    cue:'Making 100: hop to the next ten, then to 100.',
+    example:[64],
+    gen:L => [R(1,8) * 10 + (L < 2 ? R(5,9) : R(1,9))],
+    make:a => {
+      const nx = a - a % 10 + 10, u1 = nx - a, u2 = 100 - nx;
+      return {text:`${a} + ? = 100`, answer:100 - a, steps:[
+        {parts:[`${a} + `, BLANK, ` = ${nx}`], ans:u1, say:`Hop from ${a} to the next ten, ${nx}.`},
+        {parts:[`${nx} + `, BLANK, ' = 100'], ans:u2, say:`Now hop in tens from ${nx} to 100. ${nx / 10} tens and ${u2 / 10} tens make 10 tens.`},
+        {parts:[`${u1} + ${u2} = `, BLANK], ans:100 - a, say:'Add up your hops. That\'s the missing number!'}
+      ], vis:{type:'line', start:a, jumps:[{to:nx, label:`+${u1}`}, {to:100, label:`+${u2}`}], reveal:[0,1,2,2]}};
+    }
+  },
+  {
     id:'times10', name:'Times 10: digits jump', icon:'🚀', group:'times', school:true,
     blurb:'Times 10 makes every digit jump one place to the left. A 0 fills the ones.',
+    cue:'Times 10: every digit jumps one place.',
     example:[23],
     gen:L => [L < 2 ? R(2,9) : R(11,99)],
     make:n => ({text:`${n} × 10`, answer:n * 10, steps:[
@@ -1424,6 +1517,7 @@ const TRICKS = [
   {
     id:'five', name:'Times 5 is half of times 10', icon:'🖐️', group:'times', school:true,
     blurb:'5 is half of 10. Times by 10, then halve it.',
+    cue:'Times 5 is half of times 10.',
     example:[8],
     gen:() => [R(2,12)],
     make:n => ({text:either(`5 × ${n}`, `${n} × 5`), answer:5 * n, steps:[
@@ -1434,6 +1528,7 @@ const TRICKS = [
   {
     id:'doubledouble', name:'Times 4: double double', icon:'🔁', group:'times', school:true,
     blurb:'4 is double 2. Double the number, then double it again.',
+    cue:'Times 4 is double, then double again.',
     example:[7],
     gen:() => [R(3,12)],
     make:n => ({text:either(`4 × ${n}`, `${n} × 4`), answer:4 * n, steps:[
@@ -1444,6 +1539,7 @@ const TRICKS = [
   {
     id:'thinkmult', name:'Divide by thinking times', icon:'🔄', group:'times', school:true,
     blurb:'Dividing is times backwards. Ask: what times this number makes that one?',
+    cue:'Dividing is times backwards.',
     example:[4, 6],
     gen:() => [pick(STAGE3), R(2,10)],
     make:(t, n) => ({text:`${t * n} ÷ ${t}`, answer:n, steps:[
@@ -1454,12 +1550,29 @@ const TRICKS = [
   {
     id:'nines', name:'Times 9: times 10, take one', icon:'9️⃣', group:'times', school:false,
     blurb:'9 is one less than 10. Times by 10, then take one lot away.',
+    cue:'Times 9 is times 10, then take one lot away.',
     example:[6],
     gen:() => [R(2,10)],
     make:n => ({text:either(`9 × ${n}`, `${n} × 9`), answer:9 * n, steps:[
       {parts:[`${n} × 10 = `, BLANK], ans:10 * n, say:'9 is one less than 10. Times by 10 first.'},
       {parts:[`${10 * n} − ${n} = `, BLANK], ans:9 * n, say:`That's one ${n} too many, so take ${n} away.`}
     ], vis:{type:'array', rows:n, cols:10, mark:(r, c, i) => c === 9 && i >= 1 ? 'off' : 'a'}})
+  },
+  {
+    id:'doubling', name:'Double bigger numbers', icon:'✌️', group:'times', school:true,
+    blurb:'Double the tens, double the ones, then put them together.',
+    cue:'Doubling a 2-digit number: double the tens, then the ones.',
+    example:[36],
+    gen:L => [R(1,4) * 10 + (L < 2 ? R(1,4) : R(5,9))],
+    make:n => {
+      const t = n - n % 10, o = n % 10;
+      return {text:`Double ${n}`, answer:2 * n, steps:[
+        {info:`${n} is ${t} and ${o}.`, say:'Split the number into tens and ones.'},
+        {parts:[`Double ${t} = `, BLANK], ans:2 * t, say:`Double the tens: ${t / 10} tens doubled is ${2 * t / 10} tens.`},
+        {parts:[`Double ${o} = `, BLANK], ans:2 * o, say:'Double the ones.'},
+        {parts:[`${2 * t} + ${2 * o} = `, BLANK], ans:2 * n, say:'Put them back together.'}
+      ], vis:{type:'blocks', nums:[n, n], focus:['all', 'tens', 'ones', 'all']}};
+    }
   }
 ];
 const TRICK = Object.fromEntries(TRICKS.map(t => [t.id, t]));
@@ -1472,6 +1585,65 @@ function suggestTrick(){
     [...TRICKS].sort((x, y) => trickStars(x.id) - trickStars(y.id))[0];
   return next.id;
 }
+
+/* how a problem reads with its answer: "64 + 36 = 100", "14 + 24 = 38" */
+const exText = p => p.text.includes('?') ? p.text.replace('?', p.answer) : `${p.text} = ${p.answer}`;
+
+/* Does this trick suit this problem? Used by "Which trick?" so that the
+   wrong options are always tricks that genuinely don't fit. */
+function trickFits(id, p){
+  const t = p.text;
+  let m;
+  if(t.includes('?')) return id === 'bonds100';
+  if(t.startsWith('Double ')) return id === 'doubling';
+  if(/^\d+ \+ \d+ \+ \d+$/.test(t)) return id === 'friends';
+  if((m = t.match(/^(\d+) \+ (\d+)$/))){
+    const a = +m[1], b = +m[2], lo = Math.min(a, b), hi = Math.max(a, b);
+    if(id === 'bridge') return lo < 10 && hi % 10 + lo > 10;
+    if(id === 'neardouble') return hi - lo === 1;
+    if(id === 'split') return lo >= 10 && a % 10 > 0 && b % 10 > 0;
+    if(id === 'nine') return [9, 19, 29].includes(a) || [9, 19, 29].includes(b);
+    return false;
+  }
+  if((m = t.match(/^(\d+) − (\d+)$/))){
+    const a = +m[1], b = +m[2];
+    if(id === 'takeparts') return b >= 10 && b % 10 > 0;
+    if(id === 'countup') return b >= 10 && a - b <= 15;
+    return false;
+  }
+  if((m = t.match(/^(\d+) × (\d+)$/))){
+    const has = n => +m[1] === n || +m[2] === n;
+    return {times10:has(10), five:has(5), doubledouble:has(4), nines:has(9)}[id] || false;
+  }
+  if(t.includes('÷')) return id === 'thinkmult';
+  return false;
+}
+
+const shuffle = xs => xs.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+
+/* the right trick plus two that don't fit: same kind of sum first, learned ones first */
+function whichOptions(trick, p){
+  const others = TRICKS.filter(t => t.id !== trick.id && !trickFits(t.id, p));
+  const rank = t => (t.group === trick.group ? 0 : 2) + (trickStars(t.id) >= 1 ? 0 : 1);
+  const wrong = shuffle(others).sort((x, y) => rank(x) - rank(y)).slice(0, 2);
+  return shuffle([trick, ...wrong]);
+}
+
+/* 8 problems from the learned tricks, never the same trick twice in a row */
+function whichSet(){
+  const pool = TRICKS.filter(t => trickStars(t.id) >= 1);
+  const out = [];
+  let bag = [];
+  while(out.length < 8){
+    if(!bag.length) bag = shuffle(pool);
+    let i = 0;
+    while(i < bag.length - 1 && out.length && bag[i].id === out[out.length - 1].trick.id) i++;
+    const t = bag.splice(i, 1)[0];
+    out.push({trick:t, p:t.make(...t.gen(trickStars(t.id) >= 2 ? 2 : 1))});
+  }
+  return out;
+}
+const WHICH_MIN = 3;   // tricks to learn before "Which trick?" opens
 
 /* a set of problems with no repeats */
 function trickSet(t, n, level){
@@ -1761,11 +1933,80 @@ function avatarHtml(w, size){
 }
 
 /* ============================================================
+   adapt.js — difficulty that moves by itself, per operation
+   Each operation sits at a difficulty (the question tiers above).
+   A round asks mostly at that difficulty, plus easier review. Typed
+   answers at the current difficulty fill a 12-answer window: 10+ of
+   them at 85% moves it up; the last 8 under 60% moves it down,
+   quietly. Capped at Stage 3 unless a grown-up allows more.
+   ============================================================ */
+const OPS = [
+  {id:'add', name:'Adding', w:30, levels:['Facts to 20', '2-digit + 1-digit', '2-digit + 2-digit, within 100', '3-digit + 2-digit', '3-digit + 3-digit']},
+  {id:'sub', name:'Taking away', w:25, levels:['Facts to 20', '2-digit − 1-digit', '2-digit − 2-digit, within 100', '3-digit − 2-digit', '3-digit − 3-digit']},
+  {id:'mul', name:'Times tables', w:28, levels:['2×, 5× and 10×', '3× and 4×', 'All the Stage 3 tables', '6× and 8×', '7×, 9×, 11× and 12×']},
+  {id:'div', name:'Dividing', w:17, levels:['÷ 2, 5 and 10', '÷ 3 and 4', 'All the Stage 3 tables', '÷ 6 and 8', '÷ 7, 9, 11 and 12']}
+];
+const STAGE3_TOP = 3, TOP_LEVEL = 5;
+const UP_ACC = 0.85, UP_N = 10, DOWN_ACC = 0.6, DOWN_N = 8, WINDOW = 12;
+
+const maxLevel = () => S.stretch ? TOP_LEVEL : STAGE3_TOP;
+
+function adaptiveRecipe(){
+  const r = [];
+  for(const op of OPS){
+    const L = Math.min(S.levels[op.id], maxLevel());
+    if(L === 1){ r.push({op:op.id, tier:1, w:op.w}); continue; }
+    r.push({op:op.id, tier:L, w:op.w * 0.6});
+    if(L === 2){ r.push({op:op.id, tier:1, w:op.w * 0.4}); continue; }
+    r.push({op:op.id, tier:L - 1, w:op.w * 0.25});
+    for(let t = 1; t <= L - 2; t++) r.push({op:op.id, tier:t, w:op.w * 0.15 / (L - 2)});
+  }
+  return r;
+}
+
+/* one typed answer at the current difficulty */
+function noteAdaptive(q, ok){
+  if(!q.tier || !S.levels[q.op] || q.tier !== Math.min(S.levels[q.op], maxLevel())) return;
+  S.adapt[q.op] = ((S.adapt[q.op] || '') + (ok ? '1' : '0')).slice(-WINDOW);
+}
+
+function setLevel(op, L){
+  S.levels[op] = Math.max(1, Math.min(maxLevel(), L));
+  S.adapt[op] = '';    // a fresh window at the new difficulty
+}
+
+/* end of a round: returns the moves, so the up ones can be celebrated */
+function updateLevels(){
+  const share = h => h.split('').filter(c => c === '1').length / h.length;
+  const moves = [];
+  for(const op of OPS){
+    const h = S.adapt[op.id] || '', L = S.levels[op.id];
+    if(h.length >= UP_N && share(h) >= UP_ACC && L < maxLevel()){ setLevel(op.id, L + 1); moves.push({op:op.id, from:L, to:L + 1}); }
+    else if(h.length >= DOWN_N && share(h.slice(-DOWN_N)) < DOWN_ACC && L > 1){ setLevel(op.id, L - 1); moves.push({op:op.id, from:L, to:L - 1}); }
+  }
+  return moves;
+}
+
+/* grown-up lock: one table, or one topic */
+const LOCK_TOPICS = [
+  {id:'add20',  name:'Adding within 20',           recipe:[{op:'add', tier:1, w:1}]},
+  {id:'sub20',  name:'Taking away within 20',      recipe:[{op:'sub', tier:1, w:1}]},
+  {id:'add100', name:'Adding bigger numbers',      recipe:[{op:'add', tier:2, w:1}, {op:'add', tier:3, w:1}]},
+  {id:'sub100', name:'Taking away bigger numbers', recipe:[{op:'sub', tier:2, w:1}, {op:'sub', tier:3, w:1}]},
+  {id:'tables', name:'Stage 3 times tables',       recipe:[{op:'mul', tables:STAGE3, w:3}, {op:'div', tables:STAGE3, w:1}]},
+  {id:'div',    name:'Dividing',                   recipe:[{op:'div', tables:STAGE3, w:1}]}
+];
+const lockTopic = id => LOCK_TOPICS.find(x => x.id === id);
+const lockName = lock => lock.kind === 'table' ? `the ${lock.t}× table` : lockTopic(lock.id).name.toLowerCase();
+const lockRecipe = lock => lock.kind === 'table' ? focusRecipe(lock.t) : lockTopic(lock.id).recipe;
+const currentRecipe = () => S.lock ? lockRecipe(S.lock) : adaptiveRecipe();
+
+/* ============================================================
    modes.js
    ============================================================ */
 const MODES = {
-  sprint:{id:'sprint', name:'Daily Sprint', seconds:60, warmups:3, recipe:STAGE3_MIX, retry:true, bestKey:'sprint'},
-  ghost: {id:'ghost',  name:'Ghost Race',   seconds:60, warmups:3, recipe:STAGE3_MIX, retry:true, bestKey:'sprint', ghost:true},
+  sprint:{id:'sprint', name:'Daily Sprint', seconds:60, warmups:3, adaptive:true, retry:true, bestKey:'sprint'},
+  ghost: {id:'ghost',  name:'Ghost Race',   seconds:60, warmups:3, adaptive:true, retry:true, bestKey:'sprint', ghost:true},
   focus: {id:'focus',  name:'Focus',        seconds:60, warmups:3, retry:true},
   check: {id:'check',  name:'Check-up',     questions:25, perQ:6, warmups:3, recipe:CHECK_MIX, retry:false, typedOnly:true}
 };
@@ -2047,7 +2288,8 @@ function paintHome(){
     ? 'Today\'s goal: <b>done! 🎉</b>'
     : `Today's goal: <b>${done} of ${GOAL}</b> rounds`;
 
-  $('m-sprint').textContent = S.best.sprint ? `Best: ${S.best.sprint}` : 'Start here';
+  $('m-sprint').textContent = S.lock ? '🔒 Set by a grown-up' : S.best.sprint ? `Best: ${S.best.sprint}` : 'Start here';
+  $('m-sprint-ds').textContent = S.lock ? `60 seconds of ${lockName(S.lock)}` : '60 seconds of mixed facts';
   $('m-focus').textContent = `Try the ${suggestTable()}× table`;
   $('m-ghost').textContent = `Ghost to beat: ${S.best.sprint || GHOST_DEFAULT}`;
   const trickTotal = TRICKS.reduce((s, t) => s + trickStars(t.id), 0);
@@ -2155,7 +2397,8 @@ function startMode(id, opts){
     mode:m,
     input: m.typedOnly ? 'type' : S.input,
     table: opts.table || null,
-    recipe: id === 'focus' ? focusRecipe(opts.table) : m.recipe,
+    recipe: id === 'focus' ? focusRecipe(opts.table) : m.adaptive ? currentRecipe() : m.recipe,
+    adaptive: !!m.adaptive && !S.lock,   // locked rounds don't move the difficulty
     phase:'warm',             // 'warm' | 'live' | 'over'
     warmLeft:m.warmups,
     q:null, typed:'', lastId:null,
@@ -2299,6 +2542,7 @@ function submit(got, how){
 
   recordFact(q, ok, ms, typed);
   if(live) (G.areas[areaOf(q)] ||= [0, 0])[ok ? 0 : 1]++;
+  if(live && typed && G.adaptive) noteAdaptive(q, ok);
 
   if(ok){
     Snd.right();
@@ -2458,10 +2702,11 @@ function finish(){
   if(m.ghost && G.score > G.ghostTarget){ xp += XP.ghost; coins += COIN.ghost; }
   if(m.id === 'check'){                   xp += XP.check; coins += COIN.check; }
   const r = settleRound(xp, coins);
+  const moves = G.adaptive ? updateLevels() : [];
 
   logSession(m.id + (G.table ? G.table : ''), G.score, G.right, G.wrong, med, G.areas);
   saveRound();
-  paintResults({isPB, med, prevCheck, rankUp, ...r});
+  paintResults({isPB, med, prevCheck, rankUp, moves, ...r});
   Snd.done();
   show('done');
   celebrateLevel(r.xpBefore);
@@ -2545,6 +2790,8 @@ function paintResults(r){
   }
   if(G.fixed)  badges.push(['green', `🔁 Fixed ${G.fixed} on the next try`]);
   if(r.rankUp){ const k = RANKS[S.rank]; badges.push(['gold', `${k.icon} Rank up! You're a ${k.name} now`]); }
+  for(const mv of r.moves || []) if(mv.to > mv.from)
+    badges.push(['gold', `⬆️ Harder ${OPS.find(o => o.id === mv.op).name.toLowerCase()} unlocked!`]);
   if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
   $('d-badges').innerHTML = badgesHtml(badges);
 
@@ -2836,6 +3083,8 @@ function paintReport(){
   const w0 = weekStats(0), w1 = weekStats(1), had = w1.rounds > 0, streak = liveStreak();
   let h = '';
 
+  if(S.lock) h += `<div class="lockbar">🔒 Daily Sprint and Ghost Race are locked to <b>${lockName(S.lock)}</b>. Change it in Settings.</div>`;
+
   // ---- the week, in a sentence and five numbers
   h += `<p class="rhead">${
     !S.sessions.length ? `${who} hasn't played yet. This page fills in after the first few rounds.`
@@ -2857,7 +3106,8 @@ function paintReport(){
 
   // ---- skills by area
   const areas = areaStats();
-  h += '<div class="panel"><h3>Skills</h3><p class="sub">Each fact\'s last 6 answers. <b>Strong</b> means 90% right in about 3 seconds or less: remembered, not worked out.</p><div class="meters">' +
+  h += '<div class="panel"><h3>Skills</h3><p class="sub">Each fact\'s last 6 answers. <b>Strong</b> means 90% right in about 3 seconds or less: remembered, not worked out.</p>' +
+    `<p class="sub">Difficulty now: ${OPS.map(op => `${op.name.toLowerCase()} <b>${S.levels[op.id]}</b>`).join(' · ')} (of ${maxLevel()}). It adjusts by itself; change it in Settings.</p><div class="meters">` +
     AREAS.map(a => {
       const s = areas[a.id];
       if(s.status === 'none') return meterRow(a.name, 'none', 0, s.n ? 'A few more answers needed before this can be rated.' : 'Not practised yet.');
@@ -2929,6 +3179,8 @@ function paintReport(){
 }
 
 function adultTab(name){
+  // redraw the report on the way back, so a change made in Settings shows straight away
+  if(name === 'progress') paintReport();
   document.querySelectorAll('[data-atab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.atab === name)));
   $('a-progress').hidden = name !== 'progress';
   $('a-settings').hidden = name !== 'settings';
@@ -3010,7 +3262,8 @@ function applyRestore(){
 }
 
 async function showAdult(){
-  paintReport();
+  paintControls();
+  controlNote('');
   adultTab('progress');
   reminderNote('');
   backupNote('');
@@ -3137,10 +3390,15 @@ function showTricks(){
     return `<button type="button" class="tcard${t.id === sug ? ' next' : ''}" data-trick="${t.id}">` +
       (t.id === sug ? '<span class="tag next">Try next</span>' : !t.school ? '<span class="tag">Extra</span>' : '') +
       `<span class="ti">${t.icon}</span><span class="tn">${t.name}</span>` +
-      `<span class="tx">${ex.text} = ${ex.answer}</span><span class="stars">${starStr(trickStars(t.id))}</span></button>`;
+      `<span class="tx">${exText(ex)}</span><span class="stars">${starStr(trickStars(t.id))}</span></button>`;
   };
   $('t-add').innerHTML = TRICKS.filter(t => t.group === 'add').map(card).join('');
   $('t-times').innerHTML = TRICKS.filter(t => t.group === 'times').map(card).join('');
+  const learned = TRICKS.filter(t => trickStars(t.id) >= 1).length, open = learned >= WHICH_MIN;
+  $('t-which').innerHTML = `<button type="button" class="tcard wide${open ? '' : ' locked'}" data-which="1">` +
+    `<span class="ti">🔍</span><span class="tcol"><span class="tn">Which trick?</span><span class="tx">${open
+      ? `Spot the best trick for each problem, then use it${S.best.which ? ` · best ${S.best.which} of 8` : ''}`
+      : `🔒 Learn ${WHICH_MIN} tricks to unlock this (${learned} of ${WHICH_MIN} so far)`}</span></span></button>`;
   show('tricks');
 }
 
@@ -3152,7 +3410,11 @@ function openTrick(id){
 }
 
 const bubble = say => `<div class="bubble">${avatarHtml(S.wear, 54)}<div class="say">${say}</div></div>`;
-const probHtml = (p, solved) => `<div class="kprob">${p.text} = ${solved ? `<span class="eq">${p.answer}</span>` : '<span class="q">?</span>'}</div>`;
+/* "14 + 24 = ?", or for a missing-number problem "64 + ? = 100" */
+const probHtml = (p, solved) => {
+  const ans = solved ? `<span class="eq">${p.answer}</span>` : '<span class="q">?</span>';
+  return `<div class="kprob">${p.text.includes('?') ? p.text.replace('?', ans) : `${p.text} = ${ans}`}</div>`;
+};
 
 function stepLine(st, state, typed){
   if(st.info) return `<div class="kline info">${st.info}</div>`;
@@ -3167,15 +3429,15 @@ const workedLines = p => p.steps.map(s => stepLine(s, 'done')).join('');
 
 function renderTrick(){
   const t = T.t, p = T.prob, stage = $('k-stage'), act = $('k-act');
-  const typing = T.phase === 'steps' || (T.phase === 'use' && !T.showing);
+  const typing = T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing);
   $('k-pad').hidden = !typing;
-  $('k-prog').innerHTML = T.probs && (T.phase === 'steps' || T.phase === 'use')
+  $('k-prog').innerHTML = T.probs && ['steps', 'use', 'wpick', 'wsolve'].includes(T.phase)
     ? T.probs.map((_, n) => `<i class="${n < T.n ? 'done' : n === T.n ? 'cur' : ''}"></i>`).join('') : '';
 
   if(T.phase === 'intro'){
     const stars = trickStars(t.id), ex = t.make(...t.example);
     stage.innerHTML = `<div class="kintro"><div class="kicon">${t.icon}</div><h2>${t.name}</h2>` +
-      `<p class="kblurb">${t.blurb}</p><div class="kex">${ex.text} = ${ex.answer}</div>` +
+      `<p class="kblurb">${t.blurb}</p><div class="kex">${exText(ex)}</div>` +
       `<div class="stars">${starStr(stars)}</div><p class="hint">${
         !stars ? 'Watch how it works, then try it yourself to earn your first star.'
         : stars < 3 ? 'Use it on your own to earn more stars.' : 'Mastered! Use it again to keep it sharp.'}</p></div>`;
@@ -3208,7 +3470,18 @@ function renderTrick(){
     return;
   }
 
-  if(T.phase === 'use'){
+  if(T.phase === 'wpick'){
+    stage.innerHTML = probHtml(p, false) + bubble(T.msg || 'Which trick fits this one best?') +
+      '<div class="wopts">' + T.opts.map(o => {
+        const cls = !T.picked ? '' : o.id === T.item.trick.id ? ' right' : o.id === T.picked ? ' wrong' : '';
+        return `<button type="button" class="wopt${cls}" data-w="${o.id}"${T.picked ? ' disabled' : ''}>` +
+          `<span class="wi">${o.icon}</span><span class="wn">${o.name}</span></button>`;
+      }).join('') + '</div>';
+    act.innerHTML = '';
+    return;
+  }
+
+  if(T.phase === 'use' || T.phase === 'wsolve'){
     if(T.showing){
       const n = p.steps.length;
       stage.innerHTML = probHtml(p, true) + `<div class="kvis">${visHtml(p.vis, n - 1, n)}</div>` +
@@ -3217,7 +3490,7 @@ function renderTrick(){
     } else {
       stage.innerHTML = `<div class="kprob">${p.text}</div>` +
         `<div class="answer${T.typed ? '' : ' empty'}" id="k-ans">${T.typed || '?'}</div>` +
-        bubble(T.msg || `Use the trick: ${t.blurb}`);
+        bubble(T.msg || (T.kind === 'which' ? `Now use the ${T.item.trick.name} trick to solve it.` : `Use the trick: ${t.blurb}`));
       act.innerHTML = '<button class="btn2 ghost small" type="button" data-k="show">💡 Show me</button>';
     }
     return;
@@ -3225,10 +3498,15 @@ function renderTrick(){
 
   if(T.phase === 'end'){
     const e = T.end;
-    stage.innerHTML = `<div class="kintro"><div class="stars" style="font-size:46px">${starStr(e.stars)}</div>` +
+    const head = T.kind === 'which'
+      ? `<div class="bigscore">${e.score}<span class="of">out of ${T.probs.length}</span></div>`
+      : `<div class="stars" style="font-size:46px">${starStr(e.stars)}</div>`;
+    stage.innerHTML = `<div class="kintro">${head}` +
       `<div class="verdict">${e.title}</div><p class="kblurb">${e.msg}</p></div>` +
       rewardsHtml(e.r, 'k-xpfill') + `<div class="badges">${badgesHtml(e.badges)}</div>`;
-    act.innerHTML = (T.kind === 'learn'
+    act.innerHTML = T.kind === 'which'
+      ? '<button class="btn2" type="button" data-k="which">🔁 Play again</button><button class="btn2 ghost" type="button" data-k="list">Back to tricks</button>'
+      : (T.kind === 'learn'
         ? '<button class="btn2" type="button" data-k="use">🚀 Use it now</button>'
         : `<button class="btn2" type="button" data-k="use">${e.stars < 3 ? '🔁 Try again' : '🚀 Use it again'}</button>`) +
       '<button class="btn2 ghost" type="button" data-k="list">Back to tricks</button>';
@@ -3269,14 +3547,15 @@ function skipInfo(){
 
 function nextProblem(){
   T.n++;
-  if(T.n >= T.probs.length) endTrick();
+  if(T.n >= T.probs.length) (T.kind === 'which' ? endWhich : endTrick)();
+  else if(T.kind === 'which') loadWhich();
   else loadProblem();
 }
 
 const kWant = () => T.phase === 'steps' ? T.prob.steps[T.i].ans : T.prob.answer;
 
 function kPress(k){
-  if(!T || T.locked || !(T.phase === 'steps' || (T.phase === 'use' && !T.showing))) return;
+  if(!T || T.locked || !(T.phase === 'steps' || ((T.phase === 'use' || T.phase === 'wsolve') && !T.showing))) return;
   Snd.key();
   if(k === '⌫'){
     clearTimeout(T.autoT);
@@ -3310,7 +3589,7 @@ function paintTyped(){
 function kSubmit(){
   clearTimeout(T.autoT);
   const ok = Number(T.typed) === kWant();
-  if(T.phase === 'steps') stepAnswer(ok); else useAnswer(ok);
+  if(T.phase === 'steps') stepAnswer(ok); else if(T.phase === 'wsolve') whichAnswer(ok); else useAnswer(ok);
 }
 
 function stepAnswer(ok){
@@ -3421,6 +3700,117 @@ function endTrick(){
 }
 
 /* ============================================================
+   Which trick? — pick the best strategy, then use it
+   ============================================================ */
+function startWhich(){
+  T = {t:{id:'which', name:'Which trick?', icon:'🔍'}, kind:'which', probs:whichSet(), n:0,
+    xp:0, coins:0, picks:0, right:0, wrong:0};
+  $('k-name').textContent = '🔍 Which trick?';
+  loadWhich();
+  show('trick');
+}
+
+function loadWhich(){
+  const item = T.probs[T.n];
+  Object.assign(T, {phase:'wpick', item, prob:item.p, opts:whichOptions(item.trick, item.p), picked:null,
+    typed:'', tries:0, helped:false, showing:false, after:null, msg:'', locked:false});
+  renderTrick();
+}
+
+function pickTrick(id){
+  if(!T || T.phase !== 'wpick' || T.picked) return;
+  T.picked = id;
+  const ok = id === T.item.trick.id;
+  if(ok){ T.picks++; T.xp += XP.typed; T.coins += COIN.answer; Snd.right(); }
+  else Snd.wrong();
+  T.msg = ok ? `Yes! ${T.item.trick.cue}` : `This one fits best. ${T.item.trick.cue}`;
+  renderTrick();
+  const t0 = T;
+  // a wrong pick stays on screen longer, so the reason can be read
+  setTimeout(()=>{
+    if(T !== t0 || T.phase !== 'wpick') return;
+    Object.assign(T, {phase:'wsolve', msg:'', qStart:performance.now()});
+    renderTrick();
+  }, ok ? 1400 : 2600);
+}
+
+function whichAnswer(ok){
+  const a = $('k-ans');
+  if(ok){
+    Snd.right();
+    if(a) a.className = 'answer right pop';
+    const clean = T.tries === 0 && !T.helped;
+    if(clean) T.right++; else T.wrong++;
+    T.xp += clean ? XP.typed : XP.tapped;
+    T.coins += COIN.answer;
+    T.locked = true;
+    setTimeout(()=>{ T.locked = false; nextProblem(); }, 800);
+    return;
+  }
+  Snd.wrong();
+  T.tries++;
+  if(a) a.className = 'answer wrong shake';
+  T.locked = true;
+  setTimeout(()=>{
+    T.locked = false;
+    T.typed = '';
+    if(T.tries >= 2){
+      T.wrong++;
+      Object.assign(T, {showing:true, after:'next', msg:`It's ${T.prob.answer}. Here's how the trick works it out:`});
+    } else {
+      T.msg = 'Not quite. Try again, or tap 💡 Show me.';
+    }
+    renderTrick();
+  }, 900);
+}
+
+function endWhich(){
+  const best = S.best.which || 0, isBest = T.picks > best;
+  if(isBest) S.best.which = T.picks;
+  const r = settleRound(T.xp + XP.round, T.coins + (isBest && best ? COIN.best : 0));
+  logSession('which', T.picks, T.right, T.wrong, 0);
+  saveRound();
+  const badges = streakBadges(r);
+  if(isBest && best) badges.unshift(['gold', '🏆 New best at spotting tricks!']);
+  if(r.goalJustMet) badges.push(['green', '🎯 Daily goal done!']);
+  const n = T.probs.length;
+  T.end = {score:T.picks, r, badges,
+    title:`${T.picks} of ${n} tricks spotted`,
+    msg:`${T.right} of ${n} answers right first time.${T.picks === n ? ' A perfect eye for tricks! 🔍' : ''}`};
+  T.phase = 'end';
+  renderTrick();
+  Snd.done();
+  if(T.picks >= n - 1) confetti(90);
+  celebrateLevel(r.xpBefore);
+}
+
+/* ============================================================
+   grown-ups: practice and difficulty controls
+   ============================================================ */
+function paintControls(){
+  const opt = (v, label) => `<option value="${v}">${label}</option>`;
+  $('c-lock').innerHTML = opt('', 'Everything (difficulty adjusts itself)') +
+    '<optgroup label="One topic">' + LOCK_TOPICS.map(x => opt('topic:' + x.id, x.name)).join('') + '</optgroup>' +
+    '<optgroup label="One times table">' + [2, 3, 4, 5, 10, 6, 7, 8, 9, 11, 12].map(t =>
+      opt('table:' + t, `The ${t}× table${STAGE3.includes(t) ? ' (Stage 3)' : ''}`)).join('') + '</optgroup>';
+  $('c-lock').value = !S.lock ? '' : S.lock.kind === 'table' ? 'table:' + S.lock.t : 'topic:' + S.lock.id;
+  const max = maxLevel();
+  $('c-levels').innerHTML = OPS.map(op => {
+    const L = S.levels[op.id];
+    return `<div class="lvrow"><span class="ln">${op.name}</span><span class="ld">Difficulty ${L} of ${max}: ${op.levels[L - 1]}</span>` +
+      `<span class="step"><button type="button" data-lv="${op.id}" data-d="-1"${L <= 1 ? ' disabled' : ''} aria-label="Easier ${op.name.toLowerCase()}">−</button>` +
+      `<b>${L}</b><button type="button" data-lv="${op.id}" data-d="1"${L >= max ? ' disabled' : ''} aria-label="Harder ${op.name.toLowerCase()}">+</button></span></div>`;
+  }).join('');
+  $('c-stretch').checked = !!S.stretch;
+}
+
+function controlNote(text){
+  const n = $('c-note');
+  n.hidden = !text;
+  n.textContent = text || '';
+}
+
+/* ============================================================
    wiring
    ============================================================ */
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
@@ -3464,6 +3854,34 @@ el.choices.addEventListener('click', e=>{
   b.addEventListener('click', ()=>kPress(k));
   $('k-pad').appendChild(b);
 });
+$('t-which').addEventListener('click', e=>{
+  if(e.target.closest('[data-which]') && TRICKS.filter(t => trickStars(t.id) >= 1).length >= WHICH_MIN) startWhich();
+});
+$('k-stage').addEventListener('click', e=>{
+  const b = e.target.closest('[data-w]');
+  if(b) pickTrick(b.dataset.w);
+});
+$('c-lock').addEventListener('change', e=>{
+  const v = e.target.value;
+  S.lock = !v ? null : v.startsWith('table:') ? {kind:'table', t:Number(v.slice(6))} : {kind:'topic', id:v.slice(6)};
+  saveState();
+  controlNote(S.lock
+    ? `Locked to ${lockName(S.lock)}. Daily Sprint and Ghost Race will only ask these until you change it back here.`
+    : 'Unlocked. Daily Sprint and Ghost Race are back to the full mix, at the difficulty below.');
+});
+$('c-levels').addEventListener('click', e=>{
+  const b = e.target.closest('[data-lv]');
+  if(!b) return;
+  setLevel(b.dataset.lv, S.levels[b.dataset.lv] + Number(b.dataset.d));
+  saveState();
+  paintControls();
+});
+$('c-stretch').addEventListener('change', e=>{
+  S.stretch = e.target.checked;
+  if(!S.stretch) for(const op of OPS) if(S.levels[op.id] > STAGE3_TOP) setLevel(op.id, STAGE3_TOP);
+  saveState();
+  paintControls();
+});
 ['t-add', 't-times', 'd-practise'].forEach(id=>$(id).addEventListener('click', e=>{
   const b = e.target.closest('[data-trick]');
   if(b) openTrick(b.dataset.trick);
@@ -3490,6 +3908,7 @@ $('k-act').addEventListener('click', e=>{
     else { T.msg = 'Your turn. Use the trick!'; renderTrick(); }
   }
   else if(k === 'list') showTricks();
+  else if(k === 'which') startWhich();
 });
 
 $('h-shop').addEventListener('click', showShop);

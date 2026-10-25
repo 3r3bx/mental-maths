@@ -5,11 +5,12 @@ A mental maths practice app for 8-year-olds, built for an iPad. It works offline
 **Play it:** https://3r3bx.github.io/mental-maths/
 
 <p>
-  <img src="docs/screenshots/home.png" width="180" alt="Home screen with avatar, level, streak and game modes">
-  <img src="docs/screenshots/game.png" width="180" alt="A Daily Sprint round with the number pad">
-  <img src="docs/screenshots/trick.png" width="180" alt="Maths Tricks lesson: 14 + 24 split into tens and ones">
-  <img src="docs/screenshots/shop.png" width="180" alt="Avatar shop">
-  <img src="docs/screenshots/report.png" width="180" alt="Parents' progress report">
+  <img src="docs/screenshots/home.png" width="150" alt="Home screen with avatar, level, streak and game modes">
+  <img src="docs/screenshots/game.png" width="150" alt="A Daily Sprint round with the number pad">
+  <img src="docs/screenshots/trick.png" width="150" alt="Maths Tricks lesson: 14 + 24 split into tens and ones">
+  <img src="docs/screenshots/which.png" width="150" alt="Which trick? game: picking Add 9 for 46 + 9">
+  <img src="docs/screenshots/shop.png" width="150" alt="Avatar shop">
+  <img src="docs/screenshots/report.png" width="150" alt="Parents' progress report">
 </p>
 
 The content follows the **Cambridge Primary Stage 3** maths curriculum: addition and subtraction facts to 20 with speed, adding and subtracting within 100, the 2, 3, 4, 5 and 10 times tables by heart, and division as the inverse of multiplication. The 3× and 4× tables get extra weight, because they're the usual gap for children coming from the IB PYP.
@@ -20,18 +21,34 @@ The content follows the **Cambridge Primary Stage 3** maths curriculum: addition
 
 | Mode | What it does |
 |---|---|
-| ⚡ **Daily Sprint** | 60 seconds of mixed Stage 3 facts. |
+| ⚡ **Daily Sprint** | 60 seconds of mixed facts, at the child's current difficulty. |
 | 🎯 **Focus** | One times table. Starts with a look-first card that marks the child's tricky facts. |
-| 👻 **Ghost Race** | Race against your own best round, shown as two lanes. |
+| 👻 **Ghost Race** | Race against your own best round, shown as two lanes. Same questions as Daily Sprint. |
 | 📋 **Check-up** | 25 times-table questions, 6 seconds each, due weekly. Tracks progress week to week. |
 
 Every round opens with three untimed warm-up questions. Answers can be typed on a number pad or tapped from a 12-button grid. Only typed answers count towards mastery, because tapping can be done by elimination.
+
+### Difficulty that adjusts itself
+
+Adding, taking away, times tables and dividing each have their own difficulty, from 1 to 5:
+
+| | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| Adding | facts to 20 | 2-digit + 1-digit | 2-digit + 2-digit, within 100 | 3-digit + 2-digit | 3-digit + 3-digit |
+| Taking away | facts to 20 | 2-digit − 1-digit | 2-digit − 2-digit, within 100 | 3-digit − 2-digit | 3-digit − 3-digit |
+| Times tables | 2×, 5×, 10× | 3× and 4× | all Stage 3 tables | 6× and 8× | 7×, 9×, 11×, 12× |
+| Dividing | ÷ 2, 5, 10 | ÷ 3 and 4 | all Stage 3 tables | ÷ 6 and 8 | ÷ 7, 9, 11, 12 |
+
+- Daily Sprint and Ghost Race ask about 60% of questions at the current difficulty. The rest are easier review.
+- Typed answers at the current difficulty fill a window of the last 12. Once 10 or more of them are at least 85% right, the difficulty goes up, and the child sees "⬆️ Harder adding unlocked!".
+- If the last 8 fall below 60%, it goes down quietly, with no message, so a struggling child never sees a "demotion".
+- Everything starts at 2. Nothing goes above 3 (the end of Stage 3) unless a grown-up allows it.
 
 A missed fact comes back two or three questions later in the same round. After the round, the results screen shows how to work it out: a dot picture for times tables, a "through ten" step for sums, and a link to the matching Maths Trick.
 
 ### Maths Tricks
 
-Twelve mental strategies, taught step by step and without a timer:
+Fourteen mental strategies, taught step by step and without a timer:
 
 - **Adding and taking away:**
   - Ten friends (6 + 9 + 4)
@@ -41,12 +58,14 @@ Twelve mental strategies, taught step by step and without a timer:
   - Add 9: add 10, take 1 (46 + 9)
   - Take away in parts (57 − 23)
   - Count up to find the difference (42 − 38)
+  - Bonds to 100 (64 + ? = 100: hop to 70, then to 100)
 - **Times and sharing:**
   - Times 10: digits jump (23 × 10)
   - Times 5 is half of times 10
   - Times 4 is double double
   - Divide by thinking times (24 ÷ 4)
   - Times 9: times 10, take one (extension)
+  - Double bigger numbers (double 36 = 60 + 12)
 
 Each lesson has three stages:
 
@@ -55,6 +74,14 @@ Each lesson has three stages:
 3. Use the trick on 6 problems unaided. This earns up to 3 stars.
 
 Each strategy comes with the picture teachers use for it: a number line, ten frames, tens rods and ones cubes, a dot array, or a place-value chart.
+
+**🔍 Which trick?** unlocks once 3 tricks are learned. It's 8 problems from the tricks the child knows. For each one they:
+
+1. Pick the best strategy out of three.
+2. See why it fits.
+3. Solve the problem.
+
+The wrong options are always tricks that genuinely don't fit the problem, so there's only one right answer. Choosing a strategy is the skill that comes after learning them.
 
 ### Rewards
 
@@ -76,7 +103,10 @@ Press and hold **Hold for grown-ups** on the home screen for 2 seconds.
   - each Stage 3 times table, with its tricky facts named;
   - facts that keep going wrong, and facts that are right but slow;
   - a 14-day practice chart and a check-up chart.
-- **Settings:** daily streak reminders, and backup and restore.
+- **Settings:**
+  - **Practice lock:** keep Daily Sprint and Ghost Race on one times table or one topic, for example before a school test. While it's on, a lock shows on the child's home screen and a banner shows on the report, so it isn't forgotten. Locked rounds don't change the difficulty.
+  - **Difficulty:** see each difficulty and nudge it with − and +. "Allow harder than Stage 3" opens difficulties 4 and 5.
+  - Daily streak reminders, and backup and restore.
 
 Ratings use each fact's last 6 answers, so they describe how things are going now. "Strong" means 90% right in about 3 seconds or less: the fact is remembered, not worked out.
 
@@ -115,8 +145,9 @@ The script inside `index.html` is split into labelled sections:
 | Section | Contents |
 |---|---|
 | `storage` | Progress saved in `localStorage` under one key, with a version number so old saves are upgraded, not lost. |
-| `questions` | Question generator, aligned to Stage 3. |
-| `hints`, `tricks` | Worked steps and pictures. |
+| `questions` | Question generator, aligned to Stage 3. Each question remembers its difficulty tier. |
+| `adapt` | The self-adjusting difficulty and the grown-up practice lock. |
+| `hints`, `tricks` | Worked steps and pictures, plus `trickFits`, which decides which tricks suit a problem in Which trick?. |
 | `options` | The tap grid. |
 | `mastery` | Per-fact records (last 6 results, speed, streak of quick right answers) and fact families: 3 × 4, 4 × 3, 12 ÷ 3 and 12 ÷ 4 count as one. |
 | `economy`, `shop` | XP, levels, coins, streak freezes, milestones and the avatar catalogue. |
@@ -165,7 +196,7 @@ To publish a change, commit and push to `main`. GitHub Pages redeploys in about 
 
 ## Not built yet
 
-- Parent controls to lock practice to one table or topic.
-- Difficulty that moves up and down by itself, per skill area.
-- A "Which trick?" game, where the child picks the best strategy before solving.
-- More tricks: bonds to 100, and doubling bigger numbers.
+- Fractions, money and time questions, such as half of 18, change from $5, and reading a clock.
+- Word problems.
+- Bringing missed facts back on later days (spaced repetition across sessions). Today they come back within the same round.
+- More than one child on the same iPad.
