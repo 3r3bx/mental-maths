@@ -170,7 +170,7 @@ Ratings use each fact's last 6 answers, so they describe how things are going no
 2. Tap **Share → Add to Home Screen → Add**.
 3. Open it from the new icon once while online.
 
-After that it works offline. Always open it from the icon. Progress saved by the Home Screen app is protected, whereas progress in a normal Safari tab can be cleared after 7 days without a visit.
+After that it works offline. When a new version is published, the home screen shows **"A new version is ready"**; tap **Update** and progress stays. Always open it from the icon. Progress saved by the Home Screen app is protected, whereas progress in a normal Safari tab can be cleared after 7 days without a visit.
 
 > Opening `index.html` from the Files app won't work. Files shows HTML as a preview with scripts switched off. The app has to be loaded from a web address once.
 
@@ -210,7 +210,15 @@ The script inside `index.html` is split into labelled sections:
 | `report` | What the grown-ups progress page says. |
 | `ui`, `game loop` | The screens and the round itself. |
 
-**Offline.** The service worker serves the saved copy straight away and fetches a fresh one in the background. An update therefore appears on the second launch after it's published.
+**Offline and updates.** The service worker runs the app from a saved copy, which only changes when someone taps **Update**. That way a new version never swaps in halfway through a child's session.
+
+At launch, and whenever the app returns to the foreground (at most every 30 minutes), the app compares its saved copy with the published `index.html`. If they differ, a **"✨ A new version of Mental Maths is ready"** banner appears on the home screen. Tapping **Update**:
+
+1. Downloads every file first, so a dropped connection changes nothing.
+2. Saves a safety copy of every player's progress.
+3. Swaps in the new files and reloads.
+
+Progress lives in `localStorage`, separate from the app's files, so it carries over. There are no version numbers to bump: any change to `index.html` is spotted. **Settings → App updates** shows the installed version, has **Check for updates**, and can restore the safety copy if a new version ever mishandled progress.
 
 ## Daily streak reminders
 
@@ -248,7 +256,7 @@ python3 -m http.server 8000
 
 On a computer, the keyboard works in every game: digits, Backspace and Enter.
 
-To publish a change, commit and push to `main`. GitHub Pages redeploys in about a minute.
+To publish a change, commit and push to `main`. GitHub Pages redeploys in about a minute. The next time the iPad opens the app with internet, the update banner appears. Changes to the icons or the manifest alone aren't detected; they arrive with the next change to `index.html`.
 
 ## Not built yet
 

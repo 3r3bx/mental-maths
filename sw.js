@@ -1,10 +1,13 @@
-/* Offline cache. Serves the saved copy instantly, then quietly fetches a
-   fresh one in the background, so an update shows up on the next launch. */
+/* Offline cache. The app runs from this saved copy, and the copy changes
+   only when someone taps Update (or this file itself changes), so a new
+   version never swaps in halfway through a child's session. Progress is
+   kept elsewhere (localStorage), so an update never touches it. */
 const CACHE = 'mental-maths';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+  // 'reload' skips the browser's HTTP cache, so this really is the latest
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, {cache: 'reload'})))));
   self.skipWaiting();
 });
 
@@ -14,12 +17,14 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
+  // the app's update check and download ask the network directly
+  if (e.request.cache === 'no-store' || e.request.cache === 'reload') return;
   e.respondWith(caches.open(CACHE).then(async c => {
     const hit = await c.match(e.request, {ignoreSearch: true});
-    const net = fetch(e.request)
-      .then(r => { if (r.ok) c.put(e.request, r.clone()); return r; })
-      .catch(() => hit);
-    return hit || net;
+    if (hit) return hit;
+    const r = await fetch(e.request);
+    if (r.ok) c.put(e.request, r.clone());
+    return r;
   }));
 });
 

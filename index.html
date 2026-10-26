@@ -704,6 +704,12 @@
   .lvrow.off .ln,.lvrow.off .ld{color:var(--ink-faint);}
   .lvrow .ld{padding-left:32px;}
   .lengths{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+  .updbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;
+    background:var(--good-deep);border:1.5px solid var(--good);border-radius:16px;
+    padding:10px 12px 10px 16px;font-size:15px;font-weight:700;color:var(--ink);text-align:left;
+  }
+  .updbar .btn2{flex-shrink:0;}
   .lockbar{
     background:#3A2E14;border:1.5px solid var(--accent);border-radius:14px;
     padding:10px 14px;font-size:14.5px;font-weight:650;color:var(--ink);
@@ -941,6 +947,10 @@
 
   <!-- ===== HOME ===== -->
   <div class="screen scroll on" id="home"><div class="inner">
+    <div class="updbar" id="h-update" hidden>
+      <span>✨ A new version of Mental Maths is ready.</span>
+      <button class="btn2 small" type="button" id="h-update-btn">Update</button>
+    </div>
     <div class="me">
       <button class="ava-btn" type="button" id="h-ava" aria-label="My avatar and shop"></button>
       <div class="me-txt">
@@ -1100,6 +1110,19 @@
       <div class="lengths" id="c-lengths"></div>
       <p>Best scores and the ghost are kept separately for each length, so a longer round never beats a shorter one unfairly. Check-ups are compared as % right.</p>
       <div class="note" id="c-lnote" hidden></div>
+    </div>
+    <div class="panel">
+      <h3>📲 App updates</h3>
+      <p>When a change is published, the app notices the next time it's opened with internet, and shows <b>"A new version is ready"</b> on the home screen. Updating only replaces the app itself; every player's progress stays. A safety copy of everyone's progress is also saved just before each update.</p>
+      <p id="u-status"></p>
+      <div class="row">
+        <button class="btn2 small" type="button" id="u-check">Check for updates</button>
+        <button class="btn2 small" type="button" id="u-apply" hidden>Update now</button>
+      </div>
+      <div class="note" id="u-note" hidden></div>
+      <div class="row" id="u-safety" hidden>
+        <button class="btn2 small ghost" type="button" id="u-restore"></button>
+      </div>
     </div>
     <div class="panel">
       <h3>💾 Back up progress</h3>
@@ -3801,6 +3824,8 @@ function applyRestore(){
 }
 
 async function showAdult(){
+  updateNote('');
+  paintUpdateSettings();
   paintPlayers();
   playerNote('');
   paintControls();
@@ -4527,6 +4552,98 @@ function controlNote(text){
 }
 
 /* ============================================================
+   updates — a "new version is ready" button that keeps progress
+   The service worker runs the app from a saved copy. This compares
+   that copy with the one online. Update downloads every file first,
+   saves a safety copy of all progress, swaps the files and reloads.
+   Progress is in localStorage, separate from the files, so it stays.
+   ============================================================ */
+const APP_FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
+const SAFETY_KEY = 'mm_before_update', UPDATED_KEY = 'mm_updated';
+const CHECK_EVERY = 30 * 60 * 1000;
+const absUrl = f => new URL(f, location.href).href;
+let runningCopy = null, updateReady = false, lastCheck = 0, updating = false;
+
+/* the saved copy this page was started from */
+async function savedCopy(){
+  if(!('caches' in window)) return null;
+  const r = await caches.match(absUrl('./'), {ignoreSearch:true}) || await caches.match(absUrl('./index.html'), {ignoreSearch:true});
+  return r ? r.text() : null;
+}
+
+async function shortHash(text){
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(b)].slice(0, 4).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkForUpdate(force){
+  if(!runningCopy || updating || (!force && Date.now() - lastCheck < CHECK_EVERY)) return updateReady;
+  lastCheck = Date.now();
+  try{
+    const res = await fetch(absUrl('./index.html'), {cache:'no-store'});
+    if(res.ok) updateReady = (await res.text()) !== runningCopy;
+  }catch(e){}   // offline: the next check will try again
+  paintUpdate();
+  return updateReady;
+}
+
+async function applyUpdate(){
+  if(updating) return;
+  updating = true;
+  paintUpdate();
+  try{
+    // every file arrives before anything is replaced, so a dropped connection changes nothing
+    const got = await Promise.all(APP_FILES.map(async f => {
+      const r = await fetch(absUrl(f), {cache:'reload'});
+      if(!r.ok) throw new Error(f);
+      return [absUrl(f), r];
+    }));
+    saveState();
+    try{ localStorage.setItem(SAFETY_KEY, JSON.stringify({at:todayStr(), from:await shortHash(runningCopy || ''), backup:buildBackup()})); }catch(e){}
+    const c = await caches.open('mental-maths');
+    await Promise.all(got.map(([u, r]) => c.put(u, r)));
+    try{ localStorage.setItem(UPDATED_KEY, todayStr()); }catch(e){}
+    const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+    if(reg) await reg.update().catch(()=>{});
+    location.reload();
+  }catch(e){
+    updating = false;
+    paintUpdate();
+    updateNote('The update couldn\'t download. Check the internet connection and try again. Nothing has changed.', true);
+  }
+}
+
+function updateNote(text, err){
+  const n = $('u-note');
+  n.hidden = !text;
+  n.textContent = text || '';
+  n.className = 'note' + (err ? ' err' : '');
+}
+
+function paintUpdate(){
+  $('h-update').hidden = !updateReady;
+  $('h-update-btn').textContent = updating ? 'Updating…' : 'Update';
+  $('h-update-btn').disabled = updating;
+  $('u-apply').hidden = !updateReady;
+  $('u-apply').disabled = updating;
+  $('u-apply').textContent = updating ? 'Updating…' : 'Update now';
+}
+
+async function paintUpdateSettings(){
+  let updated = null, safety = null;
+  try{ updated = localStorage.getItem(UPDATED_KEY); safety = JSON.parse(localStorage.getItem(SAFETY_KEY)); }catch(e){}
+  $('u-status').innerHTML = !runningCopy
+    ? 'Updates work once the app has been opened from its Home Screen icon with internet.'
+    : `This iPad has version <b>${await shortHash(runningCopy)}</b>${updated ? `, updated ${fmtDate(dateOf(updated))}` : ''}.`;
+  $('u-safety').hidden = !safety;
+  if(safety){
+    $('u-restore').dataset.armed = '';
+    $('u-restore').textContent = `Restore progress from before the ${fmtDate(dateOf(safety.at))} update`;
+  }
+  paintUpdate();
+}
+
+/* ============================================================
    wiring
    ============================================================ */
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>{
@@ -4630,6 +4747,33 @@ $('pl-add').addEventListener('click', ()=>{
   paintPlayers();
   mirrorState();
   playerNote(`${name} added. The app will ask "Who's playing?" when it opens.`);
+});
+$('h-update-btn').addEventListener('click', applyUpdate);
+$('u-apply').addEventListener('click', applyUpdate);
+$('u-check').addEventListener('click', async ()=>{
+  if(!runningCopy){ updateNote('Open the app from its Home Screen icon with internet first.', true); return; }
+  updateNote('Checking…');
+  const ready = await checkForUpdate(true);
+  updateNote(ready ? 'A new version is ready. Tap Update now.' : 'This is the newest version.');
+});
+$('u-restore').addEventListener('click', ()=>{
+  const b = $('u-restore');
+  // two taps: this replaces every player's progress with the safety copy
+  if(!b.dataset.armed){
+    b.dataset.armed = '1';
+    b.textContent = 'Tap again to restore';
+    updateNote('This replaces every player\'s progress with the copy saved just before the last update. Anything played since is lost.', true);
+    return;
+  }
+  try{
+    const safety = JSON.parse(localStorage.getItem(SAFETY_KEY));
+    restoreBackup(safety.backup);
+    mirrorState();
+    paintPlayers();
+    paintControls();
+    paintUpdateSettings();
+    updateNote('Progress restored from the safety copy.');
+  }catch(e){ updateNote('The safety copy couldn\'t be read.', true); }
 });
 $('c-cur').addEventListener('change', e=>{
   S.currency = e.target.value || null;
@@ -4813,7 +4957,7 @@ document.addEventListener('touchmove', e=>{ if(e.touches.length > 1) e.preventDe
    way out and shift them forward by the time away on the way back. */
 document.addEventListener('visibilitychange', ()=>{
   // coming back on a new day: refresh the streak warning
-  if(!document.hidden && $('home').classList.contains('on')) paintHome();
+  if(!document.hidden && $('home').classList.contains('on')){ paintHome(); checkForUpdate(); }
   if(!G || G.phase !== 'live') return;
   if(document.hidden){
     if(G.frozenAt !== null) return;
@@ -4839,6 +4983,7 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
 mirrorState();
 paintHome();
 if(P.list.length > 1) showWho();
+savedCopy().then(t => { runningCopy = t; checkForUpdate(true); }).catch(()=>{});
 </script>
 </body>
 </html>
